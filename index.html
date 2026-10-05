@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Nové reality Praha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F5F2; --surface:#FFFFFF; --ink:#18222D; --muted:#66717C; --line:#DCE0E2;
+  --river:#24506E; --river-soft:#E3ECF2; --fresh:#1F7A4D; --fresh-soft:#E2F1E8; --drop:#B4421F;
+  --bar:#C9D3DA;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --paper:#12171C; --surface:#1A2128; --ink:#E7EBEE; --muted:#95A0AA; --line:#2B343C;
+  --river:#7FB1D3; --river-soft:#1E3240; --fresh:#5CC28D; --fresh-soft:#18301F; --drop:#F08A63; --bar:#34424D;
+}}
+:root[data-theme="dark"]{
+  --paper:#12171C; --surface:#1A2128; --ink:#E7EBEE; --muted:#95A0AA; --line:#2B343C;
+  --river:#7FB1D3; --river-soft:#1E3240; --fresh:#5CC28D; --fresh-soft:#18301F; --drop:#F08A63; --bar:#34424D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.45 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--river);outline-offset:2px}
+
+header{max-width:1100px;margin:0 auto;padding:28px 20px 8px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between}
+h1{margin:0;font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.status{color:var(--muted);font-size:14px}
+.status b{color:var(--fresh);font-weight:700}
+
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.filters-inner{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:14px;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--river);color:var(--surface);font-weight:600}
+.filters input,.filters select{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:0}
+.filters input[type=number]{width:110px}
+.filters input[type=search]{flex:1 1 180px}
+.check{font-size:14px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.more{margin-left:auto;font:inherit;font-size:14px;background:none;border:0;color:var(--river);cursor:pointer;text-decoration:underline;padding:6px 0}
+
+main{max-width:1100px;margin:0 auto;padding:8px 20px 60px}
+.summary{color:var(--muted);font-size:14px;margin:14px 0 6px}
+ul{list-style:none;margin:0;padding:0}
+li.item{display:grid;grid-template-columns:132px 1fr auto;gap:16px;padding:16px 0 16px 14px;border-bottom:1px solid var(--line);position:relative}
+li.item.new::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:var(--fresh)}
+.thumb{width:132px;aspect-ratio:4/3;border-radius:6px;background:var(--river-soft);overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.title{font-weight:700;font-size:17px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.title:hover{text-decoration:underline}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 6px}
+.fact{font-size:13px;padding:2px 8px;border-radius:4px;background:var(--river-soft);color:var(--river);font-weight:500}
+.fact.newtag{background:var(--fresh-soft);color:var(--fresh)}
+.desc{color:var(--muted);font-size:14px;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:62ch}
+.meta{color:var(--muted);font-size:13px;margin-top:6px}
+.price{text-align:right;min-width:150px}
+.price strong{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.price .was{font-size:13px;color:var(--drop)}
+.ppm{font-size:13px;color:var(--muted);margin-top:4px;white-space:nowrap}
+.gauge{margin:6px 0 0 auto;width:120px;height:6px;border-radius:3px;background:var(--bar);position:relative}
+.gauge i{position:absolute;top:-3px;width:2px;height:12px;background:var(--ink);border-radius:1px}
+.gauge::after{content:"";position:absolute;left:50%;top:-2px;width:1px;height:10px;background:var(--muted)}
+.gauge-label{font-size:12px;color:var(--muted);margin-top:3px}
+.empty{padding:48px 0;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+
+@media (max-width:640px){
+  .filters{position:static}
+  li.item{grid-template-columns:96px 1fr;gap:12px}
+  .thumb{width:96px}
+  .price{grid-column:2;text-align:left;min-width:0}
+  .gauge{margin-left:0}
+  .desc{display:none}
+  .filters input[type=number]{width:90px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Nové reality Praha</h1>
+  <div class="status" id="status">Načítám data…</div>
+</header>
+
+<div class="filters" role="search">
+  <div class="filters-inner">
+    <div class="seg" data-key="akce" aria-label="Typ nabídky">
+      <button data-v="" aria-pressed="true">Vše</button><button data-v="prodej">Prodej</button><button data-v="pronajem">Pronájem</button>
+    </div>
+    <div class="seg" data-key="typ" aria-label="Nemovitost">
+      <button data-v="" aria-pressed="true">Vše</button><button data-v="byt">Byty</button><button data-v="dum">Domy</button>
+    </div>
+    <select id="layout" aria-label="Dispozice"><option value="">Dispozice</option></select>
+    <select id="district" aria-label="Městská část"><option value="">Městská část</option></select>
+    <input id="pmin" type="number" inputmode="numeric" placeholder="Cena od" aria-label="Cena od">
+    <input id="pmax" type="number" inputmode="numeric" placeholder="Cena do" aria-label="Cena do">
+    <input id="amin" type="number" inputmode="numeric" placeholder="m² od" aria-label="Plocha od">
+    <input id="q" type="search" placeholder="Hledat v textu" aria-label="Hledat">
+    <select id="source" aria-label="Zdroj"><option value="">Bazoš + Sbazar</option><option value="bazos">Jen Bazoš</option><option value="sbazar">Jen Sbazar</option></select>
+    <select id="sort" aria-label="Řazení">
+      <option value="new">Nejnovější</option><option value="pasc">Nejlevnější</option><option value="pdesc">Nejdražší</option><option value="ppm">Nejnižší cena/m²</option>
+    </select>
+    <label class="check"><input type="checkbox" id="onlyNew"> Jen nové</label>
+    <button class="more" id="seen" type="button">Označit vše jako viděné</button>
+  </div>
+</div>
+
+<main>
+  <p class="summary" id="summary"></p>
+  <ul id="list"></ul>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const state = {akce:"", typ:""};
+let all = [], lastVisit = 0;
+const fmt = n => n == null ? "" : n.toLocaleString("cs-CZ");
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ago = iso => {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 60) return `před ${m} min`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `před ${h} h`;
+  return `před ${Math.round(h / 24)} d`;
+};
+
+try { lastVisit = +localStorage.getItem("lastVisit") || 0; } catch (e) {}
+const isNew = i => new Date(i.first_seen).getTime() > lastVisit;
+
+document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  state[seg.dataset.key] = b.dataset.v; render();
+}));
+["layout","district","pmin","pmax","amin","q","source","sort","onlyNew"].forEach(id =>
+  $("#"+id).addEventListener(id === "q" || id.startsWith("p") || id === "amin" ? "input" : "change", render));
+$("#seen").addEventListener("click", () => {
+  lastVisit = Date.now();
+  try { localStorage.setItem("lastVisit", lastVisit); } catch (e) {}
+  render();
+});
+
+function median(arr){ if(!arr.length) return null; const s=[...arr].sort((a,b)=>a-b); const m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+
+function render(){
+  const f = {
+    layout: $("#layout").value, district: $("#district").value, source: $("#source").value,
+    pmin: +$("#pmin").value || 0, pmax: +$("#pmax").value || Infinity, amin: +$("#amin").value || 0,
+    q: $("#q").value.trim().toLowerCase(), onlyNew: $("#onlyNew").checked
+  };
+  let rows = all.filter(i =>
+    (!state.akce || i.akce === state.akce) && (!state.typ || i.typ === state.typ) &&
+    (!f.source || i.source === f.source) && (!f.layout || i.layout === f.layout) &&
+    (!f.district || i.district === f.district) &&
+    (!f.pmin || (i.price || 0) >= f.pmin) && (f.pmax === Infinity || (i.price && i.price <= f.pmax)) &&
+    (!f.amin || (i.area || 0) >= f.amin) &&
+    (!f.q || `${i.title} ${i.desc} ${i.locality}`.toLowerCase().includes(f.q)) &&
+    (!f.onlyNew || isNew(i)));
+
+  // medián Kč/m² zvlášť pro každou skupinu prodej/pronájem × byt/dům
+  const med = {};
+  for (const i of all) if (i.ppm2) (med[i.akce+i.typ] ||= []).push(i.ppm2);
+  for (const k in med) med[k] = median(med[k]);
+
+  const s = $("#sort").value;
+  const by = {
+    new: (a,b) => b.first_seen.localeCompare(a.first_seen),
+    pasc: (a,b) => (a.price ?? 1e15) - (b.price ?? 1e15),
+    pdesc: (a,b) => (b.price ?? -1) - (a.price ?? -1),
+    ppm: (a,b) => (a.ppm2 ?? 1e15) - (b.ppm2 ?? 1e15)
+  }[s];
+  rows.sort(by);
+
+  const newCount = rows.filter(isNew).length;
+  $("#summary").textContent = `${fmt(rows.length)} inzerátů` + (newCount ? `, z toho ${fmt(newCount)} nových od poslední návštěvy` : "");
+
+  if (!rows.length){
+    $("#list").innerHTML = `<li class="empty"><strong>Nic neodpovídá filtrům</strong>Uvolni cenu nebo plochu, případně vypni „Jen nové".</li>`;
+    return;
+  }
+  $("#list").innerHTML = rows.slice(0, 400).map(i => {
+    const m = med[i.akce+i.typ];
+    let gauge = "";
+    if (i.ppm2 && m){
+      const ratio = i.ppm2 / m;                       // 1 = medián
+      const pos = Math.max(0, Math.min(100, 50 + (ratio - 1) * 100));
+      const pct = Math.round((ratio - 1) * 100);
+      gauge = `<div class="gauge" title="Pozice vůči mediánu Kč/m²"><i style="left:calc(${pos}% - 1px)"></i></div>
+               <div class="gauge-label">${pct === 0 ? "na mediánu" : (pct < 0 ? `${-pct} % pod mediánem` : `${pct} % nad mediánem`)}</div>`;
+    }
+    const price = i.price ? `${fmt(i.price)} Kč${i.akce === "pronajem" ? "/měs." : ""}` : esc(i.price_text || "Cena neuvedena");
+    const facts = [
+      isNew(i) ? `<span class="fact newtag">Nové</span>` : "",
+      i.akce === "pronajem" ? `<span class="fact">Pronájem</span>` : `<span class="fact">Prodej</span>`,
+      i.layout ? `<span class="fact">${esc(i.layout)}</span>` : "",
+      i.area ? `<span class="fact">${i.area} m²</span>` : "",
+      i.district ? `<span class="fact">${esc(i.district)}</span>` : ""
+    ].join("");
+    return `<li class="item${isNew(i) ? " new" : ""}">
+      <a class="thumb" href="${esc(i.url)}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">${i.img ? `<img src="${esc(i.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}</a>
+      <div>
+        <a class="title" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a>
+        <div class="facts">${facts}</div>
+        <p class="desc">${esc(i.desc)}</p>
+        <div class="meta">${i.source === "bazos" ? "Bazoš" : "Sbazar"}, přidáno ${ago(i.first_seen)}${i.locality && !i.district ? ", " + esc(i.locality.slice(0,40)) : ""}</div>
+      </div>
+      <div class="price">
+        <strong>${price}</strong>
+        ${i.price_prev ? `<span class="was">dříve ${fmt(i.price_prev)} Kč</span>` : ""}
+        ${i.ppm2 ? `<div class="ppm">${fmt(i.ppm2)} Kč/m²</div>` : ""}
+        ${gauge}
+      </div>
+    </li>`;
+  }).join("");
+}
+
+fetch("data.json?" + Date.now()).then(r => {
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}).then(d => {
+  all = Object.values(d.listings || {});
+  const opts = (key, sortFn) => [...new Set(all.map(i => i[key]).filter(Boolean))].sort(sortFn);
+  opts("layout").forEach(v => $("#layout").add(new Option(v, v)));
+  opts("district", (a,b) => (parseInt(a.replace(/\D/g,"")) || 0) - (parseInt(b.replace(/\D/g,"")) || 0))
+    .forEach(v => $("#district").add(new Option(v, v)));
+  const n = all.filter(isNew).length;
+  $("#status").innerHTML = `Aktualizováno ${ago(d.updated)}` + (n ? `, <b>${n} nových</b>` : "");
+  render();
+}).catch(() => {
+  $("#status").textContent = "Data zatím nejsou k dispozici";
+  $("#list").innerHTML = `<li class="empty"><strong>Chybí soubor data.json</strong>Spusť workflow „scrape" v záložce Actions na GitHubu a za pár minut stránku obnov.</li>`;
+});
+</script>
+</body>
+</html>
