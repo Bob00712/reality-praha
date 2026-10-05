@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 # ------------------------------------------------------------------ NASTAVENÍ
 DATA_FILE = Path("docs/data.json")
 KEEP_DAYS = 30            # jak dlouho držet inzeráty v datech
-MAX_PAGES = 5             # max. stránek na jednu kategorii a běh (20 inzerátů/str. na Bazoši)
+MAX_PAGES = 8             # max. stránek na jednu kategorii a běh (20 inzerátů/str. na Bazoši)
 
 # Bazoš: akce x typ -> URL se generují automaticky
 BAZOS_AKCE = {"prodej": "prodam", "pronajem": "pronajmu"}
@@ -110,7 +110,12 @@ def bazos_page(akce, typ, offset):
     path = f"https://reality.bazos.cz/{BAZOS_AKCE[akce]}/{BAZOS_TYP[typ]}/"
     if offset:
         path += f"{offset}/"
-    html = get(path, BAZOS_PARAMS)
+    try:
+        html = get(path, BAZOS_PARAMS)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code == 404:
+            return []          # za poslední stránkou výsledků
+        raise
     soup = BeautifulSoup(html, "lxml")
     out = []
     for box in soup.select("div.inzeraty"):
@@ -148,7 +153,6 @@ def bazos_page(akce, typ, offset):
             "posted": posted,
             "akce": akce,
             "typ": typ,
-            "top": "TOP" in full[:200],
         }))
     return out
 
@@ -164,7 +168,7 @@ def scrape_bazos(known):
                     log(f"[bazos] {akce}/{typ} str.{p}: CHYBA {e}")
                     break
                 found += items
-                fresh = [i for i in items if i["key"] not in known and not i["top"]]
+                fresh = [i for i in items if i["key"] not in known]
                 log(f"[bazos] {akce}/{typ} str.{p}: {len(items)} inzerátů, nových {len(fresh)}")
                 if not items or (p > 0 and not fresh):   # dál už jen staré
                     break
@@ -255,7 +259,7 @@ def sbazar_parse(html, akce, typ):
 
     items = []
     for v in out.values():
-        v.update({"source": "sbazar", "akce": akce, "typ": typ, "top": False, "psc": None})
+        v.update({"source": "sbazar", "akce": akce, "typ": typ, "psc": None})
         if v.get("img") and v["img"].startswith("//"):
             v["img"] = "https:" + v["img"]
         items.append(enrich(v))
@@ -350,7 +354,6 @@ def main():
     now_iso = NOW.isoformat(timespec="seconds")
     new = []
     for i in found:
-        i.pop("top", None)
         if i["key"] in store:
             old = store[i["key"]]
             if i.get("price") and old.get("price") and i["price"] != old["price"]:
