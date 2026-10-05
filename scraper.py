@@ -38,6 +38,38 @@ NOTIFY = {
     "dispozice": None,     # např. ["2+kk", "3+kk"]
 }
 MAX_SINGLE = 15         # kolik inzerátů poslat samostatně, zbytek přijde jako souhrn
+
+# Filtr realitek: "rk_ven" = posílat soukromníky i nejisté (vyřadí jen jasné RK),
+#                 "jen_soukromi" = posílat jen jasné soukromníky, None = posílat vše
+SELLER_FILTER = "rk_ven"
+MAX_DETAILS = 80        # max. detailů inzerátů načtených za jeden běh (šetrnost k Bazoši)
+RK_MIN_LISTINGS = 3     # prodávající s tolika a více inzeráty v našich datech = realitka
+
+RK_WORDS = [
+    r"\brk\b", r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředkov", r"exkluziv",
+    r"naše společnost", r"naše kancelář", r"nabízíme k (prodeji|pronájmu)", r"nabízíme vám",
+    r"číslo zakázky", r"id zakázky", r"evidenční číslo", r"kontaktujte (makléře|naši)",
+    r"rezervační (poplatek|smlouv)", r"právní servis", r"financování zajistíme", r"hypoteční poradenství",
+    r"re/?max", r"century ?21", r"m ?& ?m reality", r"m ?& ?m\b", r"maxima reality", r"svoboda ?& ?williams",
+    r"engel ?& ?v[oö]lkers", r"lexxus", r"bidli", r"realitymix", r"sting", r"mm reality",
+    r"reality\.cz", r"realit[ay]\b.*s\.r\.o", r"s\.r\.o\.", r"a\.s\.", r"properties", r"real estate",
+]
+# Konkrétní realitky / makléři, které chceš vždy vyřadit (stačí část jména, malá písmena)
+RK_SELLERS = [
+    "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
+    "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
+    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting",
+]
+
+# Inzeráty, kde majitel výslovně nechce RK – vyřadit (nemá smysl volat)
+NO_RK_WORDS = [
+    r"(rk|realitk\w*|realitní\w* kancelář\w*|makléř\w*)[^.\n]{0,25}(nevolat|nevolejte|nekontaktovat|nekontaktujte|neozývat|neozývejte|neodpovídám|nepište|ne,? děkuji|děkuji,? ne)",
+    r"(nevolat|nevolejte|nekontaktovat|nekontaktujte)[^.\n]{0,15}(rk|realitk\w*|realitní\w* kancelář\w*|makléř\w*)",
+    r"(nemám|nemáme) zájem o (rk|realitk\w*|služby (rk|realitk\w*|makléř\w*))",
+    r"bez zájmu o (rk|realitk\w*)", r"spolupráci s (rk|realitk\w*) (nechci|nepožaduji|odmítám)",
+]
+
+PRIVATE_WORDS = [r"bez rk", r"nejsem rk", r"ne ?rk", r"přímo od majitele", r"bez provize", r"provize se neplatí", r"bez poplatku rk", r"od majitele", r"jsem majitel", r"soukrom[áý] osoba", r"bez realitky"]
 # ---------------------------------------------------------------------------
 
 HEADERS = {
@@ -155,6 +187,60 @@ def bazos_page(akce, typ, offset):
             "typ": typ,
         }))
     return out
+
+
+def bazos_detail(item):
+    """Načte detail inzerátu: celý popis a jméno / ID prodávajícího."""
+    try:
+        soup = BeautifulSoup(get(item["url"]), "lxml")
+    except Exception as e:
+        log(f"[bazos] detail {item['key']}: CHYBA {e}")
+        return
+    d = soup.select_one(".popisdetail")
+    if d:
+        item["desc_full"] = d.get_text(" ", strip=True)[:3000]
+    for td in soup.find_all("td"):
+        if td.get_text(strip=True).rstrip(":").lower() == "jméno":
+            nxt = td.find_next("td")
+            if nxt:
+                item["seller"] = nxt.get_text(" ", strip=True)[:80]
+            break
+    for a in soup.select('a[href*="idphone"], a[href*="idmail"], a[href*="hodnoceni"]'):
+        m = re.search(r"id(?:phone|mail)=(\w+)", a.get("href", ""))
+        if m:
+            item["seller_id"] = m.group(1)
+            break
+
+
+def classify(item, seller_counts):
+    """Vrací 'rk', 'soukromy' nebo 'nejiste' + důvod."""
+    text = " ".join(str(item.get(k) or "") for k in ("title", "desc", "desc_full")).lower()
+    seller = (item.get("seller") or "").lower()
+    for w in NO_RK_WORDS:
+        if re.search(w, text):
+            return "rk", "majitel nechce RK"
+    for name in RK_SELLERS:
+        pat = r"(?<!\w)" + re.escape(name) + r"(?!\w)"
+        if re.search(pat, seller) or re.search(pat, text):
+            return "rk", f"na seznamu RK ({name})"
+    for w in RK_WORDS:
+        if re.search(w, seller):
+            return "rk", f"jméno prodávajícího ({item.get('seller')})"
+    sid = item.get("seller_id") or seller
+    if sid and seller_counts.get(sid, 0) >= RK_MIN_LISTINGS:
+        return "rk", f"{seller_counts[sid]} inzerátů od stejného prodávajícího"
+    priv = [w for w in PRIVATE_WORDS if re.search(w, text)]
+    clean = text
+    for w in PRIVATE_WORDS:                      # "bez RK" nesmí spustit RK
+        clean = re.sub(w, " ", clean)
+    hits = [w for w in RK_WORDS if re.search(w, clean)]
+    if hits and not priv:
+        return "rk", "text inzerátu (" + re.sub(r"\\b|\\", "", hits[0]) + ")"
+    if priv and not hits:
+        return "soukromy", "v textu uvádí soukromou nabídku"
+    if item.get("seller") and not hits:
+        return "soukromy", "jméno fyzické osoby, žádné znaky RK"
+    return "nejiste", "nedostatek informací"
 
 
 def scrape_bazos(known):
@@ -284,6 +370,9 @@ def scrape_sbazar(known):
 
 # ------------------------------------------------------------------ TELEGRAM
 def matches_notify(i):
+    st = i.get("seller_type", "nejiste")
+    if SELLER_FILTER == "rk_ven" and st == "rk": return False
+    if SELLER_FILTER == "jen_soukromi" and st != "soukromy": return False
     f = NOTIFY
     if f["akce"] and i["akce"] != f["akce"]: return False
     if f["typ"] and i["typ"] != f["typ"]: return False
@@ -324,7 +413,10 @@ def notify(new_items):
     single, rest = items[:MAX_SINGLE], items[MAX_SINGLE:]
     for i in single:                       # každý inzerát zvlášť, s náhledem fotky
         price, meta = _fmt(i)
-        _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{i['url']}")
+        who = {"soukromy": "👤 Soukromník", "nejiste": "❔ Nejisté (RK nepotvrzena)"}.get(i.get("seller_type"), "")
+        if i.get("seller"):
+            who += f" – {i['seller']}"
+        _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{who}\n{i['url']}")
     if rest:                               # zbytek v souhrnných zprávách
         lines = [f"📋 Dalších {len(rest)} nových inzerátů:"]
         for i in rest:
@@ -338,7 +430,8 @@ def notify(new_items):
             chunk += ln + "\n"
         if chunk:
             _send(tok, chat, chunk, preview=False)
-    log(f"[telegram] odesláno {len(items)} inzerátů")
+    skipped = sum(1 for x in new_items if x.get("seller_type") == "rk")
+    log(f"[telegram] odesláno {len(items)} inzerátů, vyřazeno realitek: {skipped}")
 
 
 # ------------------------------------------------------------------ MAIN
@@ -351,6 +444,26 @@ def main():
     known = set(store)
 
     found = scrape_bazos(known) + scrape_sbazar(known)
+
+    # detail jen u nových inzerátů z Bazoše (jméno prodávajícího, celý popis)
+    seen_keys = set()
+    todo = []
+    for i in found:
+        if i["key"] not in known and i["key"] not in seen_keys and i["source"] == "bazos":
+            seen_keys.add(i["key"]); todo.append(i)
+    if not first_run:
+        for i in todo[:MAX_DETAILS]:
+            bazos_detail(i)
+        log(f"[bazos] načteno detailů: {min(len(todo), MAX_DETAILS)}")
+    seller_counts = {}
+    for v in list(store.values()) + [i for i in found if i["key"] not in store]:
+        sid = v.get("seller_id") or (v.get("seller") or "").lower()
+        if sid:
+            seller_counts[sid] = seller_counts.get(sid, 0) + 1
+    for i in found:
+        if i["key"] not in known:
+            i["seller_type"], i["seller_reason"] = classify(i, seller_counts)
+            i.pop("desc_full", None)
     now_iso = NOW.isoformat(timespec="seconds")
     new = []
     for i in found:
