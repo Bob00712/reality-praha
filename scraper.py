@@ -42,12 +42,15 @@ MAX_SINGLE = 15         # kolik inzerátů poslat samostatně, zbytek přijde ja
 # Filtr realitek: "rk_ven" = posílat soukromníky i nejisté (vyřadí jen jasné RK),
 #                 "jen_soukromi" = posílat jen jasné soukromníky, None = posílat vše
 SELLER_FILTER = "rk_ven"
+DIGEST_HOUR_UTC = 16    # denní souhrn vyřazených (16 UTC = 18:00 v létě / 17:00 v zimě)
 MAX_DETAILS = 80        # max. detailů inzerátů načtených za jeden běh (šetrnost k Bazoši)
 RK_MIN_LISTINGS = 3     # prodávající s tolika a více inzeráty v našich datech = realitka
 
 RK_WORDS = [
-    r"\brk\b", r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředkov", r"exkluziv",
-    r"naše společnost", r"naše kancelář", r"nabízíme k (prodeji|pronájmu)", r"nabízíme vám",
+    r"\brk\b", r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředk", r"exkluziv",
+    r"naše společnost", r"naše kancelář", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám",
+    r"id nabídky", r"číslo nabídky", r"kód nabídky", r"\bev\. ?č", r"\bev\. ?číslo",
+    r"poplatek za (podnájem|zprostředkování|služby)", r"\w*realit\w*\.(cz|com|eu)",
     r"číslo zakázky", r"id zakázky", r"evidenční číslo", r"kontaktujte (makléře|naši)",
     r"rezervační (poplatek|smlouv)", r"právní servis", r"financování zajistíme", r"hypoteční poradenství",
     r"re/?max", r"century ?21", r"m ?& ?m reality", r"m ?& ?m\b", r"maxima reality", r"svoboda ?& ?williams",
@@ -56,7 +59,7 @@ RK_WORDS = [
 ]
 # Konkrétní realitky / makléři, které chceš vždy vyřadit (stačí část jména, malá písmena)
 RK_SELLERS = [
-    "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
+    "ideální nájemce", "dumrealit", "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
     "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
     "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting",
 ]
@@ -86,9 +89,19 @@ def log(*a):
     print(*a, flush=True)
 
 
+START = time.time()
+MAX_RUNTIME = 6 * 60      # po 6 minutách přestat stahovat a uložit, co máme
+
+
+class OutOfTime(Exception):
+    pass
+
+
 def get(url, params=None):
+    if time.time() - START > MAX_RUNTIME:
+        raise OutOfTime("vyčerpán časový limit běhu")
     time.sleep(random.uniform(1.5, 3.0))   # šetrně k serverům
-    r = S.get(url, params=params, timeout=30)
+    r = S.get(url, params=params, timeout=(10, 20))
     r.raise_for_status()
     return r.text
 
@@ -223,6 +236,8 @@ def classify(item, seller_counts):
         pat = r"(?<!\w)" + re.escape(name) + r"(?!\w)"
         if re.search(pat, seller) or re.search(pat, text):
             return "rk", f"na seznamu RK ({name})"
+    if re.search(r"\s[-–|]\s*\S", item.get("seller") or ""):
+        return "rk", f"jméno s firmou ({item.get('seller')})"
     for w in RK_WORDS:
         if re.search(w, seller):
             return "rk", f"jméno prodávajícího ({item.get('seller')})"
@@ -395,13 +410,17 @@ def _fmt(i):
 
 
 def _send(tok, chat, text, preview=True):
-    try:
-        requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
-                      json={"chat_id": chat, "text": text, "disable_web_page_preview": not preview},
-                      timeout=15)
-    except Exception as e:
-        log("[telegram]", e)
-    time.sleep(1.1)            # limit Telegramu ~1 zpráva/s do jednoho chatu
+    # TELEGRAM_CHAT_ID může obsahovat víc ID oddělených čárkou -> pošle se všem
+    for cid in [c.strip() for c in str(chat).split(",") if c.strip()]:
+        try:
+            r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
+                              json={"chat_id": cid, "text": text, "disable_web_page_preview": not preview},
+                              timeout=15)
+            if not r.ok:
+                log(f"[telegram] {cid}: {r.status_code} {r.text[:120]}")
+        except Exception as e:
+            log("[telegram]", e)
+        time.sleep(1.1)            # limit Telegramu ~1 zpráva/s do jednoho chatu
 
 
 def notify(new_items):
@@ -432,6 +451,27 @@ def notify(new_items):
             _send(tok, chat, chunk, preview=False)
     skipped = sum(1 for x in new_items if x.get("seller_type") == "rk")
     log(f"[telegram] odesláno {len(items)} inzerátů, vyřazeno realitek: {skipped}")
+
+
+def daily_rk_digest(store):
+    """Jednou denně pošle přehled vyřazených inzerátů, ať vidíš, jestli filtr nevyhodil soukromníka."""
+    tok, chat = os.getenv("TELEGRAM_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
+    if not (tok and chat) or NOW.hour != DIGEST_HOUR_UTC or NOW.minute >= 30:
+        return
+    since = (NOW - timedelta(hours=24)).isoformat()
+    rk = [v for v in store.values() if v.get("seller_type") == "rk" and v["first_seen"] >= since]
+    if not rk:
+        return
+    lines = [f"🚫 Vyřazeno filtrem za 24 h: {len(rk)}\nZkontroluj, jestli tu není soukromník:"]
+    for v in rk:
+        lines.append(f"\n• {v['title'][:70]}\n  {v.get('seller') or '?'} | důvod: {v.get('seller_reason','')}\n  {v['url']}")
+    chunk = ""
+    for ln in lines:
+        if len(chunk) + len(ln) > 3800:
+            _send(tok, chat, chunk, preview=False); chunk = ""
+        chunk += ln + "\n"
+    if chunk:
+        _send(tok, chat, chunk, preview=False)
 
 
 # ------------------------------------------------------------------ MAIN
