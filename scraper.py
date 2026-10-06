@@ -47,14 +47,14 @@ MAX_DETAILS = 80        # max. detailů inzerátů načtených za jeden běh (š
 RK_MIN_LISTINGS = 3     # prodávající s tolika a více inzeráty v našich datech = realitka
 
 RK_WORDS = [
-    r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředk", r"exkluziv",
+    r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředk", r"exkluzivně", r"exkluzivn\w* (nabíd|nabíz|prodej|zastoupen|smlouv)",
     r"naše společnost", r"naše kancelář",     r"id nabídky", r"číslo nabídky", r"kód nabídky", r"\bev\. ?č", r"\bev\. ?číslo",
     r"poplatek za (podnájem|zprostředkování|služby)", r"\w*realit\w*\.(cz|com|eu)",
     r"číslo zakázky", r"id zakázky", r"evidenční číslo", r"kontaktujte (makléře|naši)",
     r"rezervační (poplatek|smlouv)", r"právní servis", r"financování zajistíme", r"hypoteční poradenství",
     r"re/?max", r"century ?21", r"m ?& ?m reality", r"m ?& ?m\b", r"maxima reality", r"svoboda ?& ?williams",
     r"engel ?& ?v[oö]lkers", r"lexxus", r"bidli", r"realitymix", r"sting", r"mm reality",
-    r"reality\.cz", r"realit[ay]\b.*s\.r\.o", r"s\.r\.o\.", r"a\.s\.", r"properties", r"real estate",
+    r"reality\.cz", r"realit[ay]\b.*s\.r\.o", r"s\.r\.o\.", r"\bs\.? ?r\.? ?o\b", r"\bspol\.", r"a\.s\.", r"properties", r"real estate",
 ]
 # Konkrétní realitky / makléři, které chceš vždy vyřadit (stačí část jména, malá písmena)
 RK_SELLERS = [
@@ -72,7 +72,7 @@ NO_RK_WORDS = [
 ]
 
 # Slabé znaky RK: samy o sobě inzerát nevyřadí, jen ho označí jako ❔ nejistý
-RK_WEAK = [r"\brk\b", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám"]
+RK_WEAK = [r"exkluziv", r"\brk\b", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám"]
 
 PRIVATE_WORDS = [r"bez rk", r"nejsem rk", r"ne ?rk", r"přímo od majitele", r"bez provize", r"provize se neplatí", r"bez poplatku rk", r"od majitele", r"jsem majitel", r"soukrom[áý] osoba", r"bez realitky"]
 # ---------------------------------------------------------------------------
@@ -240,6 +240,8 @@ def classify(item, seller_counts):
             return "rk", f"na seznamu RK ({name})"
     if re.search(r"\s[-–|]\s*\S", item.get("seller") or ""):
         return "rk", f"jméno s firmou ({item.get('seller')})"
+    if re.search(r"\w(real|reality|estate|invest)\b|,", seller):
+        return "rk", f"jméno firmy ({item.get('seller')})"
     for w in RK_WORDS:
         if re.search(w, seller):
             return "rk", f"jméno prodávajícího ({item.get('seller')})"
