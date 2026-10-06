@@ -47,9 +47,8 @@ MAX_DETAILS = 80        # max. detailů inzerátů načtených za jeden běh (š
 RK_MIN_LISTINGS = 3     # prodávající s tolika a více inzeráty v našich datech = realitka
 
 RK_WORDS = [
-    r"\brk\b", r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředk", r"exkluziv",
-    r"naše společnost", r"naše kancelář", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám",
-    r"id nabídky", r"číslo nabídky", r"kód nabídky", r"\bev\. ?č", r"\bev\. ?číslo",
+    r"realitn\w* kancel", r"makl[eé]ř", r"provize", r"zprostředk", r"exkluziv",
+    r"naše společnost", r"naše kancelář",     r"id nabídky", r"číslo nabídky", r"kód nabídky", r"\bev\. ?č", r"\bev\. ?číslo",
     r"poplatek za (podnájem|zprostředkování|služby)", r"\w*realit\w*\.(cz|com|eu)",
     r"číslo zakázky", r"id zakázky", r"evidenční číslo", r"kontaktujte (makléře|naši)",
     r"rezervační (poplatek|smlouv)", r"právní servis", r"financování zajistíme", r"hypoteční poradenství",
@@ -71,6 +70,9 @@ NO_RK_WORDS = [
     r"(nemám|nemáme) zájem o (rk|realitk\w*|služby (rk|realitk\w*|makléř\w*))",
     r"bez zájmu o (rk|realitk\w*)", r"spolupráci s (rk|realitk\w*) (nechci|nepožaduji|odmítám)",
 ]
+
+# Slabé znaky RK: samy o sobě inzerát nevyřadí, jen ho označí jako ❔ nejistý
+RK_WEAK = [r"\brk\b", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám"]
 
 PRIVATE_WORDS = [r"bez rk", r"nejsem rk", r"ne ?rk", r"přímo od majitele", r"bez provize", r"provize se neplatí", r"bez poplatku rk", r"od majitele", r"jsem majitel", r"soukrom[áý] osoba", r"bez realitky"]
 # ---------------------------------------------------------------------------
@@ -251,6 +253,9 @@ def classify(item, seller_counts):
     hits = [w for w in RK_WORDS if re.search(w, clean)]
     if hits and not priv:
         return "rk", "text inzerátu (" + re.sub(r"\\b|\\", "", hits[0]) + ")"
+    weak = [w for w in RK_WEAK if re.search(w, clean)]
+    if weak and not priv:
+        return "nejiste", "slabý znak RK v textu"
     if priv and not hits:
         return "soukromy", "v textu uvádí soukromou nabídku"
     if item.get("seller") and not hits:
