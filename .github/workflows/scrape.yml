@@ -1,7 +1,7 @@
 name: scrape
 on:
   schedule:
-    - cron: "*/30 * * * *"   # každých 30 min (UTC)
+    - cron: "7,37 * * * *"   # každých 30 min (UTC)
   workflow_dispatch:          # ruční spuštění z GitHubu
 permissions:
   contents: write
@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: @v5
+      - uses: @v6
         with:
           python-version: "3.12"
           cache: pip
