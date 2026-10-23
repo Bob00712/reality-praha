@@ -482,6 +482,32 @@ def daily_rk_digest(store):
 
 
 # ------------------------------------------------------------------ MAIN
+
+# ------------------------------------------------------------------ PRŮZKUM NOVÝCH ZDROJŮ (dočasné)
+PROBE_URLS = {
+    "hyper_demand": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Demand&sortBy=Default",
+    "hyper_offer": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Offer&sortBy=Default",
+    "bazarcz": "https://www.bazar.cz/praha/hledat/nemovitosti/?p2=0",
+    "idnes": "https://reality.idnes.cz/s/praha/",
+    "ulovdomov": "https://www.ulovdomov.cz/",
+}
+
+
+def probe():
+    """Uloží surové stránky nových zdrojů do docs/probe/, aby šel napsat parser."""
+    out = Path("docs/probe")
+    out.mkdir(parents=True, exist_ok=True)
+    for name, url in PROBE_URLS.items():
+        try:
+            r = S.get(url, timeout=(10, 20))
+            (out / f"{name}.html").write_text(r.text, "utf-8")
+            log(f"[probe] {name}: {r.status_code}, {len(r.text)} znaků")
+        except Exception as e:
+            (out / f"{name}.html").write_text(f"CHYBA: {e}", "utf-8")
+            log(f"[probe] {name}: CHYBA {e}")
+        time.sleep(2)
+
+
 def main():
     data = {"listings": {}}
     if DATA_FILE.exists():
@@ -537,6 +563,10 @@ def main():
 
     if not first_run:          # při prvním běhu nespamovat
         notify(new)
+    try:
+        probe()
+    except Exception as e:
+        log("[probe]", e)
     if not found:
         sys.exit("Nenačten žádný inzerát – zkontroluj log (blokace nebo změna webu).")
 
