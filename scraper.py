@@ -227,8 +227,21 @@ def bazos_detail(item):
             break
 
 
+RK_KNOWN, RK_PHONES = set(), set()
+
+
+def _norm_phone(ph):
+    d = re.sub(r"\D", "", str(ph))
+    return d[-9:] if len(d) >= 9 else d
+
+
 def classify(item, seller_counts):
     """Vrací 'rk', 'soukromy' nebo 'nejiste' + důvod."""
+    if item.get("source") == "ulovdomov":
+        if item.get("ud_external"):
+            return "rk", "převzato z realitního portálu"
+        if item.get("ud_private") is False:
+            return "rk", "UlovDomov: není soukromý majitel"
     text = " ".join(str(item.get(k) or "") for k in ("title", "desc", "desc_full")).lower()
     seller = (item.get("seller") or "").lower()
     for w in NO_RK_WORDS:
@@ -245,6 +258,12 @@ def classify(item, seller_counts):
     for w in RK_WORDS:
         if re.search(w, seller):
             return "rk", f"jméno prodávajícího ({item.get('seller')})"
+    if seller and len(seller.split()) >= 2 and seller in RK_KNOWN:
+        return "rk", f"dříve vyřazen jako RK ({item.get('seller')})"
+    if item.get("phone") and _norm_phone(item["phone"]) in RK_PHONES:
+        return "rk", "telefon patří realitce"
+    if item.get("phone") and seller_counts.get("tel:" + _norm_phone(item["phone"]), 0) >= RK_MIN_LISTINGS:
+        return "rk", "stejný telefon u více inzerátů"
     sid = item.get("seller_id") or seller
     if sid and seller_counts.get(sid, 0) >= RK_MIN_LISTINGS:
         return "rk", f"{seller_counts[sid]} inzerátů od stejného prodávajícího"
@@ -390,6 +409,108 @@ def scrape_sbazar(known):
     return found
 
 
+# ------------------------------------------------------------------ ULOVDOMOV
+UD_FIND = "https://ud.api.ulovdomov.cz/v2/offer/find"
+UD_CONTACT = "https://www.ulovdomov.cz/fe-api/offer/contact-info/{}"
+UD_PRAHA = {"northEast": {"lat": 50.178, "lng": 14.707}, "southWest": {"lat": 49.942, "lng": 14.224}}
+UD_TYPES = {("pronajem", "byt"): ("rent", "flat"), ("prodej", "byt"): ("sale", "flat"),
+            ("pronajem", "dum"): ("rent", "house"), ("prodej", "dum"): ("sale", "house")}
+UD_PAGES = 3
+UD_LAYOUT = {"onePlusKk": "1+kk", "onePlusOne": "1+1", "twoPlusKk": "2+kk", "twoPlusOne": "2+1",
+             "threePlusKk": "3+kk", "threePlusOne": "3+1", "fourPlusKk": "4+kk", "fourPlusOne": "4+1",
+             "fivePlusKk": "5+kk", "fivePlusOne": "5+1"}
+
+
+def _ud_offers(obj):
+    """Najde v odpovědi seznam inzerátů (slovníky s id a absoluteUrl/seo)."""
+    if isinstance(obj, list) and obj and isinstance(obj[0], dict) and "id" in obj[0] \
+            and ("absoluteUrl" in obj[0] or "seo" in obj[0]):
+        return obj
+    if isinstance(obj, dict):
+        for v in obj.values():
+            r = _ud_offers(v)
+            if r:
+                return r
+    if isinstance(obj, list):
+        for v in obj:
+            r = _ud_offers(v)
+            if r:
+                return r
+    return []
+
+
+def _ud_item(o, akce, typ):
+    village = ((o.get("village") or {}).get("title") or "")
+    part = ((o.get("villagePart") or {}).get("title") or "")
+    street = ((o.get("street") or {}).get("title") or "")
+    price = (o.get("rentalPrice") or o.get("price") or {})
+    price = price.get("value") if isinstance(price, dict) else price
+    url = o.get("absoluteUrl") or f"https://www.ulovdomov.cz/inzerat/{o.get('seo', '')}/{o['id']}"
+    photo = (o.get("photos") or [{}])[0].get("path") if o.get("photos") else None
+    item = {
+        "key": f"ulovdomov:{o['id']}", "source": "ulovdomov", "ud_id": o["id"], "url": url,
+        "title": o.get("title") or "", "desc": (o.get("description") or "")[:400],
+        "price": int(price) if isinstance(price, (int, float)) and price > 999 else None,
+        "price_text": o.get("priceNote") or "", "locality": ", ".join(x for x in (street, part, village) if x),
+        "img": photo, "posted": (o.get("published") or "")[:10] or None, "akce": akce, "typ": typ,
+        "no_commission": o.get("isNoCommission"), "psc": None,
+        "layout": UD_LAYOUT.get(o.get("disposition")), "area": o.get("area"),
+    }
+    m = re.search(r"Praha[\s-]*(\d{1,2})", f"{part} {village}")
+    if m:
+        item["district"] = f"Praha {int(m.group(1))}"
+    return enrich(item)
+
+
+def scrape_ulovdomov(known):
+    found = []
+    for (akce, typ), (ot, pt) in UD_TYPES.items():
+        for page in range(1, UD_PAGES + 1):
+            try:
+                if time.time() - START > MAX_RUNTIME:
+                    raise OutOfTime("vyčerpán časový limit běhu")
+                time.sleep(random.uniform(1.5, 3.0))
+                r = S.post(UD_FIND, params={"page": page, "perPage": 20, "sorting": "latest"},
+                           json={"bounds": UD_PRAHA, "offerType": ot, "propertyType": pt}, timeout=(10, 20))
+                if page == 1 and akce == "pronajem" and typ == "byt":
+                    Path("docs/probe").mkdir(parents=True, exist_ok=True)
+                    Path("docs/probe/ud_find.json").write_text(r.text[:200000], "utf-8")
+                r.raise_for_status()
+                offers = _ud_offers(r.json())
+            except Exception as e:
+                log(f"[ulovdomov] {akce}/{typ} str.{page}: CHYBA {e}")
+                break
+            items = [_ud_item(o, akce, typ) for o in offers]
+            items = [i for i in items if "praha" in i["locality"].lower()]
+            found += items
+            fresh = [i for i in items if i["key"] not in known]
+            log(f"[ulovdomov] {akce}/{typ} str.{page}: {len(offers)} inzerátů, v Praze {len(items)}, nových {len(fresh)}")
+            if not offers or not fresh:
+                break
+    return found
+
+
+def ulovdomov_contact(item):
+    """Kontakt u inzerátu: soukromý majitel / firma / převzatý inzerát z jiného webu."""
+    try:
+        time.sleep(random.uniform(1.0, 2.0))
+        r = S.get(UD_CONTACT.format(item["ud_id"]), timeout=(10, 20), headers={"Accept": "application/json"})
+        if not Path("docs/probe/ud_contact.json").exists():
+            Path("docs/probe").mkdir(parents=True, exist_ok=True)
+            Path("docs/probe/ud_contact.json").write_text(r.text[:20000], "utf-8")
+        d = r.json()
+        d = d.get("data", d) if isinstance(d, dict) else {}
+    except Exception as e:
+        log(f"[ulovdomov] kontakt {item['key']}: CHYBA {e}")
+        return
+    name = " ".join(x for x in (d.get("first_name"), d.get("last_name")) if x)
+    item["seller"] = (f"{name} ({d['company_name']})" if name and d.get("company_name")
+                      else d.get("company_name") or name or None)
+    item["phone"] = d.get("phone") or None
+    item["ud_private"] = d.get("is_private_landlord")
+    item["ud_external"] = bool(d.get("external_url"))
+
+
 # ------------------------------------------------------------------ TELEGRAM
 def matches_notify(i):
     st = i.get("seller_type", "nejiste")
@@ -412,7 +533,8 @@ def _fmt(i):
         "Prodej" if i["akce"] == "prodej" else "Pronájem",
         i.get("layout"), f"{i['area']} m²" if i.get("area") else None,
         f"{i['ppm2']:,} Kč/m²".replace(",", " ") if i.get("ppm2") else None,
-        i.get("district"), "Bazoš" if i["source"] == "bazos" else "Sbazar"] if x)
+        i.get("district"), {"bazos": "Bazoš", "ulovdomov": "UlovDomov"}.get(i["source"], i["source"]),
+        "bez provize" if i.get("no_commission") else None] if x)
     return price, meta
 
 
@@ -442,7 +564,11 @@ def notify(new_items):
         who = {"soukromy": "👤 Soukromník", "nejiste": "❔ Nejisté (RK nepotvrzena)"}.get(i.get("seller_type"), "")
         if i.get("seller"):
             who += f" – {i['seller']}"
-        _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{who}\n{i['url']}")
+        q = " ".join(x for x in (f'"{i["seller"]}"' if i.get("seller") else "", i.get("phone") or "", "reality") if x)
+        google = "https://www.google.com/search?q=" + requests.utils.quote(q) if i.get("seller") or i.get("phone") else ""
+        tel = f"📞 {i['phone']}\n" if i.get("phone") else ""
+        _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{who}\n{tel}{i['url']}"
+                         + (f"\n🔎 Prověřit v Googlu: {google}" if google else ""), preview=True)
     if rest:                               # zbytek v souhrnných zprávách
         lines = [f"📋 Dalších {len(rest)} nových inzerátů:"]
         for i in rest:
@@ -505,6 +631,26 @@ def probe():
         log(f"[probe] CHYBA {e}")
 
 
+def find_duplicate(i, store):
+    """Stejný byt z jiného webu: shoda typu, dispozice, plochy ±1 m², ceny ±2 % a čtvrti (nebo telefonu)."""
+    for k, v in store.items():
+        if k == i["key"] or v.get("source") == i["source"] or v.get("akce") != i["akce"] or v.get("typ") != i["typ"]:
+            continue
+        if i.get("phone") and v.get("phone") and _norm_phone(i["phone"]) == _norm_phone(v["phone"]) \
+                and i.get("layout") == v.get("layout"):
+            return k
+        if not (i.get("price") and v.get("price")) or abs(i["price"] - v["price"]) > 0.02 * v["price"]:
+            continue
+        if not (i.get("area") and v.get("area")) or abs(i["area"] - v["area"]) > 1:
+            continue
+        if i.get("layout") and v.get("layout") and i["layout"] != v["layout"]:
+            continue
+        if i.get("district") and v.get("district") and i["district"] != v["district"]:
+            continue
+        return k
+    return None
+
+
 def main():
     data = {"listings": {}}
     if DATA_FILE.exists():
@@ -514,28 +660,54 @@ def main():
     known = set(store)
 
     found = scrape_bazos(known) + scrape_sbazar(known)
+    ud_first = not any(v["source"] == "ulovdomov" for v in store.values())
+    try:
+        found += scrape_ulovdomov(known)
+    except Exception as e:
+        log("[ulovdomov] CHYBA", e)
+
+    # paměť realitek: jména (aspoň 2 slova) a telefony, které už byly jednou vyřazené jako RK
+    for v in store.values():
+        if v.get("seller_type") == "rk" and v.get("seller_reason") != "majitel nechce RK":
+            if v.get("seller") and len(v["seller"].split()) >= 2:
+                RK_KNOWN.add(v["seller"].lower())
+            if v.get("phone"):
+                RK_PHONES.add(_norm_phone(v["phone"]))
 
     # detail (jméno prodávajícího, celý popis) u nových inzerátů z Bazoše
     # + u starších, kde se detail minule nestihl načíst ("pending")
-    pending = [dict(v) for v in store.values() if v.get("pending") and v["source"] == "bazos"]
+    pending = [dict(v) for v in store.values() if v.get("pending")]
     seen_keys = set()
     todo = []
-    for i in pending + [i for i in found if i["key"] not in known and i["source"] == "bazos"]:
+    for i in pending + [i for i in found if i["key"] not in known and i["source"] in ("bazos", "ulovdomov")]:
         if i["key"] not in seen_keys:
             seen_keys.add(i["key"]); todo.append(i)
     if not first_run:
         for i in todo[:MAX_DETAILS]:
-            bazos_detail(i)
+            if i["source"] == "bazos":
+                bazos_detail(i)
+            elif not (i["source"] == "ulovdomov" and ud_first and i["key"] not in store):
+                ulovdomov_contact(i)
         log(f"[bazos] načteno detailů: {min(len(todo), MAX_DETAILS)}, čeká na příští běh: {max(0, len(todo) - MAX_DETAILS)}")
     seller_counts = {}
     for v in list(store.values()) + [i for i in found if i["key"] not in store]:
         sid = v.get("seller_id") or (v.get("seller") or "").lower()
         if sid:
             seller_counts[sid] = seller_counts.get(sid, 0) + 1
+        if v.get("phone"):
+            ph = "tel:" + _norm_phone(v["phone"])
+            seller_counts[ph] = seller_counts.get(ph, 0) + 1
+
+    pool = dict(store)                           # pro hledání duplicit i v rámci jednoho běhu
 
     def settle(i):
         """Zařadí inzerát; bez jména prodávajícího ho nechá čekat (max. 3 běhy)."""
-        if i["source"] == "bazos" and not i.get("seller") and not first_run:
+        no_detail = (i["source"] == "bazos" and not i.get("seller")) or \
+                    (i["source"] == "ulovdomov" and i.get("ud_private") is None and not i.get("ud_external"))
+        if i["source"] == "ulovdomov" and ud_first and i["key"] not in store:
+            i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení zdroje", True, False
+            return
+        if no_detail and not first_run:
             i["tries"] = i.get("tries", 0) + 1
             if i["tries"] < 3:
                 i["pending"] = True
@@ -545,6 +717,10 @@ def main():
             i["seller_type"], i["seller_reason"] = classify(i, seller_counts)
         i["pending"] = False
         i.pop("desc_full", None)
+        dup = find_duplicate(i, pool)
+        if dup:
+            i["dup_of"], i["silent"] = dup, True
+        pool[i["key"]] = i
 
     ready = []                                   # dřívější "pending", které se teď dořešily
     by_key = {i["key"]: i for i in todo}
@@ -584,10 +760,6 @@ def main():
 
     if not first_run:          # při prvním běhu nespamovat
         notify([i for i in new + ready if not i.get("pending") and not i.get("silent")])
-    try:
-        probe()
-    except Exception as e:
-        log("[probe]", e)
     if not found:
         sys.exit("Nenačten žádný inzerát – zkontroluj log (blokace nebo změna webu).")
 
