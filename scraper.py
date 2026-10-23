@@ -485,11 +485,16 @@ def daily_rk_digest(store):
 
 # ------------------------------------------------------------------ PRŮZKUM NOVÝCH ZDROJŮ (dočasné)
 PROBE_URLS = {
-    "hyper_demand": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Demand&sortBy=Default",
-    "hyper_offer": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Offer&sortBy=Default",
-    "bazarcz": "https://www.bazar.cz/praha/hledat/nemovitosti/?p2=0",
-    "idnes": "https://reality.idnes.cz/s/praha/",
-    "ulovdomov": "https://www.ulovdomov.cz/",
+    "ud_pron_byt": "https://www.ulovdomov.cz/pronajem/bytu/praha",
+    "ud_prod_byt": "https://www.ulovdomov.cz/prodej/bytu/praha",
+    "ud_pron_dum": "https://www.ulovdomov.cz/pronajem/domu/praha",
+    "ud_prod_dum": "https://www.ulovdomov.cz/prodej/domu/praha",
+    "idnes_prod_byt": "https://reality.idnes.cz/s/prodej/byty/praha/",
+    "idnes_pron_byt": "https://reality.idnes.cz/s/pronajem/byty/praha/",
+    "hyper_supply": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Supply&sortBy=Default",
+    "hyper_prodej": "https://nemovitosti-reality.hyperinzerce.cz/prodej-realit/",
+    "hyper_pronajem": "https://nemovitosti-reality.hyperinzerce.cz/pronajem-realit/",
+    "hyper_domy": "https://nemovitosti-reality.hyperinzerce.cz/domy-prodej/",
 }
 
 
@@ -497,6 +502,8 @@ def probe():
     """Uloží surové stránky nových zdrojů do docs/probe/, aby šel napsat parser."""
     out = Path("docs/probe")
     out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.html"):
+        f.unlink()
     for name, url in PROBE_URLS.items():
         try:
             r = S.get(url, timeout=(10, 20))
