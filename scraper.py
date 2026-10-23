@@ -410,7 +410,7 @@ def scrape_sbazar(known):
 
 
 # ------------------------------------------------------------------ ULOVDOMOV
-UD_FIND = "https://ud.api.ulovdomov.cz/v2/offer/find"
+UD_FIND = "https://ud.api.ulovdomov.cz/v1/offer/find"
 UD_CONTACT = "https://www.ulovdomov.cz/fe-api/offer/contact-info/{}"
 UD_PRAHA = {"northEast": {"lat": 50.178, "lng": 14.707}, "southWest": {"lat": 49.942, "lng": 14.224}}
 UD_TYPES = {("pronajem", "byt"): ("rent", "flat"), ("prodej", "byt"): ("sale", "flat"),
