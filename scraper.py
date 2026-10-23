@@ -43,7 +43,7 @@ MAX_SINGLE = 15         # kolik inzerátů poslat samostatně, zbytek přijde ja
 #                 "jen_soukromi" = posílat jen jasné soukromníky, None = posílat vše
 SELLER_FILTER = "rk_ven"
 DIGEST_HOUR_UTC = 16    # denní souhrn vyřazených (16 UTC = 18:00 v létě / 17:00 v zimě)
-MAX_DETAILS = 80        # max. detailů inzerátů načtených za jeden běh (šetrnost k Bazoši)
+MAX_DETAILS = 100       # max. detailů inzerátů načtených za jeden běh (šetrnost k Bazoši)
 RK_MIN_LISTINGS = 3     # prodávající s tolika a více inzeráty v našich datech = realitka
 
 RK_WORDS = [
@@ -484,35 +484,25 @@ def daily_rk_digest(store):
 # ------------------------------------------------------------------ MAIN
 
 # ------------------------------------------------------------------ PRŮZKUM NOVÝCH ZDROJŮ (dočasné)
-PROBE_URLS = {
-    "ud_pron_byt": "https://www.ulovdomov.cz/pronajem/bytu/praha",
-    "ud_prod_byt": "https://www.ulovdomov.cz/prodej/bytu/praha",
-    "ud_pron_dum": "https://www.ulovdomov.cz/pronajem/domu/praha",
-    "ud_prod_dum": "https://www.ulovdomov.cz/prodej/domu/praha",
-    "idnes_prod_byt": "https://reality.idnes.cz/s/prodej/byty/praha/",
-    "idnes_pron_byt": "https://reality.idnes.cz/s/pronajem/byty/praha/",
-    "hyper_supply": "https://hyperinzerce.cz/inzeraty/Index?category=23708&distanceSearch=False&type=Supply&sortBy=Default",
-    "hyper_prodej": "https://nemovitosti-reality.hyperinzerce.cz/prodej-realit/",
-    "hyper_pronajem": "https://nemovitosti-reality.hyperinzerce.cz/pronajem-realit/",
-    "hyper_domy": "https://nemovitosti-reality.hyperinzerce.cz/domy-prodej/",
-}
+PROBE_URLS = {}
 
 
 def probe():
-    """Uloží surové stránky nových zdrojů do docs/probe/, aby šel napsat parser."""
+    """Stáhne JavaScript UlovDomova, ve kterém je adresa jejich datového rozhraní."""
     out = Path("docs/probe")
     out.mkdir(parents=True, exist_ok=True)
-    for f in out.glob("*.html"):
+    for f in out.glob("*"):
         f.unlink()
-    for name, url in PROBE_URLS.items():
-        try:
-            r = S.get(url, timeout=(10, 20))
-            (out / f"{name}.html").write_text(r.text, "utf-8")
-            log(f"[probe] {name}: {r.status_code}, {len(r.text)} znaků")
-        except Exception as e:
-            (out / f"{name}.html").write_text(f"CHYBA: {e}", "utf-8")
-            log(f"[probe] {name}: CHYBA {e}")
-        time.sleep(2)
+    try:
+        h = S.get("https://www.ulovdomov.cz/pronajem/bytu/praha", timeout=(10, 20)).text
+        js = re.findall(r'/_next/static/chunks/[^"]+\.js', h)
+        for i, path in enumerate(js):
+            r = S.get("https://www.ulovdomov.cz" + path, timeout=(10, 20))
+            (out / f"ud_js_{i}.txt").write_text(path + "\n" + r.text, "utf-8")
+            time.sleep(1)
+        log(f"[probe] ulovdomov js: {len(js)} souborů")
+    except Exception as e:
+        log(f"[probe] CHYBA {e}")
 
 
 def main():
@@ -525,25 +515,49 @@ def main():
 
     found = scrape_bazos(known) + scrape_sbazar(known)
 
-    # detail jen u nových inzerátů z Bazoše (jméno prodávajícího, celý popis)
+    # detail (jméno prodávajícího, celý popis) u nových inzerátů z Bazoše
+    # + u starších, kde se detail minule nestihl načíst ("pending")
+    pending = [dict(v) for v in store.values() if v.get("pending") and v["source"] == "bazos"]
     seen_keys = set()
     todo = []
-    for i in found:
-        if i["key"] not in known and i["key"] not in seen_keys and i["source"] == "bazos":
+    for i in pending + [i for i in found if i["key"] not in known and i["source"] == "bazos"]:
+        if i["key"] not in seen_keys:
             seen_keys.add(i["key"]); todo.append(i)
     if not first_run:
         for i in todo[:MAX_DETAILS]:
             bazos_detail(i)
-        log(f"[bazos] načteno detailů: {min(len(todo), MAX_DETAILS)}")
+        log(f"[bazos] načteno detailů: {min(len(todo), MAX_DETAILS)}, čeká na příští běh: {max(0, len(todo) - MAX_DETAILS)}")
     seller_counts = {}
     for v in list(store.values()) + [i for i in found if i["key"] not in store]:
         sid = v.get("seller_id") or (v.get("seller") or "").lower()
         if sid:
             seller_counts[sid] = seller_counts.get(sid, 0) + 1
+
+    def settle(i):
+        """Zařadí inzerát; bez jména prodávajícího ho nechá čekat (max. 3 běhy)."""
+        if i["source"] == "bazos" and not i.get("seller") and not first_run:
+            i["tries"] = i.get("tries", 0) + 1
+            if i["tries"] < 3:
+                i["pending"] = True
+                return
+            i["seller_type"], i["seller_reason"], i["silent"] = "nejiste", "nepodařilo se načíst prodávajícího", True
+        else:
+            i["seller_type"], i["seller_reason"] = classify(i, seller_counts)
+        i["pending"] = False
+        i.pop("desc_full", None)
+
+    ready = []                                   # dřívější "pending", které se teď dořešily
+    by_key = {i["key"]: i for i in todo}
+    for v in pending:
+        i = by_key.get(v["key"], v)
+        settle(i)
+        store[i["key"]] = {**store[i["key"]], **i}
+        if not i.get("pending"):
+            ready.append(store[i["key"]])
     for i in found:
         if i["key"] not in known:
-            i["seller_type"], i["seller_reason"] = classify(i, seller_counts)
-            i.pop("desc_full", None)
+            i.update(by_key.get(i["key"], {}))
+            settle(i)
     now_iso = NOW.isoformat(timespec="seconds")
     new = []
     for i in found:
@@ -569,7 +583,7 @@ def main():
     log(f"Hotovo: nových {len(new)}, celkem {len(store)}")
 
     if not first_run:          # při prvním běhu nespamovat
-        notify(new)
+        notify([i for i in new + ready if not i.get("pending") and not i.get("silent")])
     try:
         probe()
     except Exception as e:
