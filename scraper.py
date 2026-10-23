@@ -58,6 +58,7 @@ RK_WORDS = [
 ]
 # Konkrétní realitky / makléři, které chceš vždy vyřadit (stačí část jména, malá písmena)
 RK_SELLERS = [
+    "ladislav burian", "realbrána", "realbrana",
     "ideální nájemce", "dumrealit", "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
     "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
     "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting",
@@ -253,7 +254,8 @@ def classify(item, seller_counts):
             return "rk", f"na seznamu RK ({name})"
     if re.search(r"\s[-–|]\s*\S", item.get("seller") or ""):
         return "rk", f"jméno s firmou ({item.get('seller')})"
-    if re.search(r"\w(real|reality|estate|invest)\b|,", seller):
+    if re.search(r"\w(real|reality|estate|invest)\b|,", seller) or \
+            re.search(r"\bREAL|\bReal(?:it|\b|[A-ZÁ-Ž])", item.get("seller") or ""):
         return "rk", f"jméno firmy ({item.get('seller')})"
     for w in RK_WORDS:
         if re.search(w, seller):
