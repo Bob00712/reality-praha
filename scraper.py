@@ -50,6 +50,18 @@ NOTIFY = {
     "min_m2": None,        # např. 50
     "dispozice": None,     # např. ["2+kk", "3+kk"]
 }
+WA_TEXT = {
+    "pronajem": ("Dobrý den, jsem Robert Harman, realitní makléř z Prahy. Viděl jsem Váš inzerát na pronájem {co}.\n\n"
+                 "Pokud byste nechtěl řešit desítky telefonátů a prohlídek, rád to vezmu za Vás: vyberu a prověřím "
+                 "spolehlivého nájemníka, připravím smlouvu i předání {co2}. Vy jen podepíšete.\n\n"
+                 "Kdyby Vás to zajímalo, stačí odpovědět. Pokud ne, nevadí, přeji rychlé pronajmutí. 🙂\n\n"
+                 "Robert Harman\nDominius.cz"),
+    "prodej": ("Dobrý den, jsem Robert Harman, realitní makléř z Prahy. Viděl jsem Váš inzerát na prodej {co}.\n\n"
+               "Pokud byste nechtěl řešit desítky telefonátů a prohlídek, rád to vezmu za Vás: najdu a prověřím "
+               "vážného kupce, zajistím prohlídky, kupní smlouvu i bezpečný převod. Vy jen podepíšete.\n\n"
+               "Kdyby Vás to zajímalo, stačí odpovědět. Pokud ne, nevadí, přeji rychlý prodej. 🙂\n\n"
+               "Robert Harman\nDominius.cz"),
+}
 MAX_SINGLE = 15         # kolik inzerátů poslat samostatně, zbytek přijde jako souhrn
 
 # Filtr realitek: "rk_ven" = posílat soukromníky i nejisté (vyřadí jen jasné RK),
@@ -226,10 +238,14 @@ def bazos_page(akce, typ, offset, params=None, area=None):
 def bazos_detail(item):
     """Načte detail inzerátu: celý popis a jméno / ID prodávajícího."""
     try:
-        soup = BeautifulSoup(get(item["url"]), "lxml")
+        html = get(item["url"])
+        soup = BeautifulSoup(html, "lxml")
     except Exception as e:
         log(f"[bazos] detail {item['key']}: CHYBA {e}")
         return
+    if not Path("docs/probe/bazos_detail.html").exists():
+        Path("docs/probe").mkdir(parents=True, exist_ok=True)
+        Path("docs/probe/bazos_detail.html").write_text(html, "utf-8")
     d = soup.select_one(".popisdetail")
     if d:
         item["desc_full"] = d.get_text(" ", strip=True)[:3000]
@@ -244,6 +260,44 @@ def bazos_detail(item):
         if m:
             item["seller_id"] = m.group(1)
             break
+    try:
+        bazos_phone(item, soup, html)
+    except OutOfTime:
+        raise
+    except Exception as e:
+        log(f"[bazos] telefon {item['key']}: CHYBA {e}")
+
+
+PHONE_RE = re.compile(r"(?:\+?420[\s.]?)?([67]\d{2})[\s.]?(\d{3})[\s.]?(\d{3})\b")
+
+
+def _phone_from(text):
+    m = PHONE_RE.search(text or "")
+    return f"+420{m.group(1)}{m.group(2)}{m.group(3)}" if m else None
+
+
+def bazos_phone(item, soup, html):
+    """Telefon prodávajícího: buď přímo na stránce, nebo přes odkaz „zobraz číslo"."""
+    for a in soup.select('a[href^="tel:"]'):
+        ph = _phone_from(a.get("href"))
+        if ph:
+            item["phone"] = ph
+            return
+    # odkaz / onclick, který číslo dočítá (detailtel.php apod.)
+    m = re.search(r"""['"]([^'"]*detailtel[^'"]*)['"]""", html) or \
+        re.search(r"""['"]([^'"]*(?:telefon|phone)[^'"]*idi=\d+[^'"]*)['"]""", html)
+    if not m:
+        return
+    url = m.group(1).replace("&amp;", "&")
+    if url.startswith("/"):
+        url = "https://reality.bazos.cz" + url
+    elif not url.startswith("http"):
+        url = "https://reality.bazos.cz/" + url
+    resp = get(url)
+    if not Path("docs/probe/bazos_tel.txt").exists():
+        Path("docs/probe").mkdir(parents=True, exist_ok=True)
+        Path("docs/probe/bazos_tel.txt").write_text(url + "\n" + resp[:5000], "utf-8")
+    item["phone"] = _phone_from(BeautifulSoup(resp, "lxml").get_text(" ")) or _phone_from(resp)
 
 
 RK_KNOWN, RK_PHONES = set(), set()
@@ -568,12 +622,13 @@ def _fmt(i):
     return price, meta
 
 
-def _send(tok, chat, text, preview=True):
+def _send(tok, chat, text, preview=True, html=False):
     # TELEGRAM_CHAT_ID může obsahovat víc ID oddělených čárkou -> pošle se všem
     for cid in [c.strip() for c in str(chat).split(",") if c.strip()]:
         try:
             r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
-                              json={"chat_id": cid, "text": text, "disable_web_page_preview": not preview},
+                              json={"chat_id": cid, "text": text, "disable_web_page_preview": not preview,
+                                    **({"parse_mode": "HTML"} if html else {})},
                               timeout=15)
             if not r.ok:
                 log(f"[telegram] {cid}: {r.status_code} {r.text[:120]}")
@@ -594,11 +649,20 @@ def notify(new_items):
         who = {"soukromy": "👤 Soukromník", "nejiste": "❔ Nejisté (RK nepotvrzena)"}.get(i.get("seller_type"), "")
         if i.get("seller"):
             who += f" – {i['seller']}"
+        from html import escape as E
         q = i["phone"] if i.get("phone") else (f'"{i["seller"]}"' if i.get("seller") else "")
-        google = "https://www.google.com/search?q=" + requests.utils.quote(q) if i.get("seller") or i.get("phone") else ""
-        tel = f"📞 {i['phone']}\n" if i.get("phone") else ""
-        _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{who}\n{tel}{i['url']}"
-                         + (f"\n🔎 Prověřit v Googlu: {google}" if google else ""), preview=True)
+        links = [f'<a href="{E(i["url"])}">Otevřít inzerát</a>']
+        if q:
+            links.append(f'<a href="{E("https://www.google.com/search?q=" + requests.utils.quote(q))}">🔎 Google</a>')
+        if i.get("phone"):
+            digits = re.sub(r"\D", "", i["phone"])
+            digits = "420" + digits if len(digits) == 9 else digits
+            co = "bytu" if i.get("typ") == "byt" else "domu"
+            msg = WA_TEXT.get(i.get("akce"), WA_TEXT["pronajem"]).format(co=co, co2=co)
+            links.append(f'<a href="{E("https://wa.me/" + digits + "?text=" + requests.utils.quote(msg))}">📲 WhatsApp</a>')
+        tel = f"📞 {E(i['phone'])}\n" if i.get("phone") else ""
+        _send(tok, chat, f"🏠 <b>{E(i['title'])}</b>\n{E(price)}\n{E(meta)}\n{E(who)}\n{tel}" + " · ".join(links),
+              preview=True, html=True)
     if rest:                               # zbytek v souhrnných zprávách
         lines = [f"📋 Dalších {len(rest)} nových inzerátů:"]
         for i in rest:
