@@ -31,7 +31,7 @@ BAZOS_LOCATIONS = [
     ("Strančice", "25163", 5), ("Mníšek p. Brdy", "25210", 5), ("Dobřichovice", "25229", 5),
     ("Řevnice", "25230", 5), ("Kladno", "27201", 5),
 ]
-LOC_PAGES = 2             # u menších lokalit stačí 1–2 stránky
+LOC_PAGES = 1             # u menších lokalit stačí 1 stránka (20 nejnovějších)
 
 # Sbazar: vlož URL vyhledávání zkopírované z prohlížeče (Praha, byty/domy, prodej/pronájem).
 # Klíč = (akce, typ). Prázdné URL se přeskočí.
@@ -118,7 +118,7 @@ def log(*a):
 
 
 START = time.time()
-MAX_RUNTIME = 8 * 60      # po 8 minutách přestat stahovat a uložit, co máme
+MAX_RUNTIME = 6 * 60      # po 6 minutách přestat stahovat a uložit, co máme
 
 
 class OutOfTime(Exception):
@@ -262,8 +262,6 @@ def bazos_detail(item):
             break
     try:
         bazos_phone(item, soup, html)
-    except OutOfTime:
-        raise
     except Exception as e:
         log(f"[bazos] telefon {item['key']}: CHYBA {e}")
 
