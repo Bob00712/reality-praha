@@ -281,20 +281,27 @@ def bazos_phone(item, soup, html):
         if ph:
             item["phone"] = ph
             return
-    # odkaz / onclick, který číslo dočítá (detailtel.php apod.)
-    m = re.search(r"""['"]([^'"]*detailtel[^'"]*)['"]""", html) or \
-        re.search(r"""['"]([^'"]*(?:telefon|phone)[^'"]*idi=\d+[^'"]*)['"]""", html)
+    # Bazoš: onclick="odeslatrequest('/ad-phone.php','idi=...&idphone=...','overlaytel')"
+    m = re.search(r"odeslatrequest\(\s*'([^']*phone[^']*)'\s*,\s*'([^']*)'", html)
     if not m:
         return
-    url = m.group(1).replace("&amp;", "&")
-    if url.startswith("/"):
-        url = "https://reality.bazos.cz" + url
-    elif not url.startswith("http"):
-        url = "https://reality.bazos.cz/" + url
-    resp = get(url)
+    url = m.group(1)
+    url = ("https://reality.bazos.cz" + url) if url.startswith("/") else url
+    form = dict(x.split("=", 1) for x in m.group(2).replace("&amp;", "&").split("&") if "=" in x)
+    if form.get("idphone") and not item.get("seller_id"):
+        item["seller_id"] = form["idphone"]
+    if time.time() - START > MAX_RUNTIME:
+        raise OutOfTime("vyčerpán časový limit běhu")
+    time.sleep(random.uniform(1.0, 2.0))
+    r = S.post(url, data=form, timeout=(10, 20),
+               headers={"Referer": item["url"], "X-Requested-With": "XMLHttpRequest"})
+    resp = r.text
+    if not _phone_from(resp):
+        r = S.get(url, params=form, timeout=(10, 20), headers={"Referer": item["url"]})
+        resp = r.text
     if not Path("docs/probe/bazos_tel.txt").exists():
         Path("docs/probe").mkdir(parents=True, exist_ok=True)
-        Path("docs/probe/bazos_tel.txt").write_text(url + "\n" + resp[:5000], "utf-8")
+        Path("docs/probe/bazos_tel.txt").write_text(f"{url} {form} {r.status_code}\n" + resp[:5000], "utf-8")
     item["phone"] = _phone_from(BeautifulSoup(resp, "lxml").get_text(" ")) or _phone_from(resp)
 
 
