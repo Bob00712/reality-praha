@@ -206,6 +206,8 @@ def bazos_page(akce, typ, offset, params=None, area=None):
         psc = f"{psc.group(1)} {psc.group(2)}" if psc else None
         if area is None and psc and not psc.startswith("1"):      # hledání Praha: jen PSČ 1xx xx
             continue
+        if re.match(r"\s*(hled[aá]m|koup[ií]m|popt[aá]v[aá]m|sh[aá]n[ií]m)\b", a.get_text(strip=True), re.I):
+            continue                              # poptávka, ne nabídka
         full = box.get_text(" ", strip=True)
         d = re.search(r"\[(\d{1,2})\.(\d{1,2})\.\s?(\d{4})\]", full)
         posted = f"{d.group(3)}-{int(d.group(2)):02d}-{int(d.group(1)):02d}" if d else None
@@ -293,15 +295,23 @@ def bazos_phone(item, soup, html):
     if time.time() - START > MAX_RUNTIME:
         raise OutOfTime("vyčerpán časový limit běhu")
     time.sleep(random.uniform(1.0, 2.0))
-    r = S.post(url, data=form, timeout=(10, 20),
-               headers={"Referer": item["url"], "X-Requested-With": "XMLHttpRequest"})
-    resp = r.text
-    if not _phone_from(resp):
-        r = S.get(url, params=form, timeout=(10, 20), headers={"Referer": item["url"]})
-        resp = r.text
-    if not Path("docs/probe/bazos_tel.txt").exists():
+    path = m.group(1) if m.group(1).startswith("/") else "/" + m.group(1).split("/", 3)[-1]
+    resp, r, tried = "", None, []
+    for host in ("https://reality.bazos.cz", "https://www.bazos.cz"):
+        for method in ("post", "get"):
+            url = host + path
+            kw = {"data": form} if method == "post" else {"params": form}
+            r = getattr(S, method)(url, timeout=(10, 20), **kw,
+                                   headers={"Referer": item["url"], "X-Requested-With": "XMLHttpRequest"})
+            resp = r.text
+            tried.append(f"{method.upper()} {url} -> {r.status_code}")
+            if r.ok and _phone_from(resp):
+                break
+        if r.ok and _phone_from(resp):
+            break
+    if not Path("docs/probe/bazos_tel2.txt").exists():
         Path("docs/probe").mkdir(parents=True, exist_ok=True)
-        Path("docs/probe/bazos_tel.txt").write_text(f"{url} {form} {r.status_code}\n" + resp[:5000], "utf-8")
+        Path("docs/probe/bazos_tel2.txt").write_text(f"{form}\n" + "\n".join(tried) + "\n---\n" + resp[:5000], "utf-8")
     item["phone"] = _phone_from(BeautifulSoup(resp, "lxml").get_text(" ")) or _phone_from(resp)
 
 
