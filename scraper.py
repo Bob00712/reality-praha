@@ -873,5 +873,26 @@ def main():
         sys.exit("Nenačten žádný inzerát – zkontroluj log (blokace nebo změna webu).")
 
 
+def merge(ours_path):
+    """Sloučí naše data s daty, která mezitím uložil jiný běh (nic se neztratí ani nepošle dvakrát)."""
+    ours = json.loads(Path(ours_path).read_text("utf-8"))
+    theirs = json.loads(DATA_FILE.read_text("utf-8")) if DATA_FILE.exists() else {"listings": {}}
+    L = theirs.setdefault("listings", {})
+    for k, v in ours.get("listings", {}).items():
+        if k not in L:
+            L[k] = v
+        else:
+            a, b = L[k], v
+            newer = b if b.get("last_seen", "") > a.get("last_seen", "") else a
+            newer["first_seen"] = min(a.get("first_seen", ""), b.get("first_seen", "")) or newer.get("first_seen")
+            L[k] = newer
+    theirs["updated"] = max(theirs.get("updated", ""), ours.get("updated", ""))
+    DATA_FILE.write_text(json.dumps(theirs, ensure_ascii=False, separators=(",", ":")), "utf-8")
+    log(f"[merge] sloučeno, celkem {len(L)}")
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 3 and sys.argv[1] == "--merge":
+        merge(sys.argv[2])
+    else:
+        main()
