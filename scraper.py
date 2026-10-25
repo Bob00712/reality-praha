@@ -20,6 +20,19 @@ BAZOS_AKCE = {"prodej": "prodam", "pronajem": "pronajmu"}
 BAZOS_TYP = {"byt": "byt", "dum": "dum"}
 BAZOS_PARAMS = {"hlokalita": "11000", "humkreis": "15"}   # Praha + okolí 15 km, pak filtr na PSČ 1xx xx
 
+# Další lokality: (název, PSČ, okruh v km). Radotín je součást Prahy, hlídá se v ní.
+BAZOS_LOCATIONS = [
+    ("Beroun", "26601", 5), ("Benešov", "25601", 5), ("Úvaly", "25082", 5),
+    ("Kralupy n. Vlt.", "27801", 5), ("Neratovice", "27711", 5), ("Brandýs n. L.", "25001", 5),
+    ("Říčany", "25101", 5), ("Průhonice", "25243", 5), ("Jesenice", "25242", 5),
+    ("Černošice", "25228", 5), ("Rudná", "25219", 5),
+    ("Roztoky", "25263", 5), ("Klecany", "25067", 5), ("Odolena Voda", "25070", 5),
+    ("Hostivice", "25301", 5), ("Čelákovice", "25088", 5), ("Mnichovice", "25164", 5),
+    ("Strančice", "25163", 5), ("Mníšek p. Brdy", "25210", 5), ("Dobřichovice", "25229", 5),
+    ("Řevnice", "25230", 5), ("Kladno", "27201", 5),
+]
+LOC_PAGES = 2             # u menších lokalit stačí 1–2 stránky
+
 # Sbazar: vlož URL vyhledávání zkopírované z prohlížeče (Praha, byty/domy, prodej/pronájem).
 # Klíč = (akce, typ). Prázdné URL se přeskočí.
 SBAZAR_URLS = {
@@ -93,7 +106,7 @@ def log(*a):
 
 
 START = time.time()
-MAX_RUNTIME = 6 * 60      # po 6 minutách přestat stahovat a uložit, co máme
+MAX_RUNTIME = 8 * 60      # po 8 minutách přestat stahovat a uložit, co máme
 
 
 class OutOfTime(Exception):
@@ -154,12 +167,12 @@ def enrich(item):
 
 
 # ------------------------------------------------------------------ BAZOŠ
-def bazos_page(akce, typ, offset):
+def bazos_page(akce, typ, offset, params=None, area=None):
     path = f"https://reality.bazos.cz/{BAZOS_AKCE[akce]}/{BAZOS_TYP[typ]}/"
     if offset:
         path += f"{offset}/"
     try:
-        html = get(path, BAZOS_PARAMS)
+        html = get(path, params or BAZOS_PARAMS)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code == 404:
             return []          # za poslední stránkou výsledků
@@ -179,7 +192,7 @@ def bazos_page(akce, typ, offset):
         loc = loc_el.get_text(" ", strip=True) if loc_el else ""
         psc = re.search(r"\b(\d{3})\s?(\d{2})\b", loc)
         psc = f"{psc.group(1)} {psc.group(2)}" if psc else None
-        if psc and not psc.startswith("1"):      # mimo Prahu
+        if area is None and psc and not psc.startswith("1"):      # hledání Praha: jen PSČ 1xx xx
             continue
         full = box.get_text(" ", strip=True)
         d = re.search(r"\[(\d{1,2})\.(\d{1,2})\.\s?(\d{4})\]", full)
@@ -201,7 +214,12 @@ def bazos_page(akce, typ, offset):
             "posted": posted,
             "akce": akce,
             "typ": typ,
+            "area_name": area,
         }))
+    if area:
+        for i in out:
+            if not (i.get("district") or "").startswith("Praha"):
+                i["district"] = area
     return out
 
 
@@ -287,20 +305,29 @@ def classify(item, seller_counts):
 
 
 def scrape_bazos(known):
-    found = []
-    for akce in BAZOS_AKCE:
-        for typ in BAZOS_TYP:
-            for p in range(MAX_PAGES):
-                try:
-                    items = bazos_page(akce, typ, p * 20)
-                except Exception as e:
-                    log(f"[bazos] {akce}/{typ} str.{p}: CHYBA {e}")
-                    break
-                found += items
-                fresh = [i for i in items if i["key"] not in known]
-                log(f"[bazos] {akce}/{typ} str.{p}: {len(items)} inzerátů, nových {len(fresh)}")
-                if not items or (p > 0 and not fresh):   # dál už jen staré
-                    break
+    found, seen = [], set()
+    searches = [(None, None, MAX_PAGES)] + [
+        (name, {"hlokalita": psc, "humkreis": str(km)}, LOC_PAGES) for name, psc, km in BAZOS_LOCATIONS]
+    for area, params, pages in searches:
+        label = area or "Praha"
+        for akce in BAZOS_AKCE:
+            for typ in BAZOS_TYP:
+                for p in range(pages):
+                    try:
+                        items = bazos_page(akce, typ, p * 20, params, area)
+                    except OutOfTime:
+                        log("[bazos] vyčerpán čas běhu, zbytek příště")
+                        return found
+                    except Exception as e:
+                        log(f"[bazos] {label} {akce}/{typ} str.{p}: CHYBA {e}")
+                        break
+                    items = [i for i in items if i["key"] not in seen]
+                    seen.update(i["key"] for i in items)
+                    found += items
+                    fresh = [i for i in items if i["key"] not in known]
+                    log(f"[bazos] {label} {akce}/{typ} str.{p}: {len(items)} inzerátů, nových {len(fresh)}")
+                    if not items or (p > 0 and not fresh) or (area and not fresh):
+                        break
     return found
 
 
@@ -412,6 +439,7 @@ def scrape_sbazar(known):
 
 
 # ------------------------------------------------------------------ ULOVDOMOV
+UD_ENABLED = False      # UlovDomov vypnutý (skoro samé realitky); True = zapnout
 UD_FIND = "https://ud.api.ulovdomov.cz/v1/offer/find"
 UD_CONTACT = "https://www.ulovdomov.cz/fe-api/offer/contact-info/{}"
 UD_PRAHA = {"northEast": {"lat": 50.178, "lng": 14.707}, "southWest": {"lat": 49.942, "lng": 14.224}}
@@ -566,7 +594,7 @@ def notify(new_items):
         who = {"soukromy": "👤 Soukromník", "nejiste": "❔ Nejisté (RK nepotvrzena)"}.get(i.get("seller_type"), "")
         if i.get("seller"):
             who += f" – {i['seller']}"
-        q = " ".join(x for x in (f'"{i["seller"]}"' if i.get("seller") else "", i.get("phone") or "", "reality") if x)
+        q = i["phone"] if i.get("phone") else (f'"{i["seller"]}"' if i.get("seller") else "")
         google = "https://www.google.com/search?q=" + requests.utils.quote(q) if i.get("seller") or i.get("phone") else ""
         tel = f"📞 {i['phone']}\n" if i.get("phone") else ""
         _send(tok, chat, f"🏠 {i['title']}\n{price}\n{meta}\n{who}\n{tel}{i['url']}"
@@ -663,10 +691,11 @@ def main():
 
     found = scrape_bazos(known) + scrape_sbazar(known)
     ud_first = not any(v["source"] == "ulovdomov" for v in store.values())
-    try:
-        found += scrape_ulovdomov(known)
-    except Exception as e:
-        log("[ulovdomov] CHYBA", e)
+    if UD_ENABLED:
+        try:
+            found += scrape_ulovdomov(known)
+        except Exception as e:
+            log("[ulovdomov] CHYBA", e)
 
     # paměť realitek: jména (aspoň 2 slova) a telefony, které už byly jednou vyřazené jako RK
     for v in store.values():
@@ -678,10 +707,16 @@ def main():
 
     # detail (jméno prodávajícího, celý popis) u nových inzerátů z Bazoše
     # + u starších, kde se detail minule nestihl načíst ("pending")
+    # nová lokalita: při prvním načtení jen uložit (bez detailů a bez posílání)
+    known_areas = {v.get("area_name") for v in store.values()}
+    for i in found:
+        if i.get("area_name") and i["area_name"] not in known_areas and i["key"] not in known:
+            i["first_load"] = True
     pending = [dict(v) for v in store.values() if v.get("pending")]
     seen_keys = set()
     todo = []
-    for i in pending + [i for i in found if i["key"] not in known and i["source"] in ("bazos", "ulovdomov")]:
+    for i in pending + [i for i in found if i["key"] not in known and i["source"] in ("bazos", "ulovdomov")
+                        and not i.get("first_load")]:
         if i["key"] not in seen_keys:
             seen_keys.add(i["key"]); todo.append(i)
     if not first_run:
@@ -706,6 +741,9 @@ def main():
         """Zařadí inzerát; bez jména prodávajícího ho nechá čekat (max. 3 běhy)."""
         no_detail = (i["source"] == "bazos" and not i.get("seller")) or \
                     (i["source"] == "ulovdomov" and i.get("ud_private") is None and not i.get("ud_external"))
+        if i.get("first_load"):
+            i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení lokality", True, False
+            return
         if i["source"] == "ulovdomov" and ud_first and i["key"] not in store:
             i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení zdroje", True, False
             return
