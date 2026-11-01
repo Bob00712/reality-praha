@@ -130,6 +130,8 @@ def main():
     t = today()
     for c in sent:
         seen[c["key"]] = {"date": t, "stage": c.get("stage"), "rating": c["rating"]}
+        if c.get("alias") and not c.get("update"):
+            seen[c["alias"]] = seen[c["key"]]
         if c.get("fp"):
             fp_store.append({"d": t, "fp": c["fp"]})
         log_cases.append({k: c.get(k) for k in

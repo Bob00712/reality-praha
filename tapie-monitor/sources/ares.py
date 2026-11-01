@@ -20,6 +20,7 @@ EMP_CATEGORIES = {
 }
 
 _cache = {}
+STATS = {"lookups": 0, "main_known": 0, "emp_known": 0}
 
 
 def _walk(obj, keyfn):
@@ -81,6 +82,15 @@ def lookup(ico):
             if code and code not in nace:
                 nace.append(code)
 
+    # převažující (hlavní) činnost z RES – dát na první místo
+    main = None
+    for v in _walk(res, lambda k: "prevazujici" in k):
+        main = re.sub(r"\D", "", str(v.get("kod") if isinstance(v, dict) else v))
+        if main:
+            break
+    if main:
+        nace = [main] + [c for c in nace if c != main]
+
     emp = None
     for v in _walk(res, lambda k: ("poct" in k or "pocet" in k) and ("pracovn" in k or "zamest" in k)):
         emp = parse_employees(v.get("kod") if isinstance(v, dict) else v)
@@ -95,9 +105,13 @@ def lookup(ico):
         "address": addr,
         "legal_form": str(legal) if legal else None,
         "nace": nace,
+        "nace_main_known": bool(main),
         "employees": emp,
     }
     _cache[ico] = out
+    STATS["lookups"] += 1
+    STATS["main_known"] += bool(main)
+    STATS["emp_known"] += bool(emp)
     return out
 
 

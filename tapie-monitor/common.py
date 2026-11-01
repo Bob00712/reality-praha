@@ -78,10 +78,12 @@ def save_json(path, data):
 
 
 # ------------------------------------------------------------ hodnocení
-def rate(points):
-    if points >= config.RATING_A_MIN:
+def rate(points, module="FIRMA"):
+    a, b = ((config.APP_RATING_A_MIN, config.APP_RATING_B_MIN) if module == "APP"
+            else (config.RATING_A_MIN, config.RATING_B_MIN))
+    if points >= a:
         return "A"
-    if points >= config.RATING_B_MIN:
+    if points >= b:
         return "B"
     return "C"
 
@@ -221,17 +223,17 @@ def telegram_send(text):
     return ok
 
 
-def split_message(text, limit=3900):
+def split_message(text, limit=3800):
+    """Rozdělí dlouhou zprávu po celých řádcích (nikdy uprostřed HTML značky)."""
     parts, cur = [], ""
-    for block in text.split("\n\n"):
-        if len(cur) + len(block) + 2 > limit and cur:
+    for line in text.split("\n"):
+        if len(line) > limit:  # extrémně dlouhý řádek – zbav se HTML
+            line = re.sub(r"<[^>]+>", "", line)[:limit]
+        if cur and len(cur) + len(line) + 1 > limit:
             parts.append(cur)
             cur = ""
-        while len(block) > limit:
-            parts.append(block[:limit])
-            block = block[limit:]
-        cur = f"{cur}\n\n{block}" if cur else block
-    if cur:
+        cur = f"{cur}\n{line}" if cur else line
+    if cur.strip():
         parts.append(cur)
     return parts
 

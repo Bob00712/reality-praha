@@ -56,9 +56,9 @@ def soap(events):
 ARES = {
     "12345678": ({"obchodniJmeno": "CNC Kovo s.r.o.", "pravniForma": "112",
                   "sidlo": {"textovaAdresa": "Brno"}, "czNace": ["25620", "28410"]},
-                 {"zaznamy": [{"statistickeUdaje": {"kategoriePoctuPracovniku": "240"}}]}),
+                 {"zaznamy": [{"czNacePrevazujici": "25620", "statistickeUdaje": {"kategoriePoctuPracovniku": "240"}}]}),
     "87654321": ({"obchodniJmeno": "Pizzerie Roma s.r.o.", "pravniForma": "112",
-                  "czNace": ["56100"]}, {}),
+                  "czNace": ["56100"]}, {"zaznamy": [{"czNacePrevazujici": "56100"}]}),
 }
 
 RSS = """<rss><channel>
@@ -149,6 +149,10 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "Metallbau Schmid" in allt
     assert "LinguaPro" in allt and "Crypto" not in allt
     assert "Mondly" in allt and "Pearson" in allt
+    from common import split_message
+    long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))
+    for part in split_message(long):
+        assert part.count("<a ") == part.count("</a>") and len(part) <= 3800
     assert all("[FIRMA]" in s or "[APP]" in s for s in sent[1:] if "Souhrn" not in s)
 
     # druhý běh: žádné duplicity

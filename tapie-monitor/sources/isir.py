@@ -232,10 +232,13 @@ def run(state, seen):
         del cases_cache[sz]
 
     out = []
+    reported_icos = set()
     for sz, (stage, ev) in hits.items():
         c = cases_cache[sz]
         key = f"CZ:{sz}"
-        prev = seen.get(key)
+        prev = seen.get(key) or seen.get(f"CZICO:{c.get('ico')}")
+        if not prev and c.get("ico") in reported_icos:
+            continue
         if prev:
             # už posláno – pošli jen změnu z úpadku/moratoria na konkurs/reorganizaci
             if prev.get("stage") == stage or stage not in ("konkurs", "reorganizace"):
@@ -248,6 +251,7 @@ def run(state, seen):
             continue
         case = build_case(sz, c, stage, ev)
         if case:
+            reported_icos.add(c.get("ico"))
             out.append(case)
 
     for sz, ev in sales.items():
@@ -262,6 +266,9 @@ def run(state, seen):
             if ev.get("doc"):
                 case["links"].append(("dokument k prodeji", ev["doc"]))
             out.append(case)
+    s = ares.STATS
+    log(f"[ares] dotazů {s['lookups']}, hlavní obor znám u {s['main_known']}, "
+        f"zaměstnanci znám u {s['emp_known']}")
     return out
 
 
@@ -270,7 +277,7 @@ def build_case(sz, c, stage, ev):
     if ares.is_natural_person(a.get("legal_form")):
         return None  # fyzická osoba (podnikatel) – nechceme
     name = a.get("name") or c.get("name") or "?"
-    cat, excluded = classify_nace(a.get("nace"), name)
+    cat, excluded = classify_nace(a.get("nace"), name, a.get("nace_main_known", False))
     if excluded:
         log(f"[isir] vyřazeno {name}: {excluded}")
         return None
@@ -304,6 +311,7 @@ def build_case(sz, c, stage, ev):
         "liabilities": "? (ISIR je neuvádí – viz přihlášky pohledávek)",
         "contact": (c.get("admin") or "?") + " – insolvenční správce (kontakt v ISIR u spisu)",
         "link": isir_link(c.get("ico"), sz),
+        "alias": f"CZICO:{c.get('ico')}" if c.get("ico") else None,
         "links": links,
         "notes": notes,
         "points": points,
