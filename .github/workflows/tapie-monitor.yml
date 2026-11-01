@@ -5,7 +5,7 @@ on:
   workflow_dispatch:         # ruční spuštění: Actions -> tapie-monitor -> Run workflow
     inputs:
       mode:
-        description: "normal / test (zkušební zpráva) / weekly (souhrn hned)"
+        description: "normal / test (zkušební zpráva) / weekly (souhrn hned) / chats (zjistit chat ID)"
         default: normal
 permissions:
   contents: write
@@ -26,12 +26,14 @@ jobs:
       - name: Spustit monitor
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TAPIE_TELEGRAM_TOKEN: ${{ secrets.TAPIE_TELEGRAM_TOKEN }}
+          TAPIE_TELEGRAM_CHAT_ID: ${{ secrets.TAPIE_TELEGRAM_CHAT_ID }}
           MODE: ${{ github.event.inputs.mode || 'normal' }}
         run: |
           case "$MODE" in
             test)   python monitor.py --test ;;
             weekly) python monitor.py --weekly ;;
+            chats)  python monitor.py --chats ;;
             *)      python monitor.py ;;
           esac
       - name: Ulozit stav (aby nechodily duplicity)

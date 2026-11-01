@@ -192,11 +192,14 @@ def format_case(c):
 
 
 def telegram_send(text):
-    tok = os.environ.get("TELEGRAM_TOKEN", "").strip()
-    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    # Vlastní kanál pro tapie-monitor (nemíchá se s realitami).
+    # Token: vlastní bot TAPIE_TELEGRAM_TOKEN, jinak stejný bot jako reality.
+    tok = (os.environ.get("TAPIE_TELEGRAM_TOKEN") or os.environ.get("TELEGRAM_TOKEN") or "").strip()
+    chat = os.environ.get("TAPIE_TELEGRAM_CHAT_ID", "").strip()
     if not tok or not chat:
-        log("[telegram] chybí TELEGRAM_TOKEN / TELEGRAM_CHAT_ID – vypisuji jen sem:\n" + text)
-        return True
+        log("[telegram] chybí TAPIE_TELEGRAM_CHAT_ID (nebo token) – do Telegramu NEPOSÍLÁM, "
+            "vypisuji jen sem:\n" + text)
+        return False
     ok = True
     for part in split_message(text):
         try:
@@ -231,3 +234,22 @@ def split_message(text, limit=3900):
     if cur:
         parts.append(cur)
     return parts
+
+
+def telegram_find_chats():
+    """Vypíše chaty/kanály, kde bot něco viděl (pro zjištění chat ID)."""
+    tok = (os.environ.get("TAPIE_TELEGRAM_TOKEN") or os.environ.get("TELEGRAM_TOKEN") or "").strip()
+    if not tok:
+        log("[telegram] chybí token")
+        return
+    r = requests.get(f"https://api.telegram.org/bot{tok}/getUpdates", timeout=30).json()
+    found = {}
+    for u in r.get("result", []):
+        for k in ("message", "channel_post", "my_chat_member", "edited_channel_post"):
+            ch = (u.get(k) or {}).get("chat")
+            if ch:
+                found[ch["id"]] = (ch.get("type"), ch.get("title") or ch.get("username") or ch.get("first_name"))
+    if not found:
+        log("[telegram] bot zatím nic neviděl – přidej ho do kanálu jako správce a napiš tam zprávu")
+    for cid, (typ, title) in found.items():
+        log(f"[telegram] CHAT {cid} | {typ} | {title}")
