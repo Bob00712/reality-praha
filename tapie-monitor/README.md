@@ -12,35 +12,14 @@ Všechny filtry jsou v jednom souboru: **`config.py`**.
 
 ---
 
-## Zprovoznění krok za krokem (cca 15 minut)
+## Zprovoznění
+Hlídač běží v repozitáři **reality-praha** (složka `tapie-monitor/`) a používá stejného
+Telegram bota (secrets `TELEGRAM_TOKEN` a `TELEGRAM_CHAT_ID`).
 
-### Krok 1 – Telegram bot
-1. V Telegramu najdi **@BotFather**, napiš `/newbot`, zvol jméno (např. *Tapie monitor*)
-   a uživatelské jméno končící na `bot`. Dostaneš **token** (dlouhý text s dvojtečkou).
-   *Můžeš použít i stejného bota jako u reality-praha – pak token už máš.*
-2. Napiš svému botovi cokoliv (třeba „ahoj“).
-3. V prohlížeči otevři `https://api.telegram.org/bot<TOKEN>/getUpdates`
-   (místo `<TOKEN>` vlož token). Najdi `"chat":{"id": 123456789` – to číslo je **chat ID**.
-
-### Krok 2 – Repozitář na GitHubu
-1. Na GitHubu vpravo nahoře **+ → New repository**, název `tapie-monitor`, **Private**, *Create*.
-2. Obsah této složky do něj nahraju já (Claude) – stačí mi napsat, že repozitář existuje.
-
-### Krok 3 – Tajné údaje (Secrets)
-V repozitáři **Settings → Secrets and variables → Actions → New repository secret**:
-- `TELEGRAM_TOKEN` = token z kroku 1
-- `TELEGRAM_CHAT_ID` = chat ID z kroku 1
-
-### Krok 4 – Povolit zápis (kvůli pamatování, co už bylo posláno)
-**Settings → Actions → General → Workflow permissions → Read and write permissions → Save.**
-
-### Krok 5 – Zkouška
-1. **Actions → tapie-monitor → Run workflow**, do pole *mode* napiš `test` → *Run workflow*.
-   Do Telegramu má přijít „✅ spojení funguje“.
-2. Pak znovu *Run workflow* s `normal` – první ostrý běh. První běh trvá déle
-   (až ~50 min), protože si načítá ISIR zpětně; další dny pár minut.
-
-Hotovo. Dál to běží samo každé ráno.
+- **Zkouška:** Actions → *tapie-monitor* → *Run workflow* → mode `test`.
+  Do Telegramu přijde „✅ spojení funguje“.
+- **Ostrý běh hned:** totéž s `normal`. První běh trvá déle (až ~50 min, načítá ISIR zpětně).
+- Jinak běží samo každé ráno.
 
 ---
 
@@ -107,7 +86,7 @@ Nejčastější úpravy:
 - `APP_COUNTRIES`, `APP_GENRES` – země a kategorie App Store.
 - `SHOW_RATING_C = False` – posílat jen A a B.
 
-Čas spuštění změníš v `.github/workflows/daily.yml` (řádek `cron`, čas je v UTC).
+Čas spuštění změníš v `.github/workflows/tapie-monitor.yml` (v kořeni repozitáře) (řádek `cron`, čas je v UTC).
 
 ## Když něco nefunguje
 **Actions → poslední běh → krok „Spustit monitor“.** Řádky `[isir]`, `[AT]`, `[DE-Bayern]`,
