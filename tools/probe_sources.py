@@ -24,7 +24,13 @@ def probe(base, extra):
     st, fin, txt = get(urljoin(base, "/robots.txt"))
     lines += [f"## robots.txt {st} {fin}", txt[:4000] if st == 200 else txt[:300]]
     for url in [base] + extra:
+        raw = url.startswith("raw:")
+        url = url[4:] if raw else url
         st, fin, html = get(url)
+        if raw and st == 200:
+            (OUT / "html").mkdir(exist_ok=True)
+            name = re.sub(r"[^\w.-]+", "_", url.split("//", 1)[1])[:120] + ".html"
+            (OUT / "html" / name).write_text(html, "utf-8")
         lines.append(f"\n## GET {url} -> {st} {fin} ({len(html)} B)")
         if st != 200:
             lines.append(html[:300]); continue
@@ -42,20 +48,19 @@ def probe(base, extra):
         for w in ("soukrom", "majitel", "bez realitk", "RK", "makléř", "provize"):
             lines.append(f"výskyt '{w}': {txtall.count(w)}")
         if url != base:
-            lines.append("--- text ---"); lines.append(txtall[:7000])
+            lines.append("--- text ---"); lines.append(txtall[:30000] if 'podmin' in url or 'terms' in url or 'legal' in url else txtall[:7000])
         time.sleep(2)
     (OUT / f"{host}.txt").write_text("\n".join(lines), "utf-8")
     print(host, "hotovo")
 
 SOURCES = {
-    "https://www.byty.cz/": ["https://www.byty.cz/byty-2-1-prodej/", "https://www.byty.cz/byty-2-1-pronajem/",
-                             "https://www.byty.cz/podminky.aspx", "https://www.byty.cz/pro-realitky.aspx"],
-    "https://www.reality.cz/": ["https://www.reality.cz/prodej/byty/Praha/", "https://www.reality.cz/pronajem/byty/Praha/",
-                                "https://www.reality.cz/L00-007001/", "https://www.reality.cz/napoveda/"],
-    "https://realitymix.cz/": ["https://realitymix.cz/reality/byty/prodej", "https://realitymix.cz/chci-prodat-pronajmout",
-                               "https://realitymix.cz/detail/praha/pronajem-bytu-1-1-v-praze-ul-nuselska-8556969.html"],
-    "https://www.expats.cz/": ["https://www.expats.cz/praguerealestate", "https://www.expats.cz/praguerealestate/apartments/for-rent"],
-    "https://www.digireality.cz/": ["https://www.digireality.cz/byty", "https://www.digireality.cz/inzerat/698bda80641f2580ebee7271"],
+    "https://www.byty.cz/": ["raw:https://www.byty.cz/praha/byty-prodej/", "raw:https://www.byty.cz/praha/byty-pronajem/",
+                             "raw:https://www.byty.cz/praha/domy-prodej/",
+                             "raw:https://www.byty.cz/pronajem-bytu-2-1-praha-pestukova/xad14241187.aspx",
+                             "https://www.byty.cz/podminky.aspx"],
+    "https://www.expats.cz/": ["raw:https://www.expats.cz/praguerealestate/apartments/for-rent",
+                               "raw:https://www.expats.cz/praguerealestate/apartments/for-rent/prague",
+                               "https://www.expats.cz/terms-of-service", "https://www.expats.cz/legal"],
 }
 if __name__ == "__main__":
     only = sys.argv[1:]
