@@ -1,0 +1,119 @@
+# https://www.reality.cz/  2026-11-01 21:30
+## robots.txt 200 https://www.reality.cz/robots.txt
+User-agent: *
+Disallow: /cgi/
+Disallow: /oldcgi/
+Disallow: /data
+Disallow: /test
+Disallow: /idealnet
+Disallow: /input
+Disallow: /photo
+Disallow: /archphoto
+Disallow: /thumb
+Disallow: /button
+Disallow: /jan
+Disallow: /Mail
+Disallow: /mail
+Disallow: /mapa
+Disallow: /preklad
+Disallow: /temp
+Disallow: /vap
+Disallow: /nonex
+Disallow: /TEST
+Disallow: /sluzby
+Disallow: /servis
+Disallow: /win
+Disallow: */ajax*
+Allow: /images/
+Sitemap: https://www.reality.cz/api/sitemap.xml
+
+
+## GET https://www.reality.cz/ -> 200 https://www.reality.cz/ (52667 B)
+title: Katalog nemovitostí reality.cz
+odkazy (125):
+Přihlásit | https://www.reality.cz/moje-reality/registrace/
+nepřihlášen | https://www.reality.cz/moje-reality/registrace/
+Reality.cz - katalog nemovitostí - byty, domy, pozemky | https://www.reality.cz/
++ Vložit inzerát | https://www.reality.cz/moje-reality/inzerce/
+Katalog nabídek | https://www.reality.cz/
+Katalog makléřů | https://www.reality.cz/katalog-makleru/
+Poptávka | https://www.reality.cz/poptavka/
+Moje reality | https://www.reality.cz/moje-reality/registrace/
+ | https://www.reality.cz/cgi/reklama/reklama?click=2295
+zrušit | https://www.reality.cz/
+Mapa krajů a okresů | https://www.reality.cz/#okresy
+Mapa pražských městských částí | https://www.reality.cz/#mcasti
+mapa | https://www.reality.cz/#gmapa
+rozšířené hledání | https://www.reality.cz/
+prodej | https://www.reality.cz/prodej/zahranici/prodej/
+pronájem | https://www.reality.cz/prodej/zahranici/pronajem/
+byty | https://www.reality.cz/prodej/byty/
+domy | https://www.reality.cz/prodej/domy/
+rekreace | https://www.reality.cz/prodej/rekreace/
+pozemky | https://www.reality.cz/prodej/pozemky/
+komerční | https://www.reality.cz/prodej/komercni/
+ostatní | https://www.reality.cz/prodej/ostatni/
+byty | https://www.reality.cz/pronajem/byty/
+domy | https://www.reality.cz/pronajem/domy/
+rekreace | https://www.reality.cz/pronajem/rekreace/
+pozemky | https://www.reality.cz/pronajem/pozemky/
+komerční | https://www.reality.cz/pronajem/komercni/
+ostatní | https://www.reality.cz/pronajem/ostatni/
+prodej bytů v Praze | https://www.reality.cz/prodej/byty/Praha/
+pronájem bytů v Praze | https://www.reality.cz/pronajem/byty/Praha/
+prodej domů v okolí Prahy | https://www.reality.cz/prodej/domy/okres-Praha-vychod_okres-Praha-zapad/
+prodej bytů v Liberci | https://www.reality.cz/prodej/byty/Liberec/
+pronájem bytů v Liberci | https://www.reality.cz/pronajem/byty/Liberec/
+ | https://www.reality.cz/napoveda/hledani-fulltext/
+začít znovu | https://www.reality.cz/
+Byty na prodej | https://www.reality.cz/prodej/byty/Ceska-republika/
+1+kk | https://www.reality.cz/prodej/byty/Ceska-republika/?f=D111213
+2+kk | https://www.reality.cz/prodej/byty/Ceska-republika/?f=D1415
+3+kk | https://www.reality.cz/prodej/byty/Ceska-republika/?f=D1617
+4+kk | https://www.reality.cz/prodej/byty/Ceska-republika/?f=D1819
+5+kk a větší | https://www.reality.cz/prodej/byty/Ceska-republika/?f=D2021
+Domy | https://www.reality.cz/prodej/domy/Ceska-republika/
+do 1 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-0-1000000-2/
+1–2 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-1000000-2000000-2/
+2–3 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-2000000-3000000-2/
+3–5 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-3000000-5000000-2/
+5–10 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-5000000-10000000-2/
+nad 10 mil. | https://www.reality.cz/prodej/domy/Ceska-republika/cena-10000000-max-2/
+Pronájem | https://www.reality.cz/pronajem/domy/Ceska-republika/
+Komerční | https://www.reality.cz/prodej/komercni/Ceska-republika/
+Nájemní dům | https://www.reality.cz/prodej/komercni/Ceska-republika/?d=11
+Výroba a sklady | https://www.reality.cz/prodej/komercni/Ceska-republika/?d=17%2C18%2C19
+Ubytování | https://www.reality.cz/prodej/komercni/Ceska-republika/?d=15
+Obchody a kanceláře | https://www.reality.cz/prodej/komercni/Ceska-republika/?d=14%2C16
+Pronájem | https://www.reality.cz/pronajem/komercni/Ceska-republika/
+Byty na pronájem | https://www.reality.cz/pronajem/byty/Ceska-republika/
+do 5 tis. | https://www.reality.cz/pronajem/byty/Ceska-republika/cena-0-5000-4/
+5–10 tis. | https://www.reality.cz/pronajem/byty/Ceska-republika/cena-5000-10000-4/
+10–15 tis. | https://www.reality.cz/pronajem/byty/Ceska-republika/cena-10000-15000-4/
+15–20 tis. | https://www.reality.cz/pronajem/byty/Ceska-republika/cena-15000-20000-4/
+nad 20 tis. | https://www.reality.cz/pronajem/byty/Ceska-republika/cena-20000-max-4/
+Pozemky | https://www.reality.cz/prodej/pozemky/Ceska-republika/
+Pro bydlení | https://www.reality.cz/prodej/pozemky/Ceska-republika/?d=3
+Pro komerci | https://www.reality.cz/prodej/pozemky/Ceska-republika/?d=4
+Zahrady | https://www.reality.cz/prodej/pozemky/Ceska-republika/?d=2
+Zemědělské | https://www.reality.cz/prodej/pozemky/Ceska-republika/?d=1
+Rekreace a jiné | https://www.reality.cz/prodej/Ceska-republika/?d=12%2C13%2C20%2C21
+Chaty | https://www.reality.cz/prodej/rekreace/Ceska-republika/?f=j11
+Chalupy | https://www.reality.cz/prodej/rekreace/Ceska-republika/?f=j12
+Garáže | https://www.reality.cz/prodej/ostatni/Ceska-republika/?d=13
+Památky | https://www.reality.cz/prodej/ostatni/Ceska-republika/?d=20
+Pronájem | https://www.reality.cz/pronajem/rekreace/Ceska-republika/
+ | https://www.reality.cz/katalog-makleru/
+Makléři doporučují » | https://www.reality.cz/makleri-doporucuji
+nabídky doporučené našimi realitními makléři | https://www.reality.cz/makleri-doporucuji/
+Byt 3+kk, 74 m², Smíchov u Vltavy - přímo od majitele | https://www.reality.cz/L00-007001/
+Na bělidle, Praha 5 - Smíchov | https://www.reality.cz/DMQ-003737/
+Slovenského národního povstání, Liberec V - Kristiánov | https://www.reality.cz/081-6ZS7Q7/
+nové nabídky nemovitostí za poslední týden | https://www.reality.cz/novinky/
+Prodej stavebního pozemku s výhledem na Beskydy, Vyšní Lhoty | https://www.reality.cz/FFW-N02246/
+výskyt 'soukrom': 0
+výskyt 'majitel': 1
+výskyt 'bez realitk': 0
+výskyt 'RK': 1
+výskyt 'makléř': 4
+výskyt 'provize': 0

@@ -1,0 +1,33 @@
+# https://www.expats.cz/  2026-11-01 21:29
+## robots.txt 200 https://www.expats.cz/robots.txt
+# robots.txt for http://www.expats.cz
+
+User-Agent: *
+
+# Search responses use noindex; crawling must remain allowed so robots can read it.
+
+
+## GET https://www.expats.cz/ -> 200 https://www.expats.cz/ (101182 B)
+title: Expats.cz for news, jobs and real estate in Prague and the Czech Republic
+odkazy (7):
+ | https://www.expats.cz/czech-news/article/the-family-nest-why-living-with-parents-is-becoming-more-common-in-czechia
+FOR MEMBERS | https://www.expats.cz/czech-news/article/the-family-nest-why-living-with-parents-is-becoming-more-common-in-czechia
+The family nest: Why living with parents is becoming more co | https://www.expats.cz/czech-news/article/the-family-nest-why-living-with-parents-is-becoming-more-common-in-czechia
+ | https://www.expats.cz/czech-news/article/prague-rents-hit-a-plateau-but-smaller-flats-are-still-getting-pricier
+Prague rents hit a plateau, but smaller flats are still gett | https://www.expats.cz/czech-news/article/prague-rents-hit-a-plateau-but-smaller-flats-are-still-getting-pricier
+ | https://www.expats.cz/czech-news/article/leaving-on-a-high-tesco-returns-to-profit-as-czech-sale-plans-loom
+Leaving on a high? Tesco returns to profit as Czech sale pla | https://www.expats.cz/czech-news/article/leaving-on-a-high-tesco-returns-to-profit-as-czech-sale-plans-loom
+výskyt 'soukrom': 0
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 1
+výskyt 'makléř': 0
+výskyt 'provize': 0
+
+## GET https://www.expats.cz/praguerealestate/for-rent/apartments -> 404 https://www.expats.cz/404 (25358 B)
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" class="desktop">
+	<head>
+		<!-- Google Tag Manager -->
+		<script nonce='NjRlYjlkMDRjMzkwY2U3MQ=='>(function(w,d,s,l,i){ w[l]=w[l]||[];w[l].push({ 'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElemen

@@ -1,0 +1,108 @@
+# https://www.eurobydleni.cz/  2026-11-01 21:30
+## robots.txt 200 https://www.eurobydleni.cz/robots.txt
+User-agent: *
+Allow: /
+
+User-agent: AdSense
+Allow: /ads.txt
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Twitterbot
+Disallow: /
+
+Sitemap: https://www.eurobydleni.cz/mlift/json_sitemap/cz_index.xml
+
+## GET https://www.eurobydleni.cz/ -> 200 https://www.eurobydleni.cz/ (351884 B)
+title: NovÃ½ domov - najdÄte s nÃ¡mi bydlenÃ­, o kterÃ©m jste vÅ¾dy snily
+odkazy (313):
+Byty | https://www.eurobydleni.cz/byty/
+Domy | https://www.eurobydleni.cz/domy/
+RekreaÄnÃ­ | https://www.eurobydleni.cz/rekreacni-objekty/
+KomerÄnÃ­ | https://www.eurobydleni.cz/komercni-nemovitosti/
+Pozemky | https://www.eurobydleni.cz/pozemky/
+OstatnÃ­ | https://www.eurobydleni.cz/ostatni/
+ZahraniÄnÃ­ | https://www.eurobydleni.cz/zahranicni-nemovitosti/
+Brno-mÄsto | https://www.eurobydleni.cz/reality/brno/
+ÄeskÃ© BudÄjovice | https://www.eurobydleni.cz/reality/ceske-budejovice/
+Hradec KrÃ¡lovÃ© | https://www.eurobydleni.cz/reality/hradec-kralove/
+Jihlava | https://www.eurobydleni.cz/reality/jihlava/
+Karlovy Vary | https://www.eurobydleni.cz/reality/karlovy-vary/
+Liberec | https://www.eurobydleni.cz/reality/liberec/
+Olomouc | https://www.eurobydleni.cz/reality/olomouc/
+Ostrava-mÄsto | https://www.eurobydleni.cz/reality/ostrava/
+Pardubice | https://www.eurobydleni.cz/reality/pardubice/
+PlzeÅ mÄsto | https://www.eurobydleni.cz/reality/plzen/
+Praha | https://www.eurobydleni.cz/reality/praha/
+ÃstÃ­ nad Labem | https://www.eurobydleni.cz/reality/usti-nad-labem/
+ZlÃ­n | https://www.eurobydleni.cz/reality/zlin/
+ | https://www.eurobydleni.cz/
+Zobrazit rozÅ¡Ã­ÅenÃ© moÅ¾nosti | https://www.eurobydleni.cz/
+osobnÃ­ch ÃºdajÅ¯ | https://www.eurobydleni.cz/souhlas-se-zpracovanim-osobnich-udaju-gdpr/text/12780
+obchodnÃ­ch sdÄlenÃ­ | https://www.eurobydleni.cz/souhlas-se-zasilanim-obchodnich-sdeleni/text/12795
+PoloÅ¾it dotaz | https://www.eurobydleni.cz/#question
+PronÃ¡jem kancelÃ¡Åe o vÃ½mÄÅe 24,6m2 (Ä. 1C), NemanickÃ | https://www.eurobydleni.cz/pronajem-kancelare-o-vymere-246m2-c-1c-nemanicka/detail/10186208/
+PronÃ¡jem obchodnÃ­ch prostor | https://www.eurobydleni.cz/pronajem-obchodnich-prostor/detail/10186207/
+PronÃ¡jem kancelÃ¡Åe o vÃ½mÄÅe 13m2 (Ä. 2C), NemanickÃ¡ | https://www.eurobydleni.cz/pronajem-kancelare-o-vymere-13m2-c-2c-nemanicka/detail/10186211/
+VÃ¡noÄnÃ­ nÃ¡vÅ¡tÄva bez stresu: Jak pÅipravit postel pro | https://www.eurobydleni.cz/blog/vanocni-navsteva-bez-stresu-jak-pripravit-postel-pro-hosty-svatecni-st-l-i-darek-na-ze-/315/
+ChodÃ­tko do interiÃ©ru Äi exteriÃ©ru: 5 vlastnostÃ­ kvalit | https://www.eurobydleni.cz/blog/choditko-do-interieru-ci-exterieru-5-vlastnosti-kvalitniho-choditka/314/
+Rezidence Marina Zbraslav: Objevte novÃ½ domov u Vltavy | https://www.eurobydleni.cz/blog/rezidence-marina-zbraslav-objevte-novy-domov-u-vltavy/313/
+Zobrazit magazÃ­n | https://www.eurobydleni.cz/blog/
+EfektivnÃ­ inzerce nemovitostÃ­ | https://www.eurobydleni.cz/inzerce/
+RealitnÃ­ software Urbium | https://www.eurobydleni.cz/realitni-software/
+WWW strÃ¡nky pro realitnÃ­ kancelÃ¡Åe | https://www.eurobydleni.cz/www-stranky-nove/
+Monitoring soukromÃ© inzerce | https://www.eurobydleni.cz/monitoring-soukrome-inzerce/
+prodej | https://www.eurobydleni.cz/byty/prodej/
+Garsoniera | https://www.eurobydleni.cz/byty/garsoniera/prodej/
+1+1 | https://www.eurobydleni.cz/byty/1_1/prodej/
+1+kk | https://www.eurobydleni.cz/byty/1_kk/prodej/
+2+1 | https://www.eurobydleni.cz/byty/2_1/prodej/
+2+kk | https://www.eurobydleni.cz/byty/2_kk/prodej/
+3+1 | https://www.eurobydleni.cz/byty/3_1/prodej/
+3+kk | https://www.eurobydleni.cz/byty/3_kk/prodej/
+4+1 | https://www.eurobydleni.cz/byty/4_1/prodej/
+4+kk | https://www.eurobydleni.cz/byty/4_kk/prodej/
+5+1 | https://www.eurobydleni.cz/byty/5_1/prodej/
+5+kk | https://www.eurobydleni.cz/byty/5_kk/prodej/
+Pokoj | https://www.eurobydleni.cz/byty/pokoj/prodej/
+ApartmÃ¡n | https://www.eurobydleni.cz/byty/apartmany/prodej/
+pronÃ¡jem | https://www.eurobydleni.cz/byty/pronajem/
+Garsoniera | https://www.eurobydleni.cz/byty/garsoniera/pronajem/
+1+1 | https://www.eurobydleni.cz/byty/1_1/pronajem/
+1+kk | https://www.eurobydleni.cz/byty/1_kk/pronajem/
+2+1 | https://www.eurobydleni.cz/byty/2_1/pronajem/
+2+kk | https://www.eurobydleni.cz/byty/2_kk/pronajem/
+3+1 | https://www.eurobydleni.cz/byty/3_1/pronajem/
+3+kk | https://www.eurobydleni.cz/byty/3_kk/pronajem/
+4+1 | https://www.eurobydleni.cz/byty/4_1/pronajem/
+4+kk | https://www.eurobydleni.cz/byty/4_kk/pronajem/
+5+1 | https://www.eurobydleni.cz/byty/5_1/pronajem/
+5+kk | https://www.eurobydleni.cz/byty/5_kk/pronajem/
+Pokoj | https://www.eurobydleni.cz/byty/pokoj/pronajem/
+ApartmÃ¡n | https://www.eurobydleni.cz/byty/apartmany/pronajem/
+prodej | https://www.eurobydleni.cz/domy/prodej/
+RodinnÃ½ dÅ¯m | https://www.eurobydleni.cz/domy/rodinny-dum/prodej/
+Vila | https://www.eurobydleni.cz/domy/vila/prodej/
+ÄinÅ¾ovnÃ­ dÅ¯m | https://www.eurobydleni.cz/domy/cinzovni-domy/prodej/
+VÃ­cegeneraÄnÃ­ dÅ¯m | https://www.eurobydleni.cz/domy/vicegeneracni-domy/prodej/
+pronÃ¡jem | https://www.eurobydleni.cz/domy/pronajem/
+RodinnÃ½ dÅ¯m | https://www.eurobydleni.cz/domy/rodinny-dum/pronajem/
+Vila | https://www.eurobydleni.cz/domy/vila/pronajem/
+ÄinÅ¾ovnÃ­ dÅ¯m | https://www.eurobydleni.cz/domy/cinzovni-domy/pronajem/
+VÃ­cegeneraÄnÃ­ dÅ¯m | https://www.eurobydleni.cz/domy/vicegeneracni-domy/pronajem/
+RekreaÄnÃ­ objekty | https://www.eurobydleni.cz/rekreacni-objekty/
+prodej | https://www.eurobydleni.cz/rekreacni-objekty/prodej/
+Chata | https://www.eurobydleni.cz/rekreacni-objekty/chaty/prodej/
+Chalupa | https://www.eurobydleni.cz/rekreacni-objekty/chalupy/prodej/
+ZemÄdÄlskÃ¡ usedlost | https://www.eurobydleni.cz/rekreacni-objekty/zemedelska-usedlost/prodej/
+UbytovÃ¡nÃ­ | https://www.eurobydleni.cz/rekreacni-objekty/ubytovani/prodej/
+výskyt 'soukrom': 4
+výskyt 'majitel': 2
+výskyt 'bez realitk': 0
+výskyt 'RK': 0
+výskyt 'makléř': 0
+výskyt 'provize': 0

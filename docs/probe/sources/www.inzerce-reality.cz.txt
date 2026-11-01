@@ -1,0 +1,6 @@
+# https://www.inzerce-reality.cz/  2026-11-01 21:30
+## robots.txt 0 https://www.inzerce-reality.cz/robots.txt
+ERR HTTPSConnectionPool(host='www.inzerce-reality.cz', port=443): Max retries exceeded with url: /robots.txt (Caused by NameResolutionError("HTTPSConnection(host='www.inzerce-reality.cz', port=443): Failed to resolve 'www.inzerce-reality.cz' ([Errno -2] Name or service not known)"))
+
+## GET https://www.inzerce-reality.cz/ -> 0 https://www.inzerce-reality.cz/ (273 B)
+ERR HTTPSConnectionPool(host='www.inzerce-reality.cz', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='www.inzerce-reality.cz', port=443): Failed to resolve 'www.inzerce-reality.cz' ([Errno -2] Name or service not known)"))

@@ -1,0 +1,104 @@
+# https://www.byty.cz/  2026-11-01 21:30
+## robots.txt 200 https://www.byty.cz/robots.txt
+ï»¿User-agent: *
+Disallow: /g/alba/
+Disallow: /g/por/
+Disallow: /doklad/
+Disallow: /payu/
+Disallow: /scripts/
+Disallow: /swf/
+Disallow: /naseptavace/
+
+
+Sitemap: https://www.byty.cz/sitemap.xml
+
+
+## GET https://www.byty.cz/ -> 200 https://www.byty.cz/ (92402 B)
+title: Byty na prodej a k pronájmu
+odkazy (155):
+ | https://www.byty.cz/
+Vložit | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Oblíbené | https://www.byty.cz/?search=8
+Vstup RK | https://www.byty.cz/pro-realitky.aspx
+Přihlásit se / Registrace | https://www.byty.cz/moje/prihlaseni.aspx
+Registrace | https://www.byty.cz/moje/registrace.aspx
+Vložit inzerát | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Byty 1+1 | https://www.byty.cz/byty-1-1-prodej/
+Prodej | https://www.byty.cz/byty-1-1-prodej/
+Pronájem | https://www.byty.cz/byty-1-1-pronajem/
+Byty 2+1 | https://www.byty.cz/byty-2-1-prodej/
+Prodej | https://www.byty.cz/byty-2-1-prodej/
+Pronájem | https://www.byty.cz/byty-2-1-pronajem/
+Byty 3+1 | https://www.byty.cz/byty-3-1-prodej/
+Prodej | https://www.byty.cz/byty-3-1-prodej/
+Pronájem | https://www.byty.cz/byty-3-1-pronajem/
+Byty 4+1 | https://www.byty.cz/byty-4-1-prodej/
+Prodej | https://www.byty.cz/byty-4-1-prodej/
+Pronájem | https://www.byty.cz/byty-4-1-pronajem/
+Byty 5+1 a větší | https://www.byty.cz/byty-5-1-prodej/
+Prodej | https://www.byty.cz/byty-5-1-prodej/
+Pronájem | https://www.byty.cz/byty-5-1-pronajem/
+Ostatní reality | https://www.byty.cz/nemovitosti-ostatni/
+Domy | https://www.byty.cz/domy-prodej/
+Prodej | https://www.byty.cz/domy-prodej/
+Pronájem | https://www.byty.cz/domy-pronajem/
+Pozemky | https://www.byty.cz/pozemky/
+Prodej | https://www.byty.cz/pozemky/
+Pronájem | https://www.byty.cz/pozemky-pronajem/
+Komerční | https://www.byty.cz/komercni-vyrobni-prostory/
+Prodej | https://www.byty.cz/komercni-vyrobni-prostory/
+Pronájem | https://www.byty.cz/komercni-vyrobni-prostory-pronajem/
+Ostatní | https://www.byty.cz/nemovitosti-ostatni/
+BYTY | https://www.byty.cz/byty-prodej/
+DOMY | https://www.byty.cz/domy-prodej/
+POZEMKY | https://www.byty.cz/pozemky/
+KOMERČNÍ | https://www.byty.cz/komercni-vyrobni-prostory/
+Byty Praha | https://www.byty.cz/praha/byty-prodej/
+Byty Brno | https://www.byty.cz/brno/byty-prodej/
+Byty Ostrava | https://www.byty.cz/ostrava/byty-prodej/
+Byty Plzeň | https://www.byty.cz/plzen/byty-prodej/
+Byty Liberec | https://www.byty.cz/liberec/byty-prodej/
+Byty Olomouc | https://www.byty.cz/olomouc/byty-prodej/
+Byty Ústi nad Labem | https://www.byty.cz/usti-nad-labem/byty-prodej/
+Byty  Hradec Králové | https://www.byty.cz/hradec-kralove/byty-prodej/
+Byty České Budejovice | https://www.byty.cz/ceske-budejovice/byty-prodej/
+Byty Pardubice | https://www.byty.cz/pardubice/byty-prodej/
+Domy Praha | https://www.byty.cz/praha/domy-prodej/
+Domy Brno | https://www.byty.cz/brno/domy-prodej/
+Domy Ostrava | https://www.byty.cz/ostrava/domy-prodej/
+Domy Plzeň | https://www.byty.cz/plzen/domy-prodej/
+Domy Liberec | https://www.byty.cz/liberec/domy-prodej/
+Domy Olomouc | https://www.byty.cz/olomouc/domy-prodej/
+Domy Ústi nad Labem | https://www.byty.cz/usti-nad-labem/domy-prodej/
+Domy  Hradec Králové | https://www.byty.cz/hradec-kralove/domy-prodej/
+Domy České Budejovice | https://www.byty.cz/ceske-budejovice/domy-prodej/
+Domy Pardubice | https://www.byty.cz/pardubice/domy-prodej/
+Pozemky Praha | https://www.byty.cz/praha/pozemky/
+Pozemky Brno | https://www.byty.cz/brno/pozemky/
+Pozemky Ostrava | https://www.byty.cz/ostrava/pozemky/
+Pozemky Plzeň | https://www.byty.cz/plzen/pozemky/
+Pozemky Liberec | https://www.byty.cz/liberec/pozemky/
+Pozemky Olomouc | https://www.byty.cz/olomouc/pozemky/
+Pozemky Ústi nad Labem | https://www.byty.cz/usti-nad-labem/pozemky/
+Pozemky  Hradec Králové | https://www.byty.cz/hradec-kralove/pozemky/
+Pozemky České Budejovice | https://www.byty.cz/ceske-budejovice/pozemky/
+Pozemky Pardubice | https://www.byty.cz/pardubice/pozemky/
+Komerční Praha | https://www.byty.cz/praha/komercni-vyrobni-prostory/
+Komerční Brno | https://www.byty.cz/brno/komercni-vyrobni-prostory/
+Komerční Ostrava | https://www.byty.cz/ostrava/komercni-vyrobni-prostory/
+Komerční Plzeň | https://www.byty.cz/plzen/komercni-vyrobni-prostory/
+Komerční Liberec | https://www.byty.cz/liberec/komercni-vyrobni-prostory/
+Komerční Olomouc | https://www.byty.cz/olomouc/komercni-vyrobni-prostory/
+Komerční Ústi nad Labem | https://www.byty.cz/usti-nad-labem/komercni-vyrobni-prostory/
+Komerční  Hradec Králové | https://www.byty.cz/hradec-kralove/komercni-vyrobni-prostory/
+Komerční České Budejovice | https://www.byty.cz/ceske-budejovice/komercni-vyrobni-prostory/
+Komerční Pardubice | https://www.byty.cz/pardubice/komercni-vyrobni-prostory/
+Rychlé hledání | https://www.byty.cz/#col_fast_search
+Vložit inzerát zdarma | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Doporučené byty | https://www.byty.cz/byty-prodej/
+výskyt 'soukrom': 1
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 2
+výskyt 'makléř': 1
+výskyt 'provize': 0
