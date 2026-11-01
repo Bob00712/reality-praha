@@ -54,13 +54,11 @@ def probe(base, extra):
     print(host, "hotovo")
 
 SOURCES = {
-    "https://www.byty.cz/": ["raw:https://www.byty.cz/praha/byty-prodej/", "raw:https://www.byty.cz/praha/byty-pronajem/",
-                             "raw:https://www.byty.cz/praha/domy-prodej/",
-                             "raw:https://www.byty.cz/pronajem-bytu-2-1-praha-pestukova/xad14241187.aspx",
-                             "https://www.byty.cz/podminky.aspx"],
-    "https://www.expats.cz/": ["raw:https://www.expats.cz/praguerealestate/apartments/for-rent",
-                               "raw:https://www.expats.cz/praguerealestate/apartments/for-rent/prague",
-                               "https://www.expats.cz/terms-of-service", "https://www.expats.cz/legal"],
+    "https://www.expats.cz/": ["https://www.expats.cz/czech-news/article/expats-terms"],
+    "https://www.realcity.cz/": [],
+    "https://www.ireality.cz/": [],
+    "https://www.realitni-inzerce.cz/": [],
+    "https://www.sousede.cz/": [],
 }
 if __name__ == "__main__":
     only = sys.argv[1:]
