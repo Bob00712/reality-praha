@@ -41,23 +41,21 @@ def probe(base, extra):
         txtall = soup.get_text(" ", strip=True)
         for w in ("soukrom", "majitel", "bez realitk", "RK", "makléř", "provize"):
             lines.append(f"výskyt '{w}': {txtall.count(w)}")
+        if url != base:
+            lines.append("--- text ---"); lines.append(txtall[:7000])
         time.sleep(2)
     (OUT / f"{host}.txt").write_text("\n".join(lines), "utf-8")
     print(host, "hotovo")
 
 SOURCES = {
-    "https://www.avizo.cz/": ["https://www.avizo.cz/reality/"],
-    "https://www.annonce.cz/": ["https://www.annonce.cz/reality.html"],
-    "https://www.expats.cz/": ["https://www.expats.cz/praguerealestate/for-rent/apartments"],
-    "https://www.ceskereality.cz/": [],
-    "https://www.reality.cz/": [],
-    "https://www.realitymix.cz/": [],
-    "https://www.eurobydleni.cz/": [],
-    "https://www.digireality.cz/": [],
-    "https://www.bydleni.cz/": [],
-    "https://www.inzerce-reality.cz/": [],
-    "https://www.nemovitostiinzerce.cz/": [],
-    "https://www.byty.cz/": [],
+    "https://www.byty.cz/": ["https://www.byty.cz/byty-2-1-prodej/", "https://www.byty.cz/byty-2-1-pronajem/",
+                             "https://www.byty.cz/podminky.aspx", "https://www.byty.cz/pro-realitky.aspx"],
+    "https://www.reality.cz/": ["https://www.reality.cz/prodej/byty/Praha/", "https://www.reality.cz/pronajem/byty/Praha/",
+                                "https://www.reality.cz/L00-007001/", "https://www.reality.cz/napoveda/"],
+    "https://realitymix.cz/": ["https://realitymix.cz/reality/byty/prodej", "https://realitymix.cz/chci-prodat-pronajmout",
+                               "https://realitymix.cz/detail/praha/pronajem-bytu-1-1-v-praze-ul-nuselska-8556969.html"],
+    "https://www.expats.cz/": ["https://www.expats.cz/praguerealestate", "https://www.expats.cz/praguerealestate/apartments/for-rent"],
+    "https://www.digireality.cz/": ["https://www.digireality.cz/byty", "https://www.digireality.cz/inzerat/698bda80641f2580ebee7271"],
 }
 if __name__ == "__main__":
     only = sys.argv[1:]
