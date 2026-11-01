@@ -1,0 +1,22 @@
+{'idi': '225576135', 'idphone': '19077514'}
+POST https://reality.bazos.cz/ad-phone.php -> 200
+GET https://reality.bazos.cz/ad-phone.php -> 404
+POST https://www.bazos.cz/ad-phone.php -> 404
+GET https://www.bazos.cz/ad-phone.php -> 404
+---
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>404 strÃ¡nka nenalezena</title>
+</head>
+
+<body>
+
+<h1>404 strÃ¡nka nenalezena</h1>
+<p>StrÃ¡nka, o kterou jste poÅ¾Ã¡dali, nebyla na serveru <a href="https://www.bazos.cz">www.bazos.cz</a> nalezena. </p>
+<p>Je moÅ¾nÃ©, Å¾e jste objevili chybu v odkazu. NapiÅ¡te nÃ¡m prosÃ­m na <a href="mailto:info@bazos.cz">info@bazos.cz</a>.</p>
+<p><form name="formt" method=get action="https://www.bazos.cz/search.php">Prohledat inzerÃ¡ty: <input name=hledat maxlength="256"> <input type="submit" name="Submit" value="Hledat" id="submit">
+<input type="hidden" name="kitx" value="ano"></form></p>
+
+</body>
+</html>
