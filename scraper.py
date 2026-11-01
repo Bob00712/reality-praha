@@ -277,42 +277,18 @@ def _phone_from(text):
 
 
 def bazos_phone(item, soup, html):
-    """Telefon prodávajícího: buď přímo na stránce, nebo přes odkaz „zobraz číslo"."""
+    """Telefon jen pokud je přímo na stránce (odkaz tel:). Bazoš číslo přes
+    ad-phone.php nevydává, proto se na něj už nedotazujeme (jen bereme idphone)."""
     for a in soup.select('a[href^="tel:"]'):
         ph = _phone_from(a.get("href"))
         if ph:
             item["phone"] = ph
             return
-    # Bazoš: onclick="odeslatrequest('/ad-phone.php','idi=...&idphone=...','overlaytel')"
-    m = re.search(r"odeslatrequest\(\s*'([^']*phone[^']*)'\s*,\s*'([^']*)'", html)
-    if not m:
-        return
-    url = m.group(1)
-    url = ("https://reality.bazos.cz" + url) if url.startswith("/") else url
-    form = dict(x.split("=", 1) for x in m.group(2).replace("&amp;", "&").split("&") if "=" in x)
-    if form.get("idphone") and not item.get("seller_id"):
-        item["seller_id"] = form["idphone"]
-    if time.time() - START > MAX_RUNTIME:
-        raise OutOfTime("vyčerpán časový limit běhu")
-    time.sleep(random.uniform(1.0, 2.0))
-    path = m.group(1) if m.group(1).startswith("/") else "/" + m.group(1).split("/", 3)[-1]
-    resp, r, tried = "", None, []
-    for host in ("https://reality.bazos.cz", "https://www.bazos.cz"):
-        for method in ("post", "get"):
-            url = host + path
-            kw = {"data": form} if method == "post" else {"params": form}
-            r = getattr(S, method)(url, timeout=(10, 20), **kw,
-                                   headers={"Referer": item["url"], "X-Requested-With": "XMLHttpRequest"})
-            resp = r.text
-            tried.append(f"{method.upper()} {url} -> {r.status_code}")
-            if r.ok and _phone_from(resp):
-                break
-        if r.ok and _phone_from(resp):
-            break
-    if not Path("docs/probe/bazos_tel2.txt").exists():
-        Path("docs/probe").mkdir(parents=True, exist_ok=True)
-        Path("docs/probe/bazos_tel2.txt").write_text(f"{form}\n" + "\n".join(tried) + "\n---\n" + resp[:5000], "utf-8")
-    item["phone"] = _phone_from(BeautifulSoup(resp, "lxml").get_text(" ")) or _phone_from(resp)
+    m = re.search(r"odeslatrequest\(\s*'[^']*phone[^']*'\s*,\s*'([^']*)'", html)
+    if m and not item.get("seller_id"):
+        m2 = re.search(r"idphone=(\w+)", m.group(1))
+        if m2:
+            item["seller_id"] = m2.group(1)
 
 
 RK_KNOWN, RK_PHONES = set(), set()

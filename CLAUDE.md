@@ -1,7 +1,7 @@
 # reality-praha – hlídač inzerátů od soukromníků (Bazoš → Telegram)
 
 ## Pro koho a jak komunikovat
-- Majitel: Bob (Robert Harmáček), realitní makléř (Dominius reality). **Netechnický uživatel.**
+- Majitel: Bob (Robert Harman), realitní makléř (Dominius reality). **Netechnický uživatel.**
 - Odpovídej česky, stručně a prakticky. Změny dělej sám přímo v repu (commit do `main`), ne návodem „stáhni a nahraj".
 - Po každé změně ověř, že běh v GitHub Actions doběhl ✅ (log kroku „Run python scraper.py").
 
@@ -65,11 +65,11 @@ odkazy „Otevřít inzerát · 🔎 Google (hledá jen telefon, jinak jméno) �
 varianty pronájem/prodej, byt/dům). Max. 15 samostatných zpráv na běh, zbytek souhrnem.
 Automatické odesílání WhatsApp zpráv **nedělat** (ban čísla, nevyžádaná obchodní sdělení) – jen předvyplněný odkaz, Bob odesílá sám.
 
+## Rozhodnuto (neřešit znovu)
+- **Telefon z Bazoše se nezískává** – Bazoš číslo nevydává (ad-phone.php vrací 200 bez čísla). Bob: nezkoušet.
+  `bazos_phone` jen vezme `tel:` odkaz, pokud je přímo ve stránce, a `idphone` jako `seller_id` – žádné další požadavky.
+- Podpis ve `WA_TEXT` je „Robert Harman" – správně, neměnit. Jiné příjmení nikde nepoužívat.
+
 ## Otevřené body
-1. **Telefon z Bazoše se nenačítá.** Detail má `onclick="odeslatrequest('/ad-phone.php','idi=…&idphone=…','overlaytel')"`.
-   POST na `https://reality.bazos.cz/ad-phone.php` vrací 200, ale bez čísla (GET a www.bazos.cz → 404).
-   Podezření: Bazoš ukazuje čísla jen ověřeným uživatelům. Ověřit obsah odpovědi; pokud to nejde, `bazos_phone` vypnout
-   (teď dělá zbytečně 4 požadavky na inzerát – stačí 1 POST nebo nic).
-2. Podpis ve `WA_TEXT` je „Robert Harman" – nepotvrzeno, jestli záměr, nebo má být „Harmáček". Zeptat se Boba.
-3. `daily_rk_digest` (denní souhrn vyřazených) existuje, ale je vypnutý – Bob nechtěl víc zpráv.
-4. `docs/probe/` a staré probe funkce lze uklidit.
+1. `daily_rk_digest` (denní souhrn vyřazených) existuje, ale je vypnutý – Bob nechtěl víc zpráv.
+2. `docs/probe/` a staré probe funkce lze uklidit.
