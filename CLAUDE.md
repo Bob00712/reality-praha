@@ -44,6 +44,10 @@ vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je,
   API `ud.api.ulovdomov.cz/v1/offer/find` (POST, bounds Prahy), kontakt `www.ulovdomov.cz/fe-api/offer/contact-info/{id}` (`is_private_landlord`).
 - **Zamítnuté zdroje (neřešit znovu)**: Sbazar a Bezrealitky (robots.txt zakazuje), Sreality (podmínky), Realingo (zakazuje detaily/API),
   iDNES Reality (100 % realitky), Hyperinzerce (téměř nulový objem), Bazar.cz (nemá nemovitosti), Facebook (zákaz scrapingu – neobcházet).
+  - Průzkum 11/2026 (`tools/probe_sources.py`, workflow `probe-sources`, ruční spuštění): **byty.cz** (podmínky výslovně zakazují
+    scraping), **Avizo, Annonce, ceskereality.cz, Digireality, RealCity** (ochrana proti botům – neobcházet), **Eurobydlení**
+    (robots.txt zakazuje ClaudeBot), **Expats.cz** (soukromých jen pár, podmínky zakazují kopírování), **reality.cz, RealityMix**
+    (téměř jen RK), iReality/realitni-inzerce (mrtvé domény), Sousedé.cz (není inzerce).
 
 ## Filtr realitek (`classify` → `rk` / `soukromy` / `nejiste`)
 Posílá se jen `soukromy` a `nejiste` (`SELLER_FILTER = "rk_ven"`). Vyřadí se jako RK, pokud:
