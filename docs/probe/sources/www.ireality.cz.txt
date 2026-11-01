@@ -1,0 +1,36 @@
+# https://www.ireality.cz/  2026-11-01 21:40
+## robots.txt 200 https://www.ireality.cz/robots.txt
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Please wait...</title>
+<script>
+(function(){
+    var d = new Date();
+    var challenge = d.getTime() % 1000;
+    if (challenge >= 0) {
+        setTimeout(function(){
+            window.location.href = "https://regbu.com";
+        }, 100);
+    }
+})();
+</script>
+<noscript>
+<meta http-equiv="refresh" content="1;url=https://regbu.com">
+</noscript>
+</head>
+<body>
+<p>Verifying your browser, please wait...</p>
+</body>
+</html>
+
+## GET https://www.ireality.cz/ -> 200 https://www.zonky.cz/pujcka-od-zonky/?utm_campaign=espoluprace.cz&utm_source=espoluprace.cz&utm_medium=affiliate&t_id=10248a65cacd52e68633d52468f687 (372365 B)
+title: Férová půjčka od 3,75 % | Zonky
+odkazy (0):
+výskyt 'soukrom': 1
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 0
+výskyt 'makléř': 0
+výskyt 'provize': 0
