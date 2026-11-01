@@ -268,6 +268,7 @@ def bazos_detail(item):
         log(f"[bazos] telefon {item['key']}: CHYBA {e}")
 
 
+EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}", re.I)
 PHONE_RE = re.compile(r"(?:\+?420[\s.]?)?([67]\d{2})[\s.]?(\d{3})[\s.]?(\d{3})\b")
 
 
@@ -651,7 +652,12 @@ def notify(new_items):
             co = "bytu" if i.get("typ") == "byt" else "domu"
             msg = WA_TEXT.get(i.get("akce"), WA_TEXT["pronajem"]).format(co=co, co2=co)
             links.append(f'<a href="{E("https://wa.me/" + digits + "?text=" + requests.utils.quote(msg))}">📲 WhatsApp</a>')
+        mail = EMAIL_RE.search(" ".join(str(i.get(k) or "") for k in ("desc_full", "desc", "title")))
         tel = f"📞 {E(i['phone'])}\n" if i.get("phone") else ""
+        if mail:                           # Telegram mailto: odkazy nebere – e-mail jako text (klikací)
+            co = "bytu" if i.get("typ") == "byt" else "domu"
+            body = WA_TEXT.get(i.get("akce"), WA_TEXT["pronajem"]).format(co=co, co2=co)
+            tel += f"✉️ {E(mail.group(0))}\n📝 Text e-mailu (klepnutím zkopírujete):\n<code>{E(body)}</code>\n"
         _send(tok, chat, f"🏠 <b>{E(i['title'])}</b>\n{E(price)}\n{E(meta)}\n{E(who)}\n{tel}" + " · ".join(links),
               preview=True, html=True)
     if rest:                               # zbytek v souhrnných zprávách

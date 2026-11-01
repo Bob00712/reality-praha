@@ -63,7 +63,8 @@ Priorita Boba: **raději občas propustit realitku, než přijít o soukromníka
 HTML: titulek, cena, dispozice/m²/Kč/m²/lokalita/zdroj, 👤 jméno, 📞 telefon (pokud je),
 odkazy „Otevřít inzerát · 🔎 Google (hledá jen telefon, jinak jméno) · 📲 WhatsApp" (wa.me s předvyplněnou zprávou `WA_TEXT`,
 varianty pronájem/prodej, byt/dům). Max. 15 samostatných zpráv na běh, zbytek souhrnem.
-Automatické odesílání WhatsApp zpráv **nedělat** (ban čísla, nevyžádaná obchodní sdělení) – jen předvyplněný odkaz, Bob odesílá sám.
+Je-li v textu inzerátu e-mail, zpráva ukáže ✉️ adresu + text e-mailu v `<code>` (klepnutím se zkopíruje; Telegram `mailto:` odkazy nebere).
+Automatické odesílání WhatsApp zpráv ani e-mailů **nedělat** (ban čísla, nevyžádaná obchodní sdělení) – jen předvyplněný odkaz, Bob odesílá sám.
 
 ## Rozhodnuto (neřešit znovu)
 - **Telefon z Bazoše se nezískává** – Bazoš číslo nevydává (ad-phone.php vrací 200 bez čísla). Bob: nezkoušet.
