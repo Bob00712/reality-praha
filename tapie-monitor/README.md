@@ -13,8 +13,20 @@ Všechny filtry jsou v jednom souboru: **`config.py`**.
 ---
 
 ## Zprovoznění
-Hlídač běží v repozitáři **reality-praha** (složka `tapie-monitor/`) a používá stejného
-Telegram bota (secrets `TELEGRAM_TOKEN` a `TELEGRAM_CHAT_ID`).
+Hlídač běží v repozitáři **reality-praha** (složka `tapie-monitor/`). Do Telegramu posílá
+do **vlastního kanálu** (nemíchá se s realitami):
+
+1. V Telegramu: tužka ✏️ → **Nový kanál** → název např. *Tapie příležitosti* → Soukromý.
+2. V kanálu: **Správci → Přidat správce →** najdi svého bota (stejného jako u realit) → potvrď.
+3. Napiš do kanálu jakoukoliv zprávu (např. „start“).
+4. GitHub: **Actions → tapie-monitor → Run workflow**, mode `chats`. V logu kroku
+   „Spustit monitor“ najdi řádek `[telegram] CHAT -100… | channel | Tapie příležitosti`.
+5. **Settings → Secrets and variables → Actions → New repository secret:**
+   název `TAPIE_TELEGRAM_CHAT_ID`, hodnota to číslo (včetně mínusu).
+   (Volitelně vlastní bot: secret `TAPIE_TELEGRAM_TOKEN`.)
+
+Dokud `TAPIE_TELEGRAM_CHAT_ID` chybí, do Telegramu se nic neposílá (a nic se neoznačí
+jako odeslané).
 
 - **Zkouška:** Actions → *tapie-monitor* → *Run workflow* → mode `test`.
   Do Telegramu přijde „✅ spojení funguje“.

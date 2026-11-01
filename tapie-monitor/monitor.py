@@ -95,9 +95,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--test", action="store_true")
     ap.add_argument("--weekly", action="store_true")
+    ap.add_argument("--chats", action="store_true")
     ap.add_argument("--only", choices=["firma", "app"])
     args = ap.parse_args()
 
+    if args.chats:
+        from common import telegram_find_chats
+        telegram_find_chats()
+        return
     if args.test:
         ok = telegram_send("✅ Tapie-monitor: spojení s Telegramem funguje.")
         sys.exit(0 if ok else 1)
