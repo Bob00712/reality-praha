@@ -135,7 +135,7 @@ def _app_case(app, signal, sig_pts, chart_label=""):
                   f"Hodnocení: {app.get('averageUserRating', '?')}"] +
                  ([f"Žebříček: {chart_label}"] if chart_label else []),
         "points": points,
-        "rating": rate(points),
+        "rating": rate(points, "APP"),
     }
 
 
@@ -223,7 +223,7 @@ def run_charts(state, seen):
         if aid in watch_ids:
             case["notes"].insert(0, "Na tvém seznamu sledovaných (APP_WATCHLIST)")
             case["points"] += 1
-            case["rating"] = rate(case["points"])
+            case["rating"] = rate(case["points"], "APP")
         out.append(case)
     return out
 
@@ -259,7 +259,7 @@ def run_news(seen, fps):
             "contact": "? – vlastník je uveden ve zprávě; oslov Corporate Development / M&A",
             "link": it["link"], "links": [],
             "notes": [f"Titulek: {it['title']}", f"Zdroj: {it['source'] or '?'} ({it['date'] or '?'})"],
-            "points": points, "rating": rate(points),
+            "points": points, "rating": rate(points, "APP"),
         })
     log(f"[app] zpráv {len(items)}, případů {len(out)}")
     return out

@@ -22,8 +22,12 @@ MAX_MESSAGES_PER_RUN = 25        # pojistka proti zahlcení Telegramu
 SHOW_RATING_C = True             # False = posílat jen A a B
 
 # Hodnocení: body -> známka (viz README, kapitola "Jak se hodnotí")
-RATING_A_MIN = 7
-RATING_B_MIN = 4
+# FIRMA: max. 11 bodů. A = sedí řízení + obor + velikost (známá).
+RATING_A_MIN = 9
+RATING_B_MIN = 8
+# APP: max. ~10 bodů.
+APP_RATING_A_MIN = 8
+APP_RATING_B_MIN = 6
 
 # ---------------------------------------------------------------
 # 2) MODUL FIRMA – velikost
@@ -34,6 +38,9 @@ LIABILITIES_MAX_EUR = 20_000_000
 # True = firmu, o které VÍME, že je mimo rozsah zaměstnanců, vůbec
 # neposílat. Když údaj chybí ("?"), firma se pošle vždy.
 DROP_IF_SIZE_KNOWN_OUT_OF_RANGE = True
+# True = firmu, jejíž HLAVNÍ obor známe a není v kategoriích A/B/C ani e-shop,
+# neposílat (lékárny, doprava, agentury práce…). Neznámý obor "?" se pošle.
+DROP_OTHER_FIELDS = True
 
 # ---------------------------------------------------------------
 # 3) MODUL FIRMA – Česko (ISIR + ARES)
@@ -110,6 +117,14 @@ KEYWORDS_EXCLUDED = [
     "immobilien", "projektentwickl", "holding", "privatkonkurs",
     "schuldenregulierung", "privatinsolvenz", "verbraucherinsolvenz",
     "privatperson", "stavebn", "realit", "oddlužení", "oddluzeni",
+]
+
+# Slova, kvůli kterým se ČESKÁ firma vyřadí podle NÁZVU (holdingy, investice,
+# nemovitosti, stavebnictví):
+NAME_EXCLUDED_WORDS = [
+    "holding", "invest", "capital", "development", "estate", "reality", "realit",
+    "building", "stavb", "stavebn", "group s.r.o", "asset", "finance", "leasing",
+    "restaurant", "bistro", "kavárna", "hotel", "pension", "penzion",
 ]
 
 # ---------------------------------------------------------------
