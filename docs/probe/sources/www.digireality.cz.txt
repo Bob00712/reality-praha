@@ -1,4 +1,4 @@
-# https://www.digireality.cz/  2026-11-01 21:30
+# https://www.digireality.cz/  2026-11-01 21:34
 ## robots.txt 200 https://www.digireality.cz/robots.txt
 # As a condition of accessing this website, you agree to abide by the following
 # content signals:
@@ -189,4 +189,10 @@ Disallow: /admin/
 Disallow: /accoun
 
 ## GET https://www.digireality.cz/ -> 403 https://www.digireality.cz/ (5547 B)
+<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scal
+
+## GET https://www.digireality.cz/byty -> 403 https://www.digireality.cz/byty (5581 B)
+<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scal
+
+## GET https://www.digireality.cz/inzerat/698bda80641f2580ebee7271 -> 403 https://www.digireality.cz/inzerat/698bda80641f2580ebee7271 (5707 B)
 <!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scal

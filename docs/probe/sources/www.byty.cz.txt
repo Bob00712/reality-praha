@@ -1,4 +1,4 @@
-# https://www.byty.cz/  2026-11-01 21:30
+# https://www.byty.cz/  2026-11-01 21:33
 ## robots.txt 200 https://www.byty.cz/robots.txt
 ï»¿User-agent: *
 Disallow: /g/alba/
@@ -13,7 +13,7 @@ Disallow: /naseptavace/
 Sitemap: https://www.byty.cz/sitemap.xml
 
 
-## GET https://www.byty.cz/ -> 200 https://www.byty.cz/ (92402 B)
+## GET https://www.byty.cz/ -> 200 https://www.byty.cz/ (92548 B)
 title: Byty na prodej a k pronájmu
 odkazy (155):
  | https://www.byty.cz/
@@ -102,3 +102,294 @@ výskyt 'bez realitk': 0
 výskyt 'RK': 2
 výskyt 'makléř': 1
 výskyt 'provize': 0
+
+## GET https://www.byty.cz/byty-2-1-prodej/ -> 200 https://www.byty.cz/byty-2-1-prodej/ (101224 B)
+title: Byty 2+1 na prodej - Byty.cz
+odkazy (73):
+ | https://www.byty.cz/
+Vložit | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Oblíbené | https://www.byty.cz/?search=8
+Vstup RK | https://www.byty.cz/pro-realitky.aspx
+Přihlásit se | https://www.byty.cz/moje/prihlaseni.aspx
+Registrace | https://www.byty.cz/moje/registrace.aspx
+Vložit inzerát | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Byty 1+1 | https://www.byty.cz/byty-1-1-prodej/
+Prodej | https://www.byty.cz/byty-1-1-prodej/
+Pronájem | https://www.byty.cz/byty-1-1-pronajem/
+Byty 2+1 | https://www.byty.cz/byty-2-1-prodej/
+Prodej | https://www.byty.cz/byty-2-1-prodej/
+Pronájem | https://www.byty.cz/byty-2-1-pronajem/
+Byty 3+1 | https://www.byty.cz/byty-3-1-prodej/
+Prodej | https://www.byty.cz/byty-3-1-prodej/
+Pronájem | https://www.byty.cz/byty-3-1-pronajem/
+Byty 4+1 | https://www.byty.cz/byty-4-1-prodej/
+Prodej | https://www.byty.cz/byty-4-1-prodej/
+Pronájem | https://www.byty.cz/byty-4-1-pronajem/
+Byty 5+1 a větší | https://www.byty.cz/byty-5-1-prodej/
+Prodej | https://www.byty.cz/byty-5-1-prodej/
+Pronájem | https://www.byty.cz/byty-5-1-pronajem/
+Ostatní nemovitosti | https://www.byty.cz/nemovitosti-ostatni/
+Domy | https://www.byty.cz/domy-prodej/
+Prodej | https://www.byty.cz/domy-prodej/
+Pronájem | https://www.byty.cz/domy-pronajem/
+Pozemky | https://www.byty.cz/pozemky/
+Prodej | https://www.byty.cz/pozemky/
+Pronájem | https://www.byty.cz/pozemky-pronajem/
+Komerční | https://www.byty.cz/komercni-vyrobni-prostory/
+Prodej | https://www.byty.cz/komercni-vyrobni-prostory/
+Pronájem | https://www.byty.cz/komercni-vyrobni-prostory-pronajem/
+Ostatní | https://www.byty.cz/nemovitosti-ostatni/
+ | https://www.byty.cz/byty-2-1-prodej/
+Byty | https://www.byty.cz/byty-2-1-prodej/
+Domy | https://www.byty.cz/byty-2-1-prodej/
+Pozemky | https://www.byty.cz/byty-2-1-prodej/
+Komerční | https://www.byty.cz/byty-2-1-prodej/
+Ostatní | https://www.byty.cz/byty-2-1-prodej/
+Upravit hledání | https://www.byty.cz/byty-2-1-prodej/
+ | https://www.byty.cz/byty-2-1-prodej/mapa/?k=774&c=BYTY&t=1&p1=0&p2=0&ausr=0&usr=0&page=1&locid=0&loctyp=0&search=12&sp=KAT-876_
+Byty.cz | https://www.byty.cz
+Byty - prodej | https://www.byty.cz/byty-prodej/
+2+1 | https://www.byty.cz/byty-2-1-prodej/
+Mapa | https://www.byty.cz/byty-2-1-prodej/mapa/?k=774&c=BYTY&t=1&p1=0&p2=0&ausr=0&usr=0&page=1&locid=0&loctyp=0&search=12&sp=KAT-876_
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/prodej-bytu-2-1-havirov-mesto-hlavni-trida/xad13959323.aspx
+TOPNOUT Nové TOP Bez realitky Prodej družstevního bytu 2+1,  | https://www.byty.cz/prodej-bytu-2-1-ostrava-poruba-zednicka/xad14001128.aspx
+TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 na prodej,  | https://www.byty.cz/prodej-bytu-2-1-orlova-lutyne-vnitrni/xad14161601.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-usti-nad-labem-strekov-trebizskeho/xad14245338.aspx
+TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 na prodej,  | https://www.byty.cz/prodej-bytu-2-1-usti-nad-labem-severni-terasa-svestkova/xad14245337.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-brezova-okruzni/xad14245310.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-ostrava-hrabuvka-dr-martinka/xad14244244.aspx
+TOPNOUT Nové TOP Bez realitky Prodej družstevního bytu 2+1,  | https://www.byty.cz/prodej-bytu-2-1-ostrava-slavikova/xad14247056.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/prodej-bytu-2-1-josefuv-dul/xad14243215.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-praha-nove-mesto-pod-slovany/xad14243160.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-pribram-pribram-vii-marianska/xad14241780.aspx
+TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlas | https://www.byty.cz/prodej-bytu-2-1-karlovy-vary-vychodni/xad14245390.aspx
+1 | https://www.byty.cz/byty-2-1-prodej/
+2 | https://www.byty.cz/byty-2-1-prodej/2/
+3 | https://www.byty.cz/byty-2-1-prodej/3/
+4 | https://www.byty.cz/byty-2-1-prodej/4/
+Další | https://www.byty.cz/byty-2-1-prodej/2/
+ | https://www.byty.cz/byty-2-1-prodej/39/
+ | https://www.byty.cz
+Zapomenuté heslo | https://www.byty.cz/info.aspx?id=9
+Napište nám | https://www.byty.cz/feedback.aspx
+Provozní a obchodní podmínky | https://www.byty.cz/podminky.aspx
+Cookies | https://www.byty.cz/navod/cookies.aspx
+O nás | https://www.byty.cz/o-nas.aspx
+Inzertní kategorie | https://www.byty.cz/inzeraty/kategorie.aspx
+Realitní kanceláře | https://www.byty.cz/realitky/
+Financování bydlení | https://www.byty.cz/financovani-bydleni/spocitat-hypoteku.aspx
+Rady a tipy | https://www.byty.cz/blog/
+výskyt 'soukrom': 0
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 2
+výskyt 'makléř': 0
+výskyt 'provize': 0
+--- text ---
+Byty 2+1 na prodej - Byty.cz Menu Vložit Hledat Oblíbené Vstup RK Přihlásit se Registrace Vložit inzerát Byty 1+1 Prodej Pronájem Byty 2+1 Prodej Pronájem Byty 3+1 Prodej Pronájem Byty 4+1 Prodej Pronájem Byty 5+1 a větší Prodej Pronájem Ostatní nemovitosti Domy Prodej Pronájem Pozemky Prodej Pronájem Komerční Prodej Pronájem Ostatní Upravit hledání Město/adresa Typ nemovitosti Byty Domy Pozemky Komerční Ostatní Byty Domy Pozemky Komerční Ostatní Prodej Pronájem Výměna Podkategorie test Podkategorie Dispozice Vše Cena Cena Okolí (km) km 3 km 5 km 10 km 20 km 50 km Plocha Plocha S realitkou i bez Bez realitky S realitkou Typ prodeje S realitkou i bez Bez realitky S realitkou Zrušit vše Rozšířený filtr Upravit hledání Byty.cz > Byty - prodej > 2+1 > Výpis inzerátu Prodej bytů 2+1 v celé ČR (Nalezeno 467 bytů 2+1 na prodej) Od nejnovějších Od nejlevnějších Od nejdražších Podle plochy Výpis Mapa TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví na prodej, 50m² 2 950 000 Kč 50m 2 Havířov, Město, Hlavní třída TOPNOUT Nové TOP Bez realitky Prodej družstevního bytu 2+1, 58m² 3 425 000 Kč 58m 2 Ostrava, Poruba, Zednická TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 na prodej, 57m² 2 190 000 Kč 57m 2 Orlová, Lutyně, Vnitřní TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 62m² 2 970 000 Kč 62m 2 Ústí nad Labem, Střekov, Třebízského TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 na prodej, 61m² 2 690 000 Kč 61m 2 Ústí nad Labem, Severní Terasa, Švestková TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 68m² 3 300 000 Kč 68m 2 Březová, Okružní TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 54m² 3 920 000 Kč 54m 2 Ostrava, Hrabůvka, Dr. Martínka TOPNOUT Nové TOP Bez realitky Prodej družstevního bytu 2+1, 57m² 4 095 000 Kč 57m 2 Ostrava, Slavíkova TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví na prodej, 57m² 3 650 000 Kč 57m 2 Josefův Důl TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 57m² 9 250 000 Kč 57m 2 Praha, Nové Město, Pod Slovany TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 62m² 3 989 755 Kč 62m 2 Příbram, Příbram VII, Mariánská TOPNOUT Nové TOP Bez realitky Prodej bytu 2+1 v osobním vlastnictví, 60m² 3 260 000 Kč 60m 2 Karlovy Vary, Východní 1 2 3 4 Další © 2009 - 2026 TANGER infosystems s.r.o. Další informace: Zapomenuté heslo Napište nám Provozní a obchodní podmínky Cookies O nás Inzertní kategorie Vstup RK Realitní kanceláře Financování bydlení Rady a tipy Doporučujeme: Zamestnani.cz Auta.Bazar.cz Seznamka.cz Bazar.cz
+
+## GET https://www.byty.cz/byty-2-1-pronajem/ -> 200 https://www.byty.cz/byty-2-1-pronajem/ (101641 B)
+title: Byty 2+1 pronájem - Byty.cz
+odkazy (73):
+ | https://www.byty.cz/
+Vložit | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Oblíbené | https://www.byty.cz/?search=8
+Vstup RK | https://www.byty.cz/pro-realitky.aspx
+Přihlásit se | https://www.byty.cz/moje/prihlaseni.aspx
+Registrace | https://www.byty.cz/moje/registrace.aspx
+Vložit inzerát | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Byty 1+1 | https://www.byty.cz/byty-1-1-prodej/
+Prodej | https://www.byty.cz/byty-1-1-prodej/
+Pronájem | https://www.byty.cz/byty-1-1-pronajem/
+Byty 2+1 | https://www.byty.cz/byty-2-1-prodej/
+Prodej | https://www.byty.cz/byty-2-1-prodej/
+Pronájem | https://www.byty.cz/byty-2-1-pronajem/
+Byty 3+1 | https://www.byty.cz/byty-3-1-prodej/
+Prodej | https://www.byty.cz/byty-3-1-prodej/
+Pronájem | https://www.byty.cz/byty-3-1-pronajem/
+Byty 4+1 | https://www.byty.cz/byty-4-1-prodej/
+Prodej | https://www.byty.cz/byty-4-1-prodej/
+Pronájem | https://www.byty.cz/byty-4-1-pronajem/
+Byty 5+1 a větší | https://www.byty.cz/byty-5-1-prodej/
+Prodej | https://www.byty.cz/byty-5-1-prodej/
+Pronájem | https://www.byty.cz/byty-5-1-pronajem/
+Ostatní nemovitosti | https://www.byty.cz/nemovitosti-ostatni/
+Domy | https://www.byty.cz/domy-prodej/
+Prodej | https://www.byty.cz/domy-prodej/
+Pronájem | https://www.byty.cz/domy-pronajem/
+Pozemky | https://www.byty.cz/pozemky/
+Prodej | https://www.byty.cz/pozemky/
+Pronájem | https://www.byty.cz/pozemky-pronajem/
+Komerční | https://www.byty.cz/komercni-vyrobni-prostory/
+Prodej | https://www.byty.cz/komercni-vyrobni-prostory/
+Pronájem | https://www.byty.cz/komercni-vyrobni-prostory-pronajem/
+Ostatní | https://www.byty.cz/nemovitosti-ostatni/
+ | https://www.byty.cz/byty-2-1-pronajem/
+Byty | https://www.byty.cz/byty-2-1-pronajem/
+Domy | https://www.byty.cz/byty-2-1-pronajem/
+Pozemky | https://www.byty.cz/byty-2-1-pronajem/
+Komerční | https://www.byty.cz/byty-2-1-pronajem/
+Ostatní | https://www.byty.cz/byty-2-1-pronajem/
+Upravit hledání | https://www.byty.cz/byty-2-1-pronajem/
+ | https://www.byty.cz/byty-2-1-pronajem/mapa/?k=775&c=BYTY&t=2&p1=0&p2=0&ausr=0&usr=0&page=1&locid=0&loctyp=0&search=12&sp=KAT-1101_
+Byty.cz | https://www.byty.cz
+Byty - pronájem | https://www.byty.cz/byty-pronajem/
+2+1 | https://www.byty.cz/byty-2-1-pronajem/
+Mapa | https://www.byty.cz/byty-2-1-pronajem/mapa/?k=775&c=BYTY&t=2&p1=0&p2=0&ausr=0&usr=0&page=1&locid=0&loctyp=0&search=12&sp=KAT-1101_
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-most-mlade-gardy/xad14115877.aspx
+TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vl | https://www.byty.cz/pronajem-bytu-2-1-most-zdenka-stepanka/xad14123622.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-most-jaroslava-vrchlickeho/xad14201391.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-most-zatecka/xad14229227.aspx
+TOPNOUT Nové TOP Bez realitky Praha 6 - Petřiny, byt 2+1 / B | https://www.byty.cz/pronajem-bytu-2-1-praha-pestukova/xad14241187.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-kolin-kolin-i-zamecka/xad14248185.aspx
+TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vl | https://www.byty.cz/pronajem-bytu-2-1-usti-nad-labem-strekov-nova/xad14247000.aspx
+TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 k pronájmu, | https://www.byty.cz/pronajem-bytu-2-1-bilina-sidliste-za-chlumem/xad14248171.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-karlovy-vary-charkovska/xad14248163.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-ostrava-marianske-hory-premyslovcu/xad14246991.aspx
+TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví  | https://www.byty.cz/pronajem-bytu-2-1-usti-nad-labem-severni-terasa-werichova/xad14245341.aspx
+TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vl | https://www.byty.cz/pronajem-bytu-2-1-marianske-lazne-ruska/xad14244304.aspx
+1 | https://www.byty.cz/byty-2-1-pronajem/
+2 | https://www.byty.cz/byty-2-1-pronajem/2/
+3 | https://www.byty.cz/byty-2-1-pronajem/3/
+4 | https://www.byty.cz/byty-2-1-pronajem/4/
+Další | https://www.byty.cz/byty-2-1-pronajem/2/
+ | https://www.byty.cz/byty-2-1-pronajem/18/
+ | https://www.byty.cz
+Zapomenuté heslo | https://www.byty.cz/info.aspx?id=9
+Napište nám | https://www.byty.cz/feedback.aspx
+Provozní a obchodní podmínky | https://www.byty.cz/podminky.aspx
+Cookies | https://www.byty.cz/navod/cookies.aspx
+O nás | https://www.byty.cz/o-nas.aspx
+Inzertní kategorie | https://www.byty.cz/inzeraty/kategorie.aspx
+Realitní kanceláře | https://www.byty.cz/realitky/
+Financování bydlení | https://www.byty.cz/financovani-bydleni/spocitat-hypoteku.aspx
+Rady a tipy | https://www.byty.cz/blog/
+výskyt 'soukrom': 0
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 2
+výskyt 'makléř': 0
+výskyt 'provize': 0
+--- text ---
+Byty 2+1 pronájem - Byty.cz Menu Vložit Hledat Oblíbené Vstup RK Přihlásit se Registrace Vložit inzerát Byty 1+1 Prodej Pronájem Byty 2+1 Prodej Pronájem Byty 3+1 Prodej Pronájem Byty 4+1 Prodej Pronájem Byty 5+1 a větší Prodej Pronájem Ostatní nemovitosti Domy Prodej Pronájem Pozemky Prodej Pronájem Komerční Prodej Pronájem Ostatní Upravit hledání Město/adresa Typ nemovitosti Byty Domy Pozemky Komerční Ostatní Byty Domy Pozemky Komerční Ostatní Prodej Pronájem Výměna Podkategorie test Podkategorie Dispozice Vše Cena Cena Okolí (km) km 3 km 5 km 10 km 20 km 50 km Plocha Plocha S realitkou i bez Bez realitky S realitkou Typ prodeje S realitkou i bez Bez realitky S realitkou Zrušit vše Rozšířený filtr Upravit hledání Byty.cz > Byty - pronájem > 2+1 > Výpis inzerátu Pronájem bytů 2+1 v celé ČR (Nalezeno 207 bytů 2+1 k pronájmu) Od nejnovějších Od nejlevnějších Od nejdražších Podle plochy Výpis Mapa TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 54m² 13 000 Kč 54m 2 Most, Mladé gardy TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vlastnictví, 53m² 12 500 Kč 53m 2 Most, Zdeňka Štěpánka TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 57m² 12 700 Kč 57m 2 Most, Jaroslava Vrchlického TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 59m² 12 000 Kč 59m 2 Most, Žatecká TOPNOUT Nové TOP Bez realitky Praha 6 - Petřiny, byt 2+1 / B. 56 m2. U st. M. Výhled. 20 000 Kč 56m 2 Praha, Peštukova TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 90m² 17 000 Kč 90m 2 Kolín, Kolín I, Zámecká TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vlastnictví, 62m² 10 000 Kč 62m 2 Ústí nad Labem, Střekov, Nová TOPNOUT Nové TOP Bez realitky Družstevní byt 2+1 k pronájmu, 59m² 8 970 Kč 59m 2 Bílina, Sídliště Za Chlumem TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 51m² 13 500 Kč 51m 2 Karlovy Vary, Charkovská TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 80m² 12 200 Kč 80m 2 Ostrava, Mariánské Hory, Přemyslovců TOPNOUT Nové TOP Bez realitky Byt 2+1 v osobním vlastnictví k pronájmu, 66m² 9 000 Kč 66m 2 Ústí nad Labem, Severní Terasa, Werichova TOPNOUT Nové TOP Bez realitky Pronájem bytu 2+1 v osobním vlastnictví, 65m² 13 000 Kč 65m 2 Mariánské Lázně, Ruská 1 2 3 4 Další © 2009 - 2026 TANGER infosystems s.r.o. Další informace: Zapomenuté heslo Napište nám Provozní a obchodní podmínky Cookies O nás Inzertní kategorie Vstup RK Realitní kanceláře Financování bydlení Rady a tipy Doporučujeme: Zamestnani.cz Auta.Bazar.cz Seznamka.cz Bazar.cz
+
+## GET https://www.byty.cz/podminky.aspx -> 200 https://www.byty.cz/podminky.aspx (90116 B)
+title: Provozní podmínky - Byty.cz
+odkazy (44):
+ | https://www.byty.cz/
+Vložit | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Oblíbené | https://www.byty.cz/?search=8
+Vstup RK | https://www.byty.cz/pro-realitky.aspx
+Přihlásit se | https://www.byty.cz/moje/prihlaseni.aspx
+Registrace | https://www.byty.cz/moje/registrace.aspx
+Vložit inzerát | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Byty 1+1 | https://www.byty.cz/byty-1-1-prodej/
+Prodej | https://www.byty.cz/byty-1-1-prodej/
+Pronájem | https://www.byty.cz/byty-1-1-pronajem/
+Byty 2+1 | https://www.byty.cz/byty-2-1-prodej/
+Prodej | https://www.byty.cz/byty-2-1-prodej/
+Pronájem | https://www.byty.cz/byty-2-1-pronajem/
+Byty 3+1 | https://www.byty.cz/byty-3-1-prodej/
+Prodej | https://www.byty.cz/byty-3-1-prodej/
+Pronájem | https://www.byty.cz/byty-3-1-pronajem/
+Byty 4+1 | https://www.byty.cz/byty-4-1-prodej/
+Prodej | https://www.byty.cz/byty-4-1-prodej/
+Pronájem | https://www.byty.cz/byty-4-1-pronajem/
+Byty 5+1 a větší | https://www.byty.cz/byty-5-1-prodej/
+Prodej | https://www.byty.cz/byty-5-1-prodej/
+Pronájem | https://www.byty.cz/byty-5-1-pronajem/
+Ostatní reality | https://www.byty.cz/nemovitosti-ostatni/
+Domy | https://www.byty.cz/domy-prodej/
+Prodej | https://www.byty.cz/domy-prodej/
+Pronájem | https://www.byty.cz/domy-pronajem/
+Pozemky | https://www.byty.cz/pozemky/
+Prodej | https://www.byty.cz/pozemky/
+Pronájem | https://www.byty.cz/pozemky-pronajem/
+Komerční | https://www.byty.cz/komercni-vyrobni-prostory/
+Prodej | https://www.byty.cz/komercni-vyrobni-prostory/
+Pronájem | https://www.byty.cz/komercni-vyrobni-prostory-pronajem/
+Ostatní | https://www.byty.cz/nemovitosti-ostatni/
+Byty.cz | https://www.byty.cz
+ | https://www.byty.cz
+Zapomenuté heslo | https://www.byty.cz/info.aspx?id=9
+Napište nám | https://www.byty.cz/feedback.aspx
+Provozní a obchodní podmínky | https://www.byty.cz/podminky.aspx
+Cookies | https://www.byty.cz/navod/cookies.aspx
+O nás | https://www.byty.cz/o-nas.aspx
+Inzertní kategorie | https://www.byty.cz/inzeraty/kategorie.aspx
+Realitní kanceláře | https://www.byty.cz/realitky/
+Financování bydlení | https://www.byty.cz/financovani-bydleni/spocitat-hypoteku.aspx
+Rady a tipy | https://www.byty.cz/blog/
+výskyt 'soukrom': 1
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 2
+výskyt 'makléř': 0
+výskyt 'provize': 0
+--- text ---
+Provozní podmínky - Byty.cz Menu Vložit Oblíbené Vstup RK Přihlásit se Registrace Vložit inzerát Byty 1+1 Prodej Pronájem Byty 2+1 Prodej Pronájem Byty 3+1 Prodej Pronájem Byty 4+1 Prodej Pronájem Byty 5+1 a větší Prodej Pronájem Ostatní reality Domy Prodej Pronájem Pozemky Prodej Pronájem Komerční Prodej Pronájem Ostatní Byty.cz > Provozní podmínky serveru Provozní a obchodní podmínky (dále jen POP) POJMY Web Web, na kterém se nacházíte. Provozovatel webu (odstavec 3. Správce) má jednotnou registraci pro jím provozované weby, tzn., registruje-li se uživatel na jednom z webů, může se stejnými přihlašovacími údaji v sekci Můj účet de/aktivovat přihlášení pro weby správce: Bazar.cz, Byty.cz, Seznamka.cz/Rande.cz (společná aktivace), Zamestnani.cz (dále „web“). V této sekci uživatel spravuje své osobní údaje (dále jen OÚ). Uživatel, osobní údaje Uživatel je fyzická osoba používající web, která dovršila věk 18 let. Osobám pod tuto věkovou hranici je použití webu zakázáno. K plnohodnotnému používání webu je nezbytné, aby uživatel udělil samostatný a oddělený souhlas se zpracováním svých OÚ dle čl. I. níže; po udělení tohoto souhlasu se stává tzv. subjektem osobních údajů. OÚ je jakákoliv informace, pomocí níž lze přímo nebo nepřímo uživatele identifikovat, jako např. jméno, adresa, telefonní číslo, IP adresa, identifikátory zařízení, soubory cookies, lokalizační údaje apod. Správce Provozovatel webu: společnost TANGER infosystems s.r.o, IČ: 60705078, sídlem Keltičkova 1298/62, 710 00 Slezská Ostrava (dále „správce“), kterému jako uživatel udělujete výslovný a dobrovolný a oddělený souhlas se zpracováním Vašich OÚ dle těchto POP a příslušných ustanovení GDPR. Administrátor Správcem pověřená fyzická osoba zajišťující administraci, dohled a moderaci používání webu uživateli a podporu uživatelům. Cookies Správce používá na webu cookies - malé datové soubory uložené dočasně v prohlížeči nebo zařízení uživatele. Cookies se dělí na: a)	technicky nezbytné cookies (nezbytné pro funkčnost webu, přihlášení, zabezpečení); b)	funkční, analytické a marketingové cookies (včetně cookies třetích stran pro měření návštěvnosti, cílenou reklamu, propojení se sociálními sítěmi apod.). Uživatel může nastavení cookies spravovat v nastavení prohlížeče nebo prostřednictvím cookie lišty / banneru na webu. Po smazání nebo odmítnutí nepodstatných cookies může být omezena funkčnost některých částí webu nebo možnost zobrazení personalizovaného obsahu; základní přístup k webu zůstává zachován. Po smazání cookies uživatel nebude přihlášen automaticky, bude se muset opět přihlásit. ČLÁNEK I - OCHRANA A ZPRACOVÁNÍ OSOBNÍCH ÚDAJŮ Účel a právní základ zpracování OÚ Správce zpracovává OÚ v souladu s nařízením Evropského parlamentu a Rady (EU) 2016/679 (GDPR), zákonem č. 110/2019 Sb., o zpracování osobních údajů, zákonem č. 480/2004 Sb., o některých službách informační společnosti, zákonem č. 127/2005 Sb., o elektronických komunikacích, a dalšími právními předpisy. Právní základy zpracování podle čl. 6 GDPR: a)	plnění smlouvy a nezbytnost pro používání webu: správa uživatelského účtu, poskytování služeb (včetně placených), komunikace nezbytná pro plnění smlouvy; b)	plnění zákonných povinností: zejména povinnosti podle účetních a daňových předpisů; c)	oprávněné zájmy správce: zajištění bezpečnosti webu, prevence podvodů, ochrana práv správce, automatizovaná moderace obsahu a profilů pomocí lokálních AI nástrojů za účelem detekce nelegálního nebo obtěžujícího jednání nebo porušování těchto POP, základní technické fungování webu (např. IP adresa apod.); d)	souhlas subjektu údajů: zpracování pro účely přímého marketingu, zasílání obchodních sdělení a newsletterů, personalizovaná reklama, měření účinnosti reklamy, používání analytických a reklamních cookies třetích stran, propojení se sociálními sítěmi, profilování pro marketingové účely. Souhlas je udělován samostatně, dobrovolně a lze jej kdykoli odvolat, aniž by tím byla dotčena zákonnost předchozího zpracování. Rozsah zpracování OÚ Správce zpracovává OÚ v těchto režimech: a)	uživatel bez registrace (prohlížení webu) - IP adresa, technicky nezbytné cookies, datum a čas návštěvy, navštívené stránky, identifikace zařízení, typ/verze prohlížeče, rozlišení obrazovky, operační systém; - právní základ: oprávněný zájem (bezpečnost, technické fungování) a/nebo souhlas pro nepodstatné cookies. b)	uživatel s registrací (plnohodnotné používání webu/aplikace) - IP adresa, emailová adresa, přístupové heslo (v šifrované podobě), technicky nezbytné cookies; - dále pak – pouze pokud uživatel vloží: pohlaví, věk, rok/event. datum narození, výška, rodinný stav, vzdělání, město, telefonní čísla, fotografie, Facebook id či Google id (pouze při přihlášení přes třetí strany), nastavení účtu, preference newsletterů, VIP členství, sledované produkty („hlídací pes“), hodnocení produktů a služeb, komunikace s uživatelem, identifikace zařízení, informace o prohlížeči, nastavení obrazovky, operační systém; - přihlášení přes Facebook / Google: správce obdrží příslušný identifikátor a vyžádá si platnou emailovou adresu. Emailová adresa je uložena v zabezpečené databázi, není veřejně zveřejňována a slouží výhradně pro přihlášení a komunikaci mezi uživatelem a správcem. Uživatel ji může kdykoli změnit v sekci „Můj účet“. Pro úplné smazání e-mailové adresy je nutné smazat celý účet. Zpracování, předávání a ochrana OÚ Správce zpracovává OÚ elektronicky a manuálně pověřenými zaměstnanci nebo smluvními zpracovateli při dodržení požadavků GDPR. Pověřené osoby mají přístup k OÚ pouze v nezbytném rozsahu a po nezbytně nutnou dobu. Zpracovatelé a příjemci zajišťující technické, analytické, reklamní a platební služby, v abecedním pořadí: a)	Facebook Ireland Limited, sídlem 4 Grand Canal Square, Grand Canal Harbour, Dublin 2, D02 X525, Irsko; nástroje Facebook, Facebook Business Manager; podmínky: https://cs-cz.facebook.com/about/privacy; b)	Google Ireland Limited, registrační číslo: 368047, sídlem Gordon House, Barrow Street, Dublin 4, Irsko; nástroje Analytics, AdSense, AdWords, Admob; podmínky: https://policies.google.com/ technologies/ads, c)	MAFRA, a.s., sídlem Praha 5, Karla Engliše 519/11, PSČ 150 00, IČ: 45313351; inzerce; d)	Pays.cz s.r.o., sídlem Štefánikova 836/1, Veveří, 602 00 Brno, IČ: 03686515; poskytovatel PR SMS; e)	PayU S.A., sídlem ul. Grunwaldzka 182, 60-166 Poznań, Polsko; poskytovatel platební brány; f)	Seznam.cz, a.s., sídlem Radlická 3294/10, Praha 5, 150 00, IČO 26168685; nástroj reklamy Sklik. Správce zajišťuje ochranu OÚ proti neoprávněnému nebo nahodilému přístupu, změně, zničení, ztrátě, neoprávněným přenosům nebo jinému neoprávněnému zpracování, jakož i proti jinému zneužití záznamů obsahujících OÚ. OÚ jsou zabezpečeny standardními postupy a technologiemi (např. šifrování přístupových hesel, přístupová práva, zálohování). Doba zpracování OÚ OÚ jsou zpracovávány po dobu nezbytnou pro naplnění účelů (čl. I bod 1), nejdéle však: a)	po dobu existence registrace a následně 6 měs
+
+## GET https://www.byty.cz/pro-realitky.aspx -> 200 https://www.byty.cz/pro-realitky.aspx (31233 B)
+title: Vstup pro realitní kanceláře - Byty.cz
+odkazy (53):
+ | https://www.byty.cz/
+Vložit | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Oblíbené | https://www.byty.cz/?search=8
+Vstup RK | https://www.byty.cz/pro-realitky.aspx
+Přihlásit se | https://www.byty.cz/moje/prihlaseni.aspx
+Registrace | https://www.byty.cz/moje/registrace.aspx
+Vložit inzerát | https://www.byty.cz/inzeraty/vlozit-inzerat.aspx
+Byty 1+1 | https://www.byty.cz/byty-1-1-prodej/
+Prodej | https://www.byty.cz/byty-1-1-prodej/
+Pronájem | https://www.byty.cz/byty-1-1-pronajem/
+Byty 2+1 | https://www.byty.cz/byty-2-1-prodej/
+Prodej | https://www.byty.cz/byty-2-1-prodej/
+Pronájem | https://www.byty.cz/byty-2-1-pronajem/
+Byty 3+1 | https://www.byty.cz/byty-3-1-prodej/
+Prodej | https://www.byty.cz/byty-3-1-prodej/
+Pronájem | https://www.byty.cz/byty-3-1-pronajem/
+Byty 4+1 | https://www.byty.cz/byty-4-1-prodej/
+Prodej | https://www.byty.cz/byty-4-1-prodej/
+Pronájem | https://www.byty.cz/byty-4-1-pronajem/
+Byty 5+1 a větší | https://www.byty.cz/byty-5-1-prodej/
+Prodej | https://www.byty.cz/byty-5-1-prodej/
+Pronájem | https://www.byty.cz/byty-5-1-pronajem/
+Ostatní reality | https://www.byty.cz/nemovitosti-ostatni/
+Domy | https://www.byty.cz/domy-prodej/
+Prodej | https://www.byty.cz/domy-prodej/
+Pronájem | https://www.byty.cz/domy-pronajem/
+Pozemky | https://www.byty.cz/pozemky/
+Prodej | https://www.byty.cz/pozemky/
+Pronájem | https://www.byty.cz/pozemky-pronajem/
+Komerční | https://www.byty.cz/komercni-vyrobni-prostory/
+Prodej | https://www.byty.cz/komercni-vyrobni-prostory/
+Pronájem | https://www.byty.cz/komercni-vyrobni-prostory-pronajem/
+Ostatní | https://www.byty.cz/nemovitosti-ostatni/
+Byty.cz | https://www.byty.cz
+importního rozhraní | https://www.byty.cz/navod/profil.aspx#import
+Registrace pro partnery | https://www.byty.cz/moje/registrace-partnera.aspx
+Přihlásit se | https://www.byty.cz/moje/prihlaseni.aspx?partner=1
+Nápověda | https://www.byty.cz/navod/profil.aspx#komerce
+Importní rozhraní | https://www.byty.cz/navod/profil.aspx#import
+Ceník placených služeb | https://www.byty.cz/navod/ceniksluzeb.aspx
+Ceník PDF | https://www.byty.cz/cenikA4.pdf
+Podmínky | https://www.byty.cz/podminky.aspx
+Dotazy | https://www.byty.cz/feedback.aspx
+ | https://www.byty.cz
+Zapomenuté heslo | https://www.byty.cz/info.aspx?id=9
+Napište nám | https://www.byty.cz/feedback.aspx
+Provozní a obchodní podmínky | https://www.byty.cz/podminky.aspx
+Cookies | https://www.byty.cz/navod/cookies.aspx
+O nás | https://www.byty.cz/o-nas.aspx
+Inzertní kategorie | https://www.byty.cz/inzeraty/kategorie.aspx
+Realitní kanceláře | https://www.byty.cz/realitky/
+Financování bydlení | https://www.byty.cz/financovani-bydleni/spocitat-hypoteku.aspx
+Rady a tipy | https://www.byty.cz/blog/
+výskyt 'soukrom': 1
+výskyt 'majitel': 0
+výskyt 'bez realitk': 0
+výskyt 'RK': 2
+výskyt 'makléř': 0
+výskyt 'provize': 0
+--- text ---
+Vstup pro realitní kanceláře - Byty.cz Menu Vložit Oblíbené Vstup RK Přihlásit se Registrace Vložit inzerát Byty 1+1 Prodej Pronájem Byty 2+1 Prodej Pronájem Byty 3+1 Prodej Pronájem Byty 4+1 Prodej Pronájem Byty 5+1 a větší Prodej Pronájem Ostatní reality Domy Prodej Pronájem Pozemky Prodej Pronájem Komerční Prodej Pronájem Ostatní Byty.cz > Vstup pro realitní kanceláře Vstup pro realitní kanceláře Vítáme vás na realitním serveru Byty.cz, který se zaměřuje jak na soukromou, tak i komerční inzerci. Přejete si vkládat libovolné množství inzerátů bez nutnosti jednotlivých aktivací inzerátů? Staňte se partnerem Byty.cz! Výhody: - Individuální přístup ke všem klientům - Bonusový program pro inzerující realitní kanceláře - Uveřejnění PR článku na serveru Byty.cz - Přehledné třídící a vyhledávací funkce - Zobrazení a třídění všech nemovitostí na mapě - Zvýhodnění inzerátů na úvodní stránku a na mapu ve výpisu inzerátů - Vyhodnocování úspěšnosti inzerátů dle aktuálních statistik - Hromadný export inzerátů pomocí importního rozhraní Registrace pro partnery Přihlásit se Podpora pro realitky: Mgr. Gabriela Poltoráková Email: obchod@byty.cz Telefon: +420 777 227 454 Nápověda | Importní rozhraní | Ceník placených služeb | Ceník PDF | Podmínky | Dotazy × Orientační ceník komerční inzerce Počet inzerátů Cena za 6 měsíců Cena za 12 měsíců do 20 1 789 Kč 2 498 Kč do 30 1 999 Kč 3 099 Kč do 50 2 499 Kč 3 598 Kč do 100 2 999 Kč 4 299 Kč do 200 3 299 Kč 5 399 Kč do 300 3 588 Kč 5 987 Kč do 400 3 789 Kč 6 499 Kč do 500 4 199 Kč 7 299 Kč do 800 4 589 Kč 8 199 Kč do 1000 6 099 Kč 9 789 Kč nad 1000 7 799 Kč 11 899 Kč neomezeně 9 899 Kč 16 799 Kč * Uvedené ceny jsou bez DPH © 2009 - 2026 TANGER infosystems s.r.o. Další informace: Zapomenuté heslo Napište nám Provozní a obchodní podmínky Cookies O nás Inzertní kategorie Vstup RK Realitní kanceláře Financování bydlení Rady a tipy Doporučujeme: Zamestnani.cz Auta.Bazar.cz Seznamka.cz Bazar.cz
