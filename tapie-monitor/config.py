@@ -1,0 +1,249 @@
+# -*- coding: utf-8 -*-
+"""
+=====================================================================
+  TAPIE-MONITOR – VŠECHNA NASTAVENÍ NA JEDNOM MÍSTĚ
+=====================================================================
+Tady si můžeš sám upravovat filtry. Pravidla úprav:
+  * text piš do uvozovek "takhle", položky odděluj čárkou,
+  * řádek začínající # je jen poznámka (program ho ignoruje),
+  * po úpravě na GitHubu klikni "Commit changes" – změna platí od
+    příštího běhu.
+Když si nejsi jistý, změň jen čísla nebo přidej/uber slova v seznamech.
+"""
+
+# ---------------------------------------------------------------
+# 1) SPOLEČNÉ
+# ---------------------------------------------------------------
+MODULE_FIRMA_ENABLED = True      # Modul 1: insolvence firem
+MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
+
+WEEKLY_SUMMARY_WEEKDAY = 0       # 0 = pondělí (souhrn týdne)
+MAX_MESSAGES_PER_RUN = 25        # pojistka proti zahlcení Telegramu
+SHOW_RATING_C = True             # False = posílat jen A a B
+
+# Hodnocení: body -> známka (viz README, kapitola "Jak se hodnotí")
+RATING_A_MIN = 7
+RATING_B_MIN = 4
+
+# ---------------------------------------------------------------
+# 2) MODUL FIRMA – velikost
+# ---------------------------------------------------------------
+EMPLOYEES_MIN = 10
+EMPLOYEES_MAX = 150
+LIABILITIES_MAX_EUR = 20_000_000
+# True = firmu, o které VÍME, že je mimo rozsah zaměstnanců, vůbec
+# neposílat. Když údaj chybí ("?"), firma se pošle vždy.
+DROP_IF_SIZE_KNOWN_OUT_OF_RANGE = True
+
+# ---------------------------------------------------------------
+# 3) MODUL FIRMA – Česko (ISIR + ARES)
+# ---------------------------------------------------------------
+CZ_ENABLED = True
+# Při úplně prvním spuštění projde program události ISIR za posledních
+# N dní (aby nezačínal od nuly). Pak už jen nové.
+CZ_BACKFILL_DAYS = 14
+# Aby program znal dlužníky i u starších řízení (konkurs bývá prohlášen
+# 1–3 měsíce po podání návrhu), při prvním běhu si načte i starší
+# události – ale jen si je zapamatuje, neposílá je.
+CZ_CACHE_BACKFILL_DAYS = 120
+CZ_MAX_RUNTIME_MIN = 50   # když nestihne, pokračuje zítra tam, kde skončil
+
+# Stav řízení, který chceme (porovnává se bez diakritiky, stačí část slova)
+CZ_WANTED_STATES = {
+    "KONKURS": "konkurs",
+    "REORGAN": "reorganizace",
+    "UPADEK": "úpadek (způsob řešení zatím neurčen)",
+    "MORATOR": "moratorium (předstupeň reorganizace)",
+}
+# Body za typ řízení (víc = lepší)
+CZ_STATE_POINTS = {"konkurs": 3, "reorganizace": 3,
+                   "úpadek (způsob řešení zatím neurčen)": 2,
+                   "moratorium (předstupeň reorganizace)": 2}
+
+# Události, které znamenají PRODEJ Z MAJETKOVÉ PODSTATY (pošle se
+# zvláštní upozornění u firmy, kterou už sledujeme)
+CZ_SALE_KEYWORDS = ["zpeněž", "zpenez", "výběrové řízení", "vyberove rizeni",
+                    "prodej", "dražb", "drazb", "nabídk", "nabidk"]
+
+# ---------------------------------------------------------------
+# 4) OBORY (CZ-NACE) – kategorie A / B / C a vyloučené obory
+#    Stačí začátek kódu: "25" = celý oddíl 25, "2562" = jen CNC obrábění
+# ---------------------------------------------------------------
+NACE_CATEGORY_A = [  # výrobci s vlastním produktem, celoroční spotřební zboží
+    "10", "11", "13", "14", "15", "16", "17", "18", "20", "21", "22",
+    "23", "26", "27", "29", "30", "31", "32",
+]
+NACE_CATEGORY_B = [  # strojírenství, CNC, kovovýroba, tepelná technika
+    "24", "25", "28", "33", "2521", "2530", "2562", "2811", "2821", "2825",
+]
+NACE_CATEGORY_C = [  # software a aplikace
+    "62", "63", "582",
+]
+NACE_ESHOP = ["4791"]  # e-shopy / značky – jen výjimečné příležitosti
+NACE_EXCLUDED = [      # NECHCI
+    "55", "56",               # gastro, ubytování
+    "41", "42", "43",         # stavebnictví
+    "68",                     # nemovitosti
+    "642", "701",             # holdingy, činnost vedení podniků
+    "932", "0113", "0121",    # zábavní parky, sezónní zemědělství
+]
+CATEGORY_POINTS = {"A": 3, "B": 3, "C": 3, "E-SHOP": 1, "?": 1, "jiný obor": 0}
+
+# Klíčová slova pro zprávy (AT/DE) a pro názvy firem bez NACE
+KEYWORDS_CATEGORY = {
+    "A": ["hersteller", "produktion", "erzeuger", "möbel", "moebel", "textil",
+          "lebensmittel", "kosmetik", "spielwaren", "manufaktur", "brauerei",
+          "výrob", "vyrob"],
+    "B": ["maschinenbau", "cnc", "metall", "stahl", "zerspan", "dreherei",
+          "fräs", "fraes", "blech", "schweiß", "schweiss", "gießerei",
+          "giesserei", "wärmetechnik", "waermetechnik", "kessel", "turbin",
+          "anlagenbau", "werkzeugbau", "strojír", "strojir", "kovo", "obráb"],
+    "C": ["software", "app ", "apps", "it-dienstleist", "digital", "plattform",
+          "saas", "start-up", "startup", "aplikac"],
+    "E-SHOP": ["onlineshop", "online-shop", "e-commerce", "versandhandel",
+               "e-shop", "marke "],
+}
+KEYWORDS_EXCLUDED = [
+    "gastro", "restaurant", "hotel", "wirtshaus", "café", "cafe ", "bar ",
+    "catering", "bäckerei-café", "skigebiet", "seilbahn", "freizeitpark",
+    "baufirma", "bauunternehm", "baumeister", "hochbau", "tiefbau", "bauträger",
+    "immobilien", "projektentwickl", "holding", "privatkonkurs",
+    "schuldenregulierung", "privatinsolvenz", "verbraucherinsolvenz",
+    "privatperson", "stavebn", "realit", "oddlužení", "oddluzeni",
+]
+
+# ---------------------------------------------------------------
+# 5) MODUL FIRMA – Rakousko a Bavorsko (náhrada přes zprávy)
+#    Ediktsdatei a insolvenzbekanntmachungen.de NEJDOU legálně
+#    automatizovat zdarma (viz README). Používáme proto Google News RSS:
+#    KSV1870, AKV, Creditreform a regionální média o insolvencích firem
+#    píšou téměř vždy, i s počtem zaměstnanců a správcem.
+# ---------------------------------------------------------------
+AT_ENABLED = True
+AT_NEWS_QUERIES = [
+    'Sanierungsverfahren eröffnet Dienstnehmer',
+    'Sanierungsverfahren Eigenverwaltung Gläubigerschutzverband',
+    'Konkursverfahren eröffnet Unternehmen Dienstnehmer KSV1870',
+    'Insolvenz Masseverwalter Fortführung Unternehmen',
+    'Insolvenz AKV Sanierungsplan Quote',
+]
+# Zpráva musí obsahovat něco rakouského (místo nebo rakouský odborný výraz):
+AT_MARKERS = [
+    "österreich", "oesterreich", "wien", "graz", "linz", "salzburg", "innsbruck",
+    "klagenfurt", "villach", "st. pölten", "wels", "steyr", "dornbirn", "bregenz",
+    "eisenstadt", "leoben", "krems", "wiener neustadt", "kärnten", "tirol",
+    "vorarlberg", "steiermark", "niederösterreich", "oberösterreich", "burgenland",
+    "ksv1870", "ksv 1870", "akv", "creditreform österreich", "masseverwalter",
+    "sanierungsverfahren", "dienstnehmer", "landesgericht",
+]
+AT_PROCEDURES = {  # klíčové slovo -> typ řízení (a body)
+    "sanierungsverfahren mit eigenverwaltung": ("Sanierungsverfahren (Eigenverwaltung)", 3),
+    "sanierungsverfahren": ("Sanierungsverfahren", 3),
+    "sanierungsplan": ("Sanierungsverfahren / Sanierungsplan", 3),
+    "konkursverfahren": ("Konkurs", 3),
+    "konkurs": ("Konkurs", 3),
+    "insolvenz": ("insolvence (typ ?)", 1),
+}
+
+BAVARIA_ENABLED = True
+BAVARIA_NEWS_QUERIES = [
+    'Insolvenz Bayern Mitarbeiter Amtsgericht',
+    'Insolvenzantrag Amtsgericht München Mitarbeiter',
+    'Insolvenzantrag Amtsgericht Nürnberg Mitarbeiter',
+    'Eigenverwaltung Bayern Unternehmen Investor',
+    'Schutzschirmverfahren Bayern',
+    'Insolvenzverwalter Investorensuche Bayern',
+]
+# Zpráva musí zmínit Bavorsko nebo bavorské místo/soud:
+BAVARIA_PLACES = [
+    "bayern", "bayerisch", "münchen", "muenchen", "nürnberg", "nuernberg",
+    "augsburg", "regensburg", "ingolstadt", "würzburg", "wuerzburg", "fürth",
+    "erlangen", "bamberg", "bayreuth", "landshut", "passau", "rosenheim",
+    "kempten", "hof ", "coburg", "aschaffenburg", "schweinfurt", "weiden",
+    "amberg", "straubing", "deggendorf", "memmingen", "neu-ulm", "ansbach",
+    "traunstein", "weilheim", "wolfratshausen", "oberpfalz", "franken",
+    "schwaben", "allgäu", "allgaeu",
+]
+DE_PROCEDURES = {
+    "schutzschirm": ("Schutzschirmverfahren", 3),
+    "eigenverwaltung": ("Eigenverwaltung", 3),
+    "regelinsolvenz": ("Regelinsolvenz", 3),
+    "insolvenzverfahren eröffnet": ("Regelinsolvenz", 3),
+    "vorläufige insolvenzverwalt": ("Regelinsolvenz (vorläufige)", 2),
+    "vorläufiger insolvenzverwalt": ("Regelinsolvenz (vorläufige)", 2),
+    "insolvenzantrag": ("Insolvenzantrag (typ ?)", 2),
+    "insolvenz": ("insolvence (typ ?)", 1),
+}
+NEWS_MAX_AGE_DAYS = 3   # starší zprávy ignorovat
+
+# ---------------------------------------------------------------
+# 6) MODUL APP – upadající aplikace
+# ---------------------------------------------------------------
+# App Store žebříčky (oficiální veřejné RSS od Apple). Země a kategorie:
+APP_COUNTRIES = ["us", "gb", "de", "cz"]
+APP_GENRES = {          # číslo kategorie Apple -> název
+    6017: "Education",
+    6012: "Lifestyle",
+    6007: "Productivity",
+    6024: "Shopping",
+    6000: "Business",
+    6013: "Health & Fitness",
+}
+APP_CHART_LIMIT = 200
+# Pokles v žebříčku: aplikace byla v posledních 30 dnech aspoň
+# APP_MIN_DAYS_IN_TOP dní v TOP APP_TOP_RANK a teď je o víc než
+# APP_DROP_POSITIONS míst níž (nebo z žebříčku vypadla na 7+ dní).
+APP_TOP_RANK = 50
+APP_MIN_DAYS_IN_TOP = 10
+APP_DROP_POSITIONS = 80
+APP_ABSENT_DAYS = 7
+# Dlouho bez aktualizace u velké aplikace:
+APP_STALE_MONTHS = 12
+APP_MIN_RATINGS = 20_000       # "velká uživatelská základna" (počet hodnocení)
+
+# Aplikace, které chceš hlídat vždy (název z App Store):
+APP_WATCHLIST = [
+    "Mondly", "Busuu", "Memrise", "Babbel", "Drops: Language learning",
+    "Rosetta Stone", "Lingvist", "Beelinguapp", "Mango Languages",
+    "Quizlet", "Photomath", "Elevate", "Blinkist",
+]
+
+APP_FOCUS_KEYWORDS = [  # zaměření (pro zprávy)
+    "language", "learning", "edtech", "education", "tutoring", "app",
+    "consumer", "e-commerce", "ecommerce", "shopify", "subscription",
+    "fitness app", "productivity",
+]
+APP_EXCLUDED_KEYWORDS = [  # hry a krypto ignorovat
+    "game", "gaming", "esports", "casino", "crypto", "bitcoin", "blockchain",
+    "nft", "web3", "token", "defi", "games",
+]
+APP_EXCLUDED_GENRES = ["Games", "Finance"]  # Finance = většinou krypto/burzy
+
+APP_NEWS_QUERIES = [
+    '"language learning app" layoffs',
+    '"language app" sale OR divest OR "strategic review"',
+    'edtech app layoffs',
+    'edtech "exploring a sale"',
+    'app "shut down" OR "sunset" OR "discontinue" consumer app',
+    'Pearson OR Chegg OR Coursera OR Duolingo OR Babbel app divest OR sale OR layoffs',
+    '"consumer app" layoffs startup',
+    'e-commerce tool app acquired OR "for sale" OR layoffs',
+    'app "strategic alternatives"',
+]
+APP_NEWS_SIGNALS = {   # slovo ve zprávě -> signál (a body)
+    "for sale": ("vlastník prodává", 3),
+    "exploring a sale": ("vlastník zvažuje prodej", 3),
+    "strategic alternatives": ("vlastník zvažuje prodej", 3),
+    "strategic review": ("strategická revize / možný prodej", 3),
+    "divest": ("odprodej divize", 3),
+    "sell ": ("vlastník prodává", 2),
+    "shut down": ("ukončení produktu", 3),
+    "shutting down": ("ukončení produktu", 3),
+    "sunset": ("ukončení produktu", 3),
+    "discontinu": ("ukončení produktu", 3),
+    "layoff": ("propouštění", 2),
+    "lays off": ("propouštění", 2),
+    "laid off": ("propouštění", 2),
+    "job cuts": ("propouštění", 2),
+    "restructur": ("restrukturalizace", 2),
+}
