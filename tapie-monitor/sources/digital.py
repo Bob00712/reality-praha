@@ -95,6 +95,21 @@ def extract_deadline(text):
     return None
 
 
+# „Za korunu“ (Tapie style): firma se nabízí za symbolickou cenu (kupec převezme provoz/závazky
+# vůči zaměstnancům, ale ne staré dluhy). Platí pro jakýkoli obor kromě vyloučených.
+SYMBOLIC = [
+    "euro symbolique", "€ symbolique", "symbolischen euro", "symbolischen preis", "symbolischen kaufpreis",
+    "symbolic euro", "symbolic price", "symbolic sum", "symbolic fee", "for one euro", "for €1",
+    "for 1 euro", "for £1", "for one pound", "for a nominal", "nominal price", "nominal sum",
+    "euro simbolico", "prezzo simbolico", "euro simbólico", "precio simbólico",
+    "symbolische euro", "voor één euro", "voor 1 euro", "symbolickou korunu", "za korunu",
+    "za symbolickou cenu", "za 1 kč", "za jednu korunu",
+]
+# Už proběhlé převzetí – jen inspirace, neposílá se
+DONE_WORDS = ["racheté", "a été repris", "reprise par", "übernommen", "übernimmt", "hat gekauft",
+              "was acquired", "acquired by", "bought by", "sold to", "takes over", "took over",
+              "rilevat", "adquirid", "overgenomen", "převzal", "koupil", "koupila"]
+
 DIGITAL = [
     "app", "plattform", "platform", "plateforme", "piattaforma", "plataforma",
     "platforma", "saas", "software", "online", "e-commerce", "onlineshop", "e-shop",
@@ -124,22 +139,26 @@ STAFF_RE = re.compile(
     re.I)
 
 QUERIES = {
-    "DE": ["Insolvenzverwalter Investorensuche Onlineshop Marke", "Insolvenz Onlinehändler Investor gesucht",
+    "DE": ["für einen symbolischen Euro Übernahme Insolvenz", "symbolischer Kaufpreis Investor gesucht",
+           "Insolvenzverwalter Investorensuche Onlineshop Marke", "Insolvenz Onlinehändler Investor gesucht",
            "Start-up Insolvenz App Nutzer", "Insolvenz Plattform Investor gesucht",
            "Insolvenzantrag Online-Plattform Mitarbeiter", "Software Start-up Insolvenz Kunden"],
     "AT": ["Start-up Insolvenz App Nutzer", "Sanierungsverfahren Plattform Software"],
-    "FR": ["redressement judiciaire recherche repreneur marque site", "redressement judiciaire e-commerce repreneur",
+    "FR": ["reprise à l'euro symbolique", "cédée à l'euro symbolique repreneur",
+           "redressement judiciaire recherche repreneur marque site", "redressement judiciaire e-commerce repreneur",
            "appel d'offres reprise plateforme en ligne", "liquidation judiciaire marque e-commerce repreneur",
            "redressement judiciaire plateforme repreneur", "redressement judiciaire application utilisateurs",
            "liquidation judiciaire start-up application", "start-up cherche repreneur plateforme"],
-    "NL": ["faillissement webshop curator zoekt koper", "failliet merk webwinkel doorstart",
+    "NL": ["overname voor een symbolische euro", "faillissement webshop curator zoekt koper", "failliet merk webwinkel doorstart",
            "faillissement platform app gebruikers", "failliet startup app doorstart"],
-    "IT": ["e-commerce marchio fallimento cerca acquirente", "startup app concordato utenti",
+    "IT": ["cessione a un euro simbolico azienda", "e-commerce marchio fallimento cerca acquirente", "startup app concordato utenti",
            "piattaforma digitale fallimento acquirente"],
-    "ES": ["tienda online marca concurso de acreedores busca comprador",
+    "ES": ["venta por un euro simbólico empresa", "tienda online marca concurso de acreedores busca comprador",
            "startup app concurso de acreedores usuarios", "plataforma digital concurso comprador"],
-    "CZ": ["startup aplikace insolvence uživatelé", "platforma insolvence kupec"],
-    "EN": ["European startup insolvency app users", "European app startup administration buyer",
+    "CZ": ["startup aplikace insolvence uživatelé", "platforma insolvence kupec",
+           "firma za symbolickou korunu", "prodej firmy za korunu"],
+    "EN": ["European company sold for one euro symbolic", "for a symbolic euro takeover Europe",
+           "European startup insolvency app users", "European app startup administration buyer",
            "EU startup shuts down app users"],
 }
 COUNTRY_HINT = {"DE": "DE", "AT": "AT", "FR": "FR", "NL": "NL", "IT": "IT", "ES": "ES", "CZ": "CZ",
@@ -314,7 +333,11 @@ def run(seen, fps):
                     continue  # globální web (TechCrunch) – jen evropské firmy
                 strong = next((k for k in STRONG + STRUGGLE if k in low), None)
                 medium = next((k for k in MEDIUM if k in low), None)
-                if not (strong or medium):
+                symbolic = next((k for k in SYMBOLIC if k in low), None)
+                if symbolic and any(w in low for w in DONE_WORDS) and not \
+                        any(k in low for k in BUYER_CALL):
+                    symbolic = None   # už prodáno – pro nás jen inspirace
+                if not (strong or medium or symbolic):
                     continue
                 if medium and not strong and config.DIGITAL_LAYOFFS_ARE_STRONG:
                     strong = medium
@@ -328,6 +351,9 @@ def run(seen, fps):
                 smala = bool(buyer and (digital or brand))
                 if smala and config.DIGITAL_BUYER_CALL_IS_AAA:
                     g = "AAA"   # správce aktivně hledá kupce digitálního byznysu/značky = vždy zajímavé
+                if symbolic and config.SYMBOLIC_PRICE_IS_AAA:
+                    g = "AAA"   # nabídka za symbolickou cenu (Tapie style) = vždy zajímavé
+                    deadline = deadline or extract_deadline(text)
                 key = "DIGI:" + hashlib.sha1(it["title"].lower().encode()).hexdigest()[:16]
                 if key in seen or news.is_duplicate(it["title"], fps):
                     continue
@@ -344,9 +370,12 @@ def run(seen, fps):
                     "key": key, "fp": fp, "module": "DIGITAL", "source": f"zprávy {loc}",
                     "name": news.guess_company(it["title"]),
                     "country": COUNTRY_HINT.get(loc, "?") if eu_native or loc != "EN" else "EU?",
-                    "procedure": (f"správce hledá kupce („{buyer}“)" if smala else signal_label(strong or medium)),
+                    "procedure": (f"💶 převzetí za symbolickou cenu – Tapie style („{symbolic}“)" if symbolic
+                                  else f"správce hledá kupce („{buyer}“)" if smala
+                                  else signal_label(strong or medium)),
                     "deadline": deadline,
-                    "field": (f"digitální produkt / značka ({digital or brand})" if (digital or brand) else "?"),
+                    "field": (f"digitální produkt / značka ({digital or brand})" if (digital or brand)
+                              else "firma (obor viz zpráva)" if symbolic else "?"),
                     "size": ", ".join(size) or "?",
                     "contact": news.extract_admin(text) or
                                "? – správce/vlastník je ve zprávě; u FR „administrateur judiciaire“",

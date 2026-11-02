@@ -4,6 +4,8 @@
 > přehled všech AAA příležitostí s rozborem. Výjimka: když má příležitost termín pro nabídky
 > do 7 dní (např. „repreneur recherché jusqu'au …“), přijde hned. Nejcennější typ je „Smala“:
 > správce veřejně hledá kupce digitálního byznysu/značky (web, zákazníci, zásoby) – ten je AAA vždy.
+> Stejně tak **„za korunu“ (Tapie style)**: firma nabízená za symbolickou cenu (1 €, 1 Kč, „euro symbolique“,
+> „symbolischer Euro“…) v jakémkoli oboru – už proběhlá převzetí se neposílají.
 
 Každé ráno (cca 5:23 v zimě, 6:23 v létě) projde zdroje a pošle do Telegramu **jen nové** případy:
 
