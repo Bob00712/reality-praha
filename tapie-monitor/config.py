@@ -24,7 +24,8 @@ MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
 #         velká základna (APP_AAA_MIN_RATINGS hodnocení)
 ONLY_AAA = True
 ANALYSIS_ENABLED = True   # ke každému případu potenciál, rizika, doporučení
-APP_AAA_MIN_RATINGS = 100_000   # "hodně používaná" = aspoň tolik hodnocení
+APP_AAA_MIN_RATINGS = 10_000    # "hodně používaná" = aspoň tolik hodnocení (v EU obchodě, kde je v žebříčku)
+APP_MIN_AVG_RATING = 3.0        # průměrné hodnocení pod tím = rozbitá/mrtvá appka → vynechat
 APP_REQUIRE_FOCUS = False       # False = obor aplikace je jedno (jen ne hry/krypto)
 # Horní hranice: aplikace s víc hodnoceními jsou globální giganti (ChatGPT, Outlook…),
 # které nikdo neprodá – to nejsou příležitosti.
@@ -227,7 +228,9 @@ NEWS_MAX_AGE_DAYS = 3   # starší zprávy ignorovat
 # 6) MODUL APP – upadající aplikace
 # ---------------------------------------------------------------
 # App Store žebříčky (oficiální veřejné RSS od Apple). Země a kategorie:
-APP_COUNTRIES = ["us", "gb", "de", "cz"]
+# EU trh bez Bulharska, Rumunska a Polska (kódy obchodů App Store):
+APP_COUNTRIES = ["de", "fr", "it", "es", "nl", "be", "at", "se", "dk", "fi", "ie", "pt",
+                 "cz", "sk", "hu", "gr", "si", "hr", "lu", "ee", "lv", "lt", "cy", "mt"]
 APP_GENRES = {          # číslo kategorie Apple -> název
     6017: "Education",
     6012: "Lifestyle",
@@ -260,7 +263,7 @@ APP_DROP_POSITIONS = 80
 APP_ABSENT_DAYS = 7
 # Dlouho bez aktualizace u velké aplikace:
 APP_STALE_MONTHS = 18
-APP_MIN_RATINGS = 20_000       # "velká uživatelská základna" (počet hodnocení)
+APP_MIN_RATINGS = 5_000        # spodní hranice pro známku B (počet hodnocení)
 
 # Aplikace, které chceš hlídat vždy (název z App Store):
 APP_WATCHLIST = [
