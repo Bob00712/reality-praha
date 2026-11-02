@@ -56,10 +56,10 @@ vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je,
 ## Filtr realitek (`classify` → `rk` / `soukromy` / `nejiste`)
 Posílá se jen `soukromy` a `nejiste` (`SELLER_FILTER = "rk_ven"`). Vyřadí se jako RK, pokud:
 - jméno je na seznamu `RK_SELLERS` (Bobův seznam – M&M, Paschke, HVB, Finpos, Next Reality, ZOOM, Bohemian Estates, Ideální nájemce,
-  Dumrealit, Ladislav Burian/REALBrána…; když Bob nahlásí další, přidej sem),
+  Dumrealit, Ladislav Burian/REALBrána, Pavelková…; když Bob nahlásí další, přidej sem),
 - jméno obsahuje firmu (`Jméno - Firma`, čárku, s.r.o./spol., `…Real/Reality/Estate/Invest`, `REAL…`),
 - text obsahuje `NO_RK_WORDS` („RK nevolat" apod. – Bob tyto majitele nechce oslovovat),
-- text obsahuje silné RK výrazy (`RK_WORDS`: provize, makléř, zprostředkuje, ID nabídky, ev. č., …webrealit.cz…),
+- text obsahuje silné RK výrazy (`RK_WORDS`: provize, makléř, zprostředkuje, výhradní zastoupení, ID nabídky, ev. č., …webrealit.cz…),
 - stejný prodávající/telefon má ≥ 3 inzeráty (`RK_MIN_LISTINGS`), nebo byl dříve vyřazen (paměť `RK_KNOWN`, `RK_PHONES`).
 Slabé znaky (`RK_WEAK`: „nabízíme k pronájmu", samotné „RK", „exkluzivní") inzerát nevyřadí, jen označí ❔.
 Priorita Boba: **raději občas propustit realitku, než přijít o soukromníka.**

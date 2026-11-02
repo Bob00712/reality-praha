@@ -88,6 +88,7 @@ RK_WORDS = [
     r"poplatek za (podnájem|zprostředkování|služby)", r"\w*realit\w*\.(cz|com|eu)",
     r"číslo zakázky", r"id zakázky", r"evidenční číslo", r"kontaktujte (makléře|naši)",
     r"rezervační (poplatek|smlouv)", r"právní servis", r"financování zajistíme", r"hypoteční poradenství",
+    r"výhradn\w* (zastoupen|smlouv|prodej|nabíd|zprostředk)", r"v zastoupení (majitel|vlastník)",
     r"re/?max", r"century ?21", r"m ?& ?m reality", r"m ?& ?m\b", r"maxima reality", r"svoboda ?& ?williams",
     r"engel ?& ?v[oö]lkers", r"lexxus", r"bidli", r"realitymix", r"sting", r"mm reality",
     r"reality\.cz", r"realit[ay]\b.*s\.r\.o", r"s\.r\.o\.", r"\bs\.? ?r\.? ?o\b", r"\bspol\.", r"a\.s\.", r"properties", r"real estate",
@@ -97,7 +98,7 @@ RK_SELLERS = [
     "ladislav burian", "realbrána", "realbrana",
     "ideální nájemce", "dumrealit", "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
     "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
-    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting",
+    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting", "pavelková",
 ]
 
 # Inzeráty, kde majitel výslovně nechce RK – vyřadit (nemá smysl volat)
