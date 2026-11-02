@@ -193,19 +193,20 @@ def esc(s):
 
 
 def format_case(c):
-    flag = {"CZ": "🇨🇿", "AT": "🇦🇹", "DE": "🇩🇪", "US": "🇺🇸"}.get(c.get("country"), "🌍")
+    flag = {"CZ": "🇨🇿", "AT": "🇦🇹", "DE": "🇩🇪", "US": "🇺🇸", "FR": "🇫🇷", "NL": "🇳🇱",
+            "IT": "🇮🇹", "ES": "🇪🇸"}.get(c.get("country"), "🌍")
     label = c.get("grades") or c["rating"]
     head = f"<b>[{c['module']}] {esc(label)}</b> · <b>{esc(c['name'])}</b>"
     if c.get("update"):
         head = f"<b>[{c['module']}] {esc(label)} · {esc(c['update'])}</b>\n<b>{esc(c['name'])}</b>"
     lines = [head,
              f"{flag} Země: {esc(c.get('country'))}",
-             f"⚖️ {'Signál' if c['module'] == 'APP' else 'Řízení'}: {esc(c.get('procedure'))}",
+             f"⚖️ {'Řízení' if c['module'] == 'FIRMA' else 'Signál'}: {esc(c.get('procedure'))}",
              f"🏭 Obor: {esc(c.get('field'))}",
              f"👥 Velikost: {esc(c.get('size'))}"]
     if c["module"] == "FIRMA":
         lines.append(f"💶 Závazky: {esc(c.get('liabilities'))}")
-    lines.append(f"📇 {'Vlastník' if c['module'] == 'APP' else 'Správce'}: {esc(c.get('contact'))}")
+    lines.append(f"📇 {'Správce' if c['module'] == 'FIRMA' else 'Vlastník / správce'}: {esc(c.get('contact'))}")
     for n in c.get("notes", []):
         lines.append(f"ℹ️ {esc(n)}")
     if c.get("link"):
