@@ -44,6 +44,13 @@ def collect(state, seen, fps, only=None):
 
 
 def send_daily(cases, errors):
+    if config.ONLY_AAA:
+        dropped = [c for c in cases if c.get("grades") != "AAA"]
+        cases = [c for c in cases if c.get("grades") == "AAA"]
+        log(f"[filtr] AAA: {len(cases)}, nevyhovělo: {len(dropped)}")
+        if not cases:
+            log("[telegram] žádný AAA případ – nic se neposílá")
+            return []
     if not config.SHOW_RATING_C:
         cases = [c for c in cases if c["rating"] != "C"]
     cases.sort(key=lambda c: (ORDER.get(c["rating"], 3), c["module"], -c.get("points", 0)))
@@ -76,6 +83,9 @@ def send_daily(cases, errors):
 def weekly_summary(log_cases):
     since = (now_utc() - timedelta(days=7)).strftime("%Y-%m-%d")
     week = [c for c in log_cases if c.get("date", "") >= since]
+    week = [c for c in week if ":sale:" not in (c.get("key") or "")]
+    if config.ONLY_AAA:
+        week = [c for c in week if c.get("grades") == "AAA"]
     week.sort(key=lambda c: (ORDER.get(c["rating"], 3), c["module"], c["name"]))
     lines = [f"📊 <b>Souhrn týdne (od {since})</b> – {len(week)} případů"]
     if not week:
@@ -84,7 +94,7 @@ def weekly_summary(log_cases):
     for c in week:
         if c["rating"] != cur:
             cur = c["rating"]
-            lines.append(f"\n<b>Hodnocení {cur}</b>")
+            lines.append(f"\n<b>Hodnocení {'AAA' if config.ONLY_AAA else cur}</b>")
         link = f' – <a href="{html.escape(c["link"])}">odkaz</a>' if c.get("link") else ""
         lines.append(f"[{c['module']}] {esc(c['name'])} ({esc(c.get('country'))}) · "
                      f"{esc(c.get('procedure'))} · {esc(c.get('size'))}{link}")
@@ -136,7 +146,7 @@ def main():
             fp_store.append({"d": t, "fp": c["fp"]})
         log_cases.append({k: c.get(k) for k in
                           ("key", "module", "name", "country", "procedure", "size",
-                           "rating", "link")} | {"date": t})
+                           "rating", "grades", "link")} | {"date": t})
     # případy, které jsme vyřadili jen kvůli SHOW_RATING_C, si také pamatujeme
     for c in cases:
         if c["key"] not in seen and c["rating"] == "C" and not config.SHOW_RATING_C:
@@ -149,12 +159,14 @@ def main():
     log_cutoff = (now_utc() - timedelta(days=60)).strftime("%Y-%m-%d")
     log_cases = [c for c in log_cases if c.get("date", "") >= log_cutoff]
 
+    # týdenní souhrn jen jednou za den (i když běh spustíme víckrát)
+    if now_utc().weekday() == config.WEEKLY_SUMMARY_WEEKDAY and state.get("weekly_sent") != t:
+        weekly_summary(log_cases)
+        state["weekly_sent"] = t
+
     save_json(STATE_FILE, state)
     save_json(CASES_FILE, log_cases)
     log(f"[hotovo] odesláno {len(sent)} z {len(cases)}; chyby: {errors or 'žádné'}")
-
-    if now_utc().weekday() == config.WEEKLY_SUMMARY_WEEKDAY:
-        weekly_summary(log_cases)
 
 
 if __name__ == "__main__":

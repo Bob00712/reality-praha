@@ -17,6 +17,15 @@ Když si nejsi jistý, změň jen čísla nebo přidej/uber slova v seznamech.
 MODULE_FIRMA_ENABLED = True      # Modul 1: insolvence firem
 MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
 
+# Posílat JEN případy, které sedí ve všech třech kritériích (známka AAA):
+#  FIRMA: typ řízení (konkurs/reorganizace/Sanierung/Eigenverwaltung…) +
+#         obor A/B/C (známý) + velikost 10–150 zaměstnanců (známá)
+#  APP:   silný signál (propad/prodej/ukončení) + jazyky/vzdělávání +
+#         velká základna (APP_AAA_MIN_RATINGS hodnocení)
+ONLY_AAA = True
+ANALYSIS_ENABLED = True   # ke každému případu potenciál, rizika, doporučení
+APP_AAA_MIN_RATINGS = 100_000
+
 WEEKLY_SUMMARY_WEEKDAY = 0       # 0 = pondělí (souhrn týdne)
 MAX_MESSAGES_PER_RUN = 25        # pojistka proti zahlcení Telegramu
 SHOW_RATING_C = True             # False = posílat jen A a B

@@ -13,7 +13,7 @@ nejlepší legální náhrada zdarma.
 import hashlib
 
 import config
-from common import (log, rate, size_points, liab_points, fmt_employees, fmt_eur,
+from common import (log, rate, size_points, liab_points, fmt_employees, fmt_eur, grades_firma,
                     extract_employees, extract_liabilities)
 from sources import news
 from sources.firma_rules import classify_text, CAT_LABEL
@@ -75,6 +75,9 @@ def _process(items, country, table, seen, fps, require_places=None):
                       "Údaje ze zprávy – ověř v úředním rejstříku."],
             "points": points,
             "rating": rate(points),
+            "grades": grades_firma(ppts, cat, sp, liab),
+            "cat": cat,
+            "employees": emp,
         })
     return out
 

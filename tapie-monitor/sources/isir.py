@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
 import config
-from common import (http, log, norm, now_utc, rate, size_points, liab_points,
+from common import (http, log, norm, now_utc, rate, size_points, liab_points, grades_firma,
                     fmt_employees)
 from sources import ares
 from sources.firma_rules import classify_nace, CAT_LABEL
@@ -274,6 +274,8 @@ def run(state, seen):
 
 def build_case(sz, c, stage, ev):
     a = ares.lookup(c.get("ico")) or {}
+    if not a:
+        return None  # bez záznamu v ARES (typicky fyzická osoba) – nechceme
     if ares.is_natural_person(a.get("legal_form")):
         return None  # fyzická osoba (podnikatel) – nechceme
     name = a.get("name") or c.get("name") or "?"
@@ -316,4 +318,7 @@ def build_case(sz, c, stage, ev):
         "notes": notes,
         "points": points,
         "rating": rate(points),
+        "grades": grades_firma(config.CZ_STATE_POINTS.get(stage, 1), cat, sp),
+        "cat": cat,
+        "employees": emp,
     }
