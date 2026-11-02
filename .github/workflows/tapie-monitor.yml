@@ -44,10 +44,16 @@ jobs:
           git add data/
           git diff --staged --quiet && exit 0
           git commit -m "tapie stav $(date -u +%F)"
+          cp data/state.json /tmp/our_state.json; cp data/cases.json /tmp/our_cases.json
           for i in 1 2 3 4 5; do
             git push origin HEAD:main && exit 0
-            echo "push odmítnut, přebírám novější main (pokus $i)"
-            git pull --rebase origin main || exit 1
+            echo "push odmítnut, slučuji se stavem z novějšího main (pokus $i)"
+            git fetch origin main
+            git reset --hard origin/main
+            python monitor.py --merge /tmp/our_state.json /tmp/our_cases.json
+            git add data/
+            git diff --staged --quiet && exit 0
+            git commit -m "tapie stav merge $(date -u +%F)"
             sleep $((RANDOM % 10 + 3))
           done
           exit 1

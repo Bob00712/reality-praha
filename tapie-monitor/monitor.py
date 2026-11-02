@@ -7,6 +7,7 @@
   python monitor.py --only firma|app
 """
 import argparse
+import json
 import html
 import sys
 import traceback
@@ -104,14 +105,46 @@ def weekly_summary(log_cases):
     telegram_send("\n".join(lines))
 
 
+def merge_state(our_state_path, our_cases_path):
+    """Souběžný běh uložil stav dřív než my – spoj oba, ať se nic nepošle dvakrát."""
+    theirs = load_json(STATE_FILE, {})
+    ours = load_json(our_state_path, {})
+    seen = theirs.setdefault("seen", {})
+    for k, v in ours.get("seen", {}).items():
+        seen.setdefault(k, v)
+    fps = {json.dumps(f, sort_keys=True): f for f in theirs.get("fps", []) + ours.get("fps", [])}
+    theirs["fps"] = list(fps.values())
+    ti, oi = theirs.setdefault("isir", {}), ours.get("isir", {})
+    if oi.get("last_id", 0) > ti.get("last_id", 0):
+        ti["last_id"] = oi["last_id"]
+    for sz, c in oi.get("cases", {}).items():
+        ti.setdefault("cases", {}).setdefault(sz, c)
+    if ours.get("apps", {}).get("best_day", "") >= theirs.get("apps", {}).get("best_day", ""):
+        theirs["apps"] = ours.get("apps", theirs.get("apps", {}))
+    theirs["weekly_sent"] = max(theirs.get("weekly_sent", ""), ours.get("weekly_sent", ""))
+    for k, v in ours.items():
+        theirs.setdefault(k, v)
+    cases = load_json(CASES_FILE, [])
+    have = {(c.get("key"), c.get("date")) for c in cases}
+    cases += [c for c in load_json(our_cases_path, []) if (c.get("key"), c.get("date")) not in have]
+    save_json(STATE_FILE, theirs)
+    save_json(CASES_FILE, cases)
+    log(f"[merge] sloučeno: {len(seen)} odeslaných klíčů, {len(cases)} případů v logu")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--test", action="store_true")
     ap.add_argument("--weekly", action="store_true")
     ap.add_argument("--chats", action="store_true")
+    ap.add_argument("--merge", nargs=2, metavar=("OUR_STATE", "OUR_CASES"),
+                    help="sloučí náš stav do novějšího stavu z repa (po souběžném běhu)")
     ap.add_argument("--only", choices=["firma", "app", "digital"])
     args = ap.parse_args()
 
+    if args.merge:
+        merge_state(*args.merge)
+        return
     if args.chats:
         from common import telegram_find_chats
         telegram_find_chats()
