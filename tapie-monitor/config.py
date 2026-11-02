@@ -24,7 +24,9 @@ MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
 #         velká základna (APP_AAA_MIN_RATINGS hodnocení)
 ONLY_AAA = True
 ANALYSIS_ENABLED = True   # ke každému případu potenciál, rizika, doporučení
-APP_AAA_MIN_RATINGS = 100_000
+APP_AAA_MIN_RATINGS = 100_000   # "hodně používaná" = aspoň tolik hodnocení
+APP_REQUIRE_FOCUS = False       # False = obor aplikace je jedno (jen ne hry/krypto)
+APP_NEWS_MAX_AGE_DAYS = 14      # zprávy o aplikacích: jak daleko zpět hledat
 
 WEEKLY_SUMMARY_WEEKDAY = 0       # 0 = pondělí (souhrn týdne)
 MAX_MESSAGES_PER_RUN = 25        # pojistka proti zahlcení Telegramu
@@ -212,6 +214,20 @@ APP_GENRES = {          # číslo kategorie Apple -> název
     6024: "Shopping",
     6000: "Business",
     6013: "Health & Fitness",
+    6005: "Social Networking",
+    6008: "Photo & Video",
+    6002: "Utilities",
+    6016: "Entertainment",
+    6003: "Travel",
+    6023: "Food & Drink",
+    6011: "Music",
+    6010: "Navigation",
+    6001: "Weather",
+    6006: "Reference",
+    6018: "Books",
+    6020: "Medical",
+    6009: "News",
+    6004: "Sports",
 }
 APP_CHART_LIMIT = 200
 # Pokles v žebříčku: aplikace byla v posledních 30 dnech aspoň
@@ -253,6 +269,11 @@ APP_NEWS_QUERIES = [
     '"consumer app" layoffs startup',
     'e-commerce tool app acquired OR "for sale" OR layoffs',
     'app "strategic alternatives"',
+    'popular app "shutting down" OR "will shut down"',
+    'app maker layoffs OR "lays off"',
+    'app "acquired by" OR "agreed to sell" consumer',
+    'company "sells" app OR "divests" app',
+    'subscription app "for sale" OR "exploring sale"',
 ]
 APP_NEWS_SIGNALS = {   # slovo ve zprávě -> signál (a body)
     "for sale": ("vlastník prodává", 3),

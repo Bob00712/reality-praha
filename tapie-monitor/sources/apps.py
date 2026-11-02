@@ -71,6 +71,29 @@ def lookup(ids, cc="us"):
     return out
 
 
+STOPWORDS = {"The", "A", "An", "App", "Apps", "How", "Why", "What", "After", "Its", "Inc",
+             "New", "CEO", "Report", "Exclusive", "Update", "This", "Startup", "Company"}
+
+
+def find_app_for_news(title):
+    """Zkusí ke zprávě najít aplikaci v App Store (kvůli velikosti a vlastníkovi)."""
+    import re as _re
+    cands = _re.findall(r"\b([A-Z][\w'&.-]+(?:\s+[A-Z][\w'&.-]+){0,2})", title)
+    seen_c = []
+    for c in cands:
+        c = " ".join(w for w in c.split() if w not in STOPWORDS).strip(" .'")
+        if len(c) >= 3 and c not in seen_c:
+            seen_c.append(c)
+    for term in seen_c[:3]:
+        q = urllib.parse.urlencode({"term": term, "entity": "software", "limit": 3, "country": "us"})
+        data = _get_json(f"https://itunes.apple.com/search?{q}")
+        for r in (data or {}).get("results") or []:
+            names = f"{r.get('trackName', '')} {r.get('sellerName', '')} {r.get('artistName', '')}".lower()
+            if term.lower().split()[0] in names:
+                return r
+    return None
+
+
 def search_app(term):
     q = urllib.parse.urlencode({"term": term, "entity": "software", "limit": 1, "country": "us"})
     data = _get_json(f"https://itunes.apple.com/search?{q}")
@@ -232,7 +255,7 @@ def run_charts(state, seen):
 def run_news(seen, fps):
     items = []
     for q in config.APP_NEWS_QUERIES:
-        items += news.search(q, "EN")
+        items += news.search(q, "EN", days=config.APP_NEWS_MAX_AGE_DAYS)
     out = []
     for it in items:
         text = f"{it['title']} {it['summary']}".lower()
@@ -249,6 +272,19 @@ def run_news(seen, fps):
         fp = sorted(news.fingerprint(it["title"]))
         fps.append(fp)
         focus = 2 if any(k in text for k in ("language", "learning", "edtech", "education")) else 1
+        app = find_app_for_news(it["title"]) if sig[1] >= 3 else None
+        ratings = int((app or {}).get("userRatingCount") or 0)
+        if app and _excluded(app.get("trackName", ""), app.get("primaryGenreName", "")):
+            continue
+        if app:
+            case = _app_case(app, sig[0], sig[1])
+            case.update({"key": key, "fp": fp, "source": "zprávy + App Store", "link": it["link"]})
+            case["links"].insert(0, ("aplikace v App Store", app.get("trackViewUrl", "")))
+            case["notes"] = [f"Titulek: {it['title']}",
+                             f"Zdroj: {it['source'] or '?'} ({it['date'] or '?'})",
+                             "Aplikace dohledána podle názvu ve zprávě – ověř, že jde o tu správnou."] + case["notes"]
+            out.append(case)
+            continue
         points = sig[1] + focus + 1  # +1 = velikost "?"
         out.append({
             "key": key, "fp": fp, "module": "APP", "source": "zprávy",
@@ -261,7 +297,7 @@ def run_news(seen, fps):
             "link": it["link"], "links": [],
             "notes": [f"Titulek: {it['title']}", f"Zdroj: {it['source'] or '?'} ({it['date'] or '?'})"],
             "points": points, "rating": rate(points, "APP"),
-            "grades": grades_app(sig[1], focus, 0),
+            "grades": grades_app(sig[1], focus, ratings),
         })
     log(f"[app] zpráv {len(items)}, případů {len(out)}")
     return out

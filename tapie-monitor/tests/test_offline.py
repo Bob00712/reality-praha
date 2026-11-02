@@ -71,6 +71,8 @@ RSS = """<rss><channel>
 <link>https://news.example/3</link><pubDate>{pub}</pubDate><source>BR</source><description></description></item>
 <item><title>LinguaPro language learning app owner exploring a sale after layoffs - TechCrunch</title>
 <link>https://news.example/4</link><pubDate>{pub}</pubDate><source>TechCrunch</source><description></description></item>
+<item><title>Pearson will shut down Mondly app next year - The Verge</title>
+<link>https://news.example/6</link><pubDate>{pub}</pubDate><source>The Verge</source><description></description></item>
 <item><title>Crypto game studio lays off staff</title><link>https://news.example/5</link>
 <pubDate>{pub}</pubDate><source>X</source><description></description></item>
 </channel></rss>"""
@@ -109,7 +111,10 @@ def fake_http(method, url, **kw):
             return Resp(js={"feed": {"entry": entries}})
         return Resp(js={"feed": {}})
     if "itunes.apple.com/search" in url:
-        return Resp(js={"results": [{"trackId": 777}]} if "Mondly" in url else {"results": []})
+        mondly = {"trackId": 777, "trackName": "Mondly", "sellerName": "Pearson", "artistName": "ATi Studios",
+                  "userRatingCount": 150000, "primaryGenreName": "Education",
+                  "trackViewUrl": "https://apps.apple.com/app/id777"}
+        return Resp(js={"results": [mondly]} if "Mondly" in url else {"results": []})
     if "itunes.apple.com/lookup" in url:
         old = (NOW - timedelta(days=500)).strftime("%Y-%m-%dT00:00:00Z")
         return Resp(js={"results": [
@@ -148,7 +153,8 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "Hotel Alpenblick" not in allt
     assert "Metallbau Schmid" in allt
     # jen AAA: aplikace bez známé velikosti / jen bez aktualizace neprojdou
-    assert "LinguaPro" not in allt and "Crypto" not in allt and "Mondly" not in allt
+    assert "LinguaPro" not in allt and "Crypto" not in allt
+    assert "[APP] AAA" in allt and "ukončení produktu" in allt  # zpráva + dohledaná velká appka
     assert "[FIRMA] AAA" in allt and "Business potenciál" in allt and "Rizika" in allt
     from common import split_message
     long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))
