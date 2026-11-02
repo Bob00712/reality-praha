@@ -80,7 +80,10 @@ nebo víc než 150 zaměstnanců (vypneš `DROP_IF_SIZE_KNOWN_OUT_OF_RANGE = Fal
 ## Modul [DIGITAL] – upadající digitální byznys v EU (model Bending Spoons v menším)
 Hledá v evropských zprávách (DE, AT, FR, NL, IT, ES, CZ + EN) digitální produkty – appky, platformy,
 SaaS, e-shopy – které jsou v insolvenci (Insolvenz, redressement judiciaire, faillissement, concurso…),
-hledají kupce/investora nebo končí. **AAA** jen když zpráva uvádí konkrétní velikost: aspoň
+hledají kupce/investora nebo končí. Navíc čte tech weby (TechCrunch – jen evropské firmy, Sifted, tech.eu,
+EU-Startups, Silicon Canals, Trending Topics, deutsche-startups, t3n, Maddyness, StartupItalia, CzechCrunch)
+a bere i signály „nedaří se“ (propouštění, ztráta uživatelů, nedostatek peněz, ukončení, strategická revize).
+Tržby/ARR 1–100 mil. se počítají jako velikost. **AAA** jen když zpráva uvádí konkrétní velikost: aspoň
 10 000 uživatelů/zákazníků (max. 20 mil.) nebo 10–300 zaměstnanců. Bez Bulharska, Rumunska, Polska.
 Nastavení `DIGITAL_*` v `config.py`.
 
