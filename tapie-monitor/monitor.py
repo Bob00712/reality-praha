@@ -40,6 +40,9 @@ def collect(state, seen, fps, only=None):
         from sources import apps
         safe("App Store", lambda: apps.run_charts(state, seen))
         safe("APP zprávy", lambda: apps.run_news(seen, fps))
+    if getattr(config, "MODULE_DIGITAL_ENABLED", False) and only in (None, "digital"):
+        from sources import digital
+        safe("DIGITAL zprávy", lambda: digital.run(seen, fps))
     return cases, errors
 
 
@@ -106,7 +109,7 @@ def main():
     ap.add_argument("--test", action="store_true")
     ap.add_argument("--weekly", action="store_true")
     ap.add_argument("--chats", action="store_true")
-    ap.add_argument("--only", choices=["firma", "app"])
+    ap.add_argument("--only", choices=["firma", "app", "digital"])
     args = ap.parse_args()
 
     if args.chats:

@@ -16,6 +16,13 @@ Když si nejsi jistý, změň jen čísla nebo přidej/uber slova v seznamech.
 # ---------------------------------------------------------------
 MODULE_FIRMA_ENABLED = True      # Modul 1: insolvence firem
 MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
+MODULE_DIGITAL_ENABLED = True    # Modul 3: upadající digitální byznys v EU (à la Bending Spoons)
+
+# DIGITAL – AAA jen když zpráva uvádí konkrétní velikost:
+DIGITAL_MIN_USERS = 10_000       # aspoň tolik uživatelů/zákazníků …
+DIGITAL_MAX_USERS = 20_000_000   # … ale ne globální gigant
+DIGITAL_MAX_STAFF = 300          # nebo 10–300 zaměstnanců
+DIGITAL_NEWS_DAYS = 14           # jak daleko zpět číst zprávy
 
 # Posílat JEN případy, které sedí ve všech třech kritériích (známka AAA):
 #  FIRMA: typ řízení (konkurs/reorganizace/Sanierung/Eigenverwaltung…) +

@@ -16,6 +16,11 @@ LOCALES = {
     "AT": dict(hl="de", gl="AT", ceid="AT:de"),
     "DE": dict(hl="de", gl="DE", ceid="DE:de"),
     "EN": dict(hl="en-US", gl="US", ceid="US:en"),
+    "FR": dict(hl="fr", gl="FR", ceid="FR:fr"),
+    "NL": dict(hl="nl", gl="NL", ceid="NL:nl"),
+    "IT": dict(hl="it", gl="IT", ceid="IT:it"),
+    "ES": dict(hl="es", gl="ES", ceid="ES:es"),
+    "CZ": dict(hl="cs", gl="CZ", ceid="CZ:cs"),
 }
 
 

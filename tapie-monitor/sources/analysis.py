@@ -114,7 +114,33 @@ def analyze_app(c):
     return potential, risks, verdict
 
 
+def analyze_digital(c):
+    sig = (c.get("procedure") or "").lower()
+    insolv = any(k in sig for k in ("insolv", "redressement", "liquidation", "faillis", "failliet",
+                                    "concorso", "concordato", "fallimento", "concurso", "administrat"))
+    potential = []
+    if insolv:
+        potential.append("Prodej z insolvence (asset deal: značka, doména, kód, uživatelská báze) "
+                         "bez převzetí dluhů – správce typicky preferuje rychlost a jistotu plnění.")
+    else:
+        potential.append("Vlastník hledá kupce/ukončuje produkt – prostor pro levný carve-out aktiv.")
+    potential.append(f"Velikost: {c.get('size')}. Model Bending Spoons: zeštíhlit náklady (cloud, tým), "
+                     "zavést/zdražit předplatné, centralizovat vývoj – marže lze zvednout rychle.")
+    risks = [
+        "Převod osobních údajů uživatelů (GDPR) – nutný právní titul a informování uživatelů.",
+        "Hodnota je v týmu/kódu – ověř, kdo vlastní IP, technický dluh a závislosti na dodavatelích.",
+        "Uživatelé po oznámení insolvence rychle odcházejí – čas hraje proti hodnotě.",
+        "Data ze zprávy nejsou ověřená – vyžádej metriky (MAU, MRR, churn) a účetní závěrky.",
+    ]
+    verdict = ("PRIORITA: kontaktovat správce/administrateur do 48 h, vyžádat teaser, data room "
+               "a termín pro nabídky." if insolv else
+               "SLEDOVAT: neformální kontakt s vlastníkem, zjistit ochotu prodat a metriky.")
+    return potential, risks, verdict
+
+
 def analyze(c):
+    if c.get("module") == "DIGITAL":
+        return analyze_digital(c)
     return analyze_app(c) if c.get("module") == "APP" else analyze_firma(c)
 
 
