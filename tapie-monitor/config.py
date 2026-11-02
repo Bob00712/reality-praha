@@ -260,9 +260,9 @@ APP_GENRES = {          # číslo kategorie Apple -> název (10 kategorií = bě
     6000: "Business",
     6013: "Health & Fitness",
     6008: "Photo & Video",
-    6002: "Utilities",
     6003: "Travel",
-    6023: "Food & Drink",
+    # Utilities a Food & Drink vyřazeny (Bob 2.11.2026): baterky, QR čtečky, počasí
+    # nemají hodnotu k převzetí; jídlo = gastro, které Bob nechce.
 }
 APP_CHART_LIMIT = 100
 APP_HISTORY_DAYS = 30   # kolik dní historie pořadí si pamatovat
@@ -315,8 +315,23 @@ APP_FOCUS_KEYWORDS = [  # zaměření (pro zprávy)
 APP_EXCLUDED_KEYWORDS = [  # hry a krypto ignorovat
     "game", "gaming", "esports", "casino", "crypto", "bitcoin", "blockchain",
     "nft", "web3", "token", "defi", "games",
+    # počasí ve více jazycích (i když je appka zařazená v jiné kategorii)
+    "weather", "wetter", "météo", "meteo", "počasí", "pocasi", "počasie", "tiempo",
+    "rain radar", "regenradar", "pluie", "pioggia", "väder", "vejret", "sää", "időjárás",
+    "weer", "kachelmann", "windy",
+    # zaměnitelné utility
+    "flashlight", "taschenlampe", "lampe torche", "torcia", "linterna", "baterka",
+    "qr code", "qr-code", "barcode", "qr scanner", "qr reader",
 ]
-APP_EXCLUDED_GENRES = ["Games", "Finance"]  # Finance = většinou krypto/burzy
+APP_EXCLUDED_GENRES = [  # celé kategorie, které nemají hodnotu k převzetí
+    "Games", "Finance",          # hry, krypto/burzy
+    "Weather",                   # počasí (Bob 2.11.2026) – data od cizích služeb, nulová loajalita
+    "Utilities",                 # baterky, QR čtečky, ovladače – zaměnitelné, zdarma všude
+    "Reference", "News",         # Bible, slovníky, zpravodajství – obsah nepatří vlastníkovi appky
+    "Navigation",                # radary, mapy – závislé na datech třetích stran
+    "Music",                     # rádia, streamy – licence k obsahu
+    "Food & Drink",              # gastro
+]
 
 APP_NEWS_QUERIES = [
     '"language learning app" layoffs',
