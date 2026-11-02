@@ -41191,6 +41191,12 @@
     "name": "Veronika Plecitá",
     "seen": "2026-07-09"
    },
+   "INS 19240/2026": {
+    "ico": "67579442",
+    "kind": "PODNIKATEL",
+    "name": "Josef Křižan",
+    "seen": "2026-11-02"
+   },
    "INS 19244/2026": {
     "ico": "67098631",
     "kind": "PODNIKATEL",
@@ -41220,6 +41226,12 @@
     "kind": "PODNIKATEL",
     "name": "Vladimír Ščuka",
     "seen": "2026-10-30"
+   },
+   "INS 19267/2026": {
+    "ico": "03179451",
+    "kind": "PODNIKATEL",
+    "name": "Martin Šťastný",
+    "seen": "2026-11-02"
    },
    "INS 19271/2025": {
     "ico": "17567157",
@@ -50180,7 +50192,7 @@
     "seen": "2026-09-22"
    }
   },
-  "last_id": 81216786
+  "last_id": 81217039
  },
  "seen": {
   "APP:1053148887:stale": {
