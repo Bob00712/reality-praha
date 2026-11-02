@@ -204,6 +204,7 @@ def format_case(c):
     lines = [head,
              f"{flag} Země: {esc(c.get('country'))}",
              f"⚖️ {'Řízení' if c['module'] == 'FIRMA' else 'Signál'}: {esc(c.get('procedure'))}",
+             *([f"📅 <b>Nabídky do: {esc(c['deadline'])}</b>"] if c.get("deadline") else []),
              f"🏭 Obor: {esc(c.get('field'))}",
              f"👥 Velikost: {esc(c.get('size'))}"]
     if c["module"] == "FIRMA":
