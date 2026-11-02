@@ -8,6 +8,7 @@ Každé ráno (cca 5:23 v zimě, 6:23 v létě) projde zdroje a pošle do Telegr
   ukončení produktu, vlastník chce prodávat).
 
 Každé pondělí přijde navíc **souhrn týdne** seřazený podle hodnocení A → B → C.
+**Aplikace [APP] chodí jen v tomto pondělním souhrnu**, ne denně (`APP_WEEKLY_ONLY`).
 Všechny filtry jsou v jednom souboru: **`config.py`**.
 
 ---

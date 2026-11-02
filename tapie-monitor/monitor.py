@@ -139,9 +139,17 @@ def main():
         uniq.setdefault(c["key"], c)
     cases = list(uniq.values())
 
+    # Aplikace jen 1× týdně (Bob 2.11.2026): denně se neposílají, jen se zapíšou
+    # do logu a přijdou v pondělním souhrnu týdne.
+    queued = []
+    if getattr(config, "APP_WEEKLY_ONLY", False):
+        queued = [c for c in cases if c["module"] == "APP"
+                  and (not config.ONLY_AAA or c.get("grades") == "AAA")]
+        cases = [c for c in cases if c["module"] != "APP"]
+        log(f"[app] {len(queued)} aplikací odloženo do týdenního souhrnu")
     sent = send_daily(cases, errors)
     t = today()
-    for c in sent:
+    for c in sent + queued:
         seen[c["key"]] = {"date": t, "stage": c.get("stage"), "rating": c["rating"]}
         if c.get("alias") and not c.get("update"):
             seen[c["alias"]] = seen[c["key"]]

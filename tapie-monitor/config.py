@@ -16,6 +16,7 @@ Když si nejsi jistý, změň jen čísla nebo přidej/uber slova v seznamech.
 # ---------------------------------------------------------------
 MODULE_FIRMA_ENABLED = True      # Modul 1: insolvence firem
 MODULE_APP_ENABLED = True        # Modul 2: upadající aplikace
+APP_WEEKLY_ONLY = True           # aplikace jen v pondělním souhrnu, ne denně (Bob 2.11.2026)
 MODULE_DIGITAL_ENABLED = True    # Modul 3: upadající digitální byznys v EU (à la Bending Spoons)
 
 # DIGITAL – AAA jen když zpráva uvádí konkrétní velikost:
