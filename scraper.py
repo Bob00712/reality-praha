@@ -20,8 +20,11 @@ BAZOS_AKCE = {"prodej": "prodam", "pronajem": "pronajmu"}
 BAZOS_CENTER, BAZOS_RADIUS = "11000", "70"           # Praha + 70 km
 BAZOS_SEARCHES = [                                  # (akce, typ = rubrika na Bazoši)
     ("prodej", "byt"), ("prodej", "dum"), ("pronajem", "byt"), ("pronajem", "dum"),
-    ("prodej", "pozemek"), ("prodej", "chata"), ("prodej", "garaz"),
+    ("prodej", "pozemek"), ("prodej", "chata"), ("prodej", "garaz"), ("pronajem", "garaz"),
 ]
+# Pozemky: pole, louky, lesy a jiná zemědělská půda Boba nezajímají (stavební / k bydlení se nechávají)
+FIELD_RE = r"\bpol[eií]\b|\bpolí\b|orn[áéou]\w* půd|zemědělsk|\blouk|\bles\b|\blesy\b|lesní|lesů|pastvin|travní porost|\bttp\b"
+BUILD_RE = r"stavební|k bydlení|pro bydlení|pozemky/bydlení|ke stavbě|rodinn"
 # Posílá se: Praha (PSČ 1xx xx) + okolí obcí podle prvních 3 číslic PSČ (pošt. obvod ≈ obec + ~10 km):
 NEAR_PSC = {
     "250",  # Brandýs n. L., Úvaly, Čelákovice, Odolena Voda, Klecany, Zdiby
@@ -42,7 +45,7 @@ NEAR_PSC = {
 # Drahé nemovitosti: všechny rubriky (i komerční), Praha + celý Středočeský kraj (PSČ 25x–29x)
 EXPENSIVE_MIN = 5_000_000
 EXPENSIVE_RADIUS = "90"
-SCHEME = "v2"             # změna schématu hledání -> první běh jen uloží (nic nepošle)
+SCHEME = "v3"             # změna schématu hledání -> první běh jen uloží (nic nepošle)
 
 # Sbazar: vlož URL vyhledávání zkopírované z prohlížeče (Praha, byty/domy, prodej/pronájem).
 # Klíč = (akce, typ). Prázdné URL se přeskočí.
@@ -259,6 +262,10 @@ def bazos_page(akce, typ, offset, params, accept):
         desc_el = box.select_one(".popis")
         desc = (desc_el.get_text(" ", strip=True) if desc_el else "")[:400]
         locality = loc.replace(psc or "", "").strip()
+        typ_i = typ or guess_typ(title, desc)
+        blob = f"{title} {desc}".lower()
+        if typ_i == "pozemek" and re.search(FIELD_RE, blob) and not re.search(BUILD_RE, blob):
+            continue                              # pole / les / louka – nezajímá
         out.append(enrich({
             "key": f"bazos:{m.group(1)}",
             "source": "bazos",
@@ -272,7 +279,7 @@ def bazos_page(akce, typ, offset, params, accept):
             "img": img.get("src") if img else None,
             "posted": posted,
             "akce": akce,
-            "typ": typ or guess_typ(title, desc),
+            "typ": typ_i,
             "district": None if (psc or "").startswith("1") else (locality or None),
             "search": f"{akce}/{typ or 'vse'}",
         }))
