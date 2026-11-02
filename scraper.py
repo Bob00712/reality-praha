@@ -20,7 +20,7 @@ BAZOS_AKCE = {"prodej": "prodam", "pronajem": "pronajmu"}
 BAZOS_CENTER, BAZOS_RADIUS = "11000", "70"           # Praha + 70 km
 BAZOS_SEARCHES = [                                  # (akce, typ = rubrika na Bazoši)
     ("prodej", "byt"), ("prodej", "dum"), ("pronajem", "byt"), ("pronajem", "dum"),
-    ("prodej", "pozemek"), ("prodej", "chata"), ("prodej", "garaz"), ("pronajem", "garaz"),
+    ("prodej", "pozemek"), ("prodej", "chata"), ("prodej", "garaz"),
 ]
 # Pozemky: pole, louky, lesy a jiná zemědělská půda Boba nezajímají (stavební / k bydlení se nechávají)
 FIELD_RE = r"\bpol[eií]\b|\bpolí\b|orn[áéou]\w* půd|zemědělsk|\blouk|\bles\b|\blesy\b|lesní|lesů|pastvin|travní porost|\bttp\b"

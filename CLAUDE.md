@@ -33,7 +33,7 @@ vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je,
 ## Zdroje
 - **Bazoš (jediný aktivní)**: `reality.bazos.cz/{prodam|pronajmu}/{rubrika}/{offset}/` s `hlokalita=11000&humkreis=70`
   (40 inzerátů/str., offset po 40). Jedno velké hledání na rubriku (`BAZOS_SEARCHES`), pak filtr podle PSČ (`near`):
-  - rubriky: byt, dum, garaz (prodej i pronájem), pozemek, chata (jen prodej).
+  - rubriky: byt, dum (prodej i pronájem), pozemek, chata, garaz (jen prodej – pronájem garáží Bob nechce).
   - pozemky: jen od 1 mil. Kč (`POZEMEK_MIN`, bez uvedené ceny se nechávají); **pole, louky, lesy, zemědělská půda se vyřazují** (`FIELD_RE`), pokud nejde o stavební / k bydlení (`BUILD_RE`) – Bob je nechce.
   - posílá se Praha (PSČ `1xx xx`) + `NEAR_PSC` = první 3 číslice PSČ (poštovní obvod ≈ obec + ~10 km): Brandýs, Úvaly,
     Čelákovice, Odolena Voda, Klecany, Zdiby (250), Říčany… (251), Praha-západ obce (252), Hostivice (253), Benešov (256/257),
