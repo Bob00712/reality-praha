@@ -728,5 +728,29 @@
   "procedure": "ukončení produktu",
   "rating": "B",
   "size": "854 708 hodnocení v App Store"
+ },
+ {
+  "country": "US",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:1047334922:stale",
+  "link": "https://apps.apple.com/us/app/mr-number-lookup-call-block/id1047334922?uo=4",
+  "module": "APP",
+  "name": "Mr. Number Lookup & Call Block",
+  "procedure": "populární aplikace (v žebříčku), vlastník ji neaktualizuje od 2023-07-10",
+  "rating": "B",
+  "size": "100 027 hodnocení v App Store"
+ },
+ {
+  "country": "CZ",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:979274575:stale",
+  "link": "https://apps.apple.com/us/app/apollo-for-reddit/id979274575?uo=4",
+  "module": "APP",
+  "name": "Apollo for Reddit",
+  "procedure": "populární aplikace (v žebříčku), vlastník ji neaktualizuje od 2023-11-28",
+  "rating": "B",
+  "size": "180 262 hodnocení v App Store"
  }
 ]
