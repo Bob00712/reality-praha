@@ -345,7 +345,9 @@ def run(seen, fps):
                                 if re.search(r"\b" + re.escape(k) + (r"s?\b" if len(k) <= 4 else ""), low)), None)
                 users, staff, revenue = extract_users(text), extract_staff(text), extract_revenue(text)
                 g = grades(strong, digital, users, staff, revenue)
-                buyer = next((k for k in BUYER_CALL if k in low), None)
+                # „repreneur“ jen jako samostatné slovo (ne „entrepreneur“)
+                buyer = next((k for k in BUYER_CALL
+                              if re.search(r"(?<![a-zà-ÿ])" + re.escape(k), low)), None)
                 brand = next((k for k in BRAND if k in low), None)
                 deadline = extract_deadline(text) if buyer else None
                 smala = bool(buyer and (digital or brand))
