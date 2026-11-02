@@ -63,8 +63,10 @@ Body se sčítají; hranice jsou v `config.py` (`RATING_A_MIN = 7`, `RATING_B_MI
 | Zaměstnanci 10–150 | 3 · částečně v rozsahu 2 · neznámo `?` 1 |
 | Závazky do 20 mil. EUR | 2 · neznámo `?` 1 |
 
-U [APP]: signál (pokles v žebříčku 3, bez aktualizace 2, obojí 4; prodej/ukončení ze zpráv 3,
-propouštění 2) + velikost (počet hodnocení) + zaměření (jazyky/vzdělávání víc).
+**[APP] AAA** = aplikace je v žebříčku App Store (tedy používaná) a zároveň (a) výrazně padá v pořadí
+nebo (b) ji vlastník přes 18 měsíců neaktualizuje; má 100 000 – 3 000 000 hodnocení; vlastník není big tech,
+banka, médium ani stát (`APP_OWNER_BLACKLIST`); nejde o hru ani krypto. Zprávy z Google News případ samy
+nevytvoří – jen se k padající aplikaci dohledají jako kontext.
 
 **Vyřazuje se:** gastro, ubytování, stavebnictví, nemovitosti, holdingy, sezónní byznys,
 fyzické osoby (oddlužení), hry, krypto. A firmy, o kterých *víme*, že mají méně než 10
@@ -82,7 +84,7 @@ nebo víc než 150 zaměstnanců (vypneš `DROP_IF_SIZE_KNOWN_OUT_OF_RANGE = Fal
 | **DE insolvenzbekanntmachungen.de** (Bavorsko) | ❌ ne → ✅ náhrada | Portál nemá API, podle vyhlášky InsBekV §2 je chráněný proti hromadnému kopírování a vyhledávání je záměrně omezené. **Náhrada:** zprávy (BR, Süddeutsche, Merkur, nordbayern, JUVE, tiskové zprávy správců Pluta, Schultze & Braun, Anchor…) přes Google News RSS, filtrováno na bavorská místa a soudy. Ruční kontrola: [insolvenzbekanntmachungen.de](https://neu.insolvenzbekanntmachungen.de/). |
 | **App Store** žebříčky + detail aplikace | ✅ automaticky | Veřejné RSS žebříčky Apple a iTunes Search/Lookup API (vlastník, web vývojáře, počet hodnocení, datum poslední aktualizace). Propad se pozná po ~10 dnech sbírání historie. |
 | **Google Play** | ❌ ne | Nemá veřejné API, stahování webu porušuje podmínky. Většina významných aplikací je i v App Store, takže pokrytí je dostatečné. |
-| **Google News RSS** (propouštění, ukončení, prodej) | ✅ automaticky | Veřejné RSS, zdarma. |
+| **Google News RSS** (propouštění, ukončení, prodej) | ✅ jen jako kontext | U aplikací jen doplní zprávu k aplikaci, která už padá v žebříčku (párování zpráv podle jména dávalo nesmysly). |
 | **layoffs.fyi** | ❌ ne → ✅ náhrada | Nemá API (data v Airtable), automatické stahování není povoleno. Stejné zprávy chytá Google News RSS. |
 | **Acquire.com, Flippa** | ❌ ne → 📧 náhrada | Podmínky zakazují automatické stahování, Acquire.com navíc vyžaduje přihlášení. **Náhrada:** založ si tam účet a ulož hledání s e-mailovým upozorněním (filtr: *Education / Consumer / SaaS / E-commerce*, *Revenue > 0*, *min. 10 000 uživatelů nebo $5k MRR*). Nabídky pak chodí e-mailem. |
 

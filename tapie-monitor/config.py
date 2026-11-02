@@ -26,6 +26,27 @@ ONLY_AAA = True
 ANALYSIS_ENABLED = True   # ke každému případu potenciál, rizika, doporučení
 APP_AAA_MIN_RATINGS = 100_000   # "hodně používaná" = aspoň tolik hodnocení
 APP_REQUIRE_FOCUS = False       # False = obor aplikace je jedno (jen ne hry/krypto)
+# Horní hranice: aplikace s víc hodnoceními jsou globální giganti (ChatGPT, Outlook…),
+# které nikdo neprodá – to nejsou příležitosti.
+APP_MAX_RATINGS = 3_000_000
+# Zprávy (Google News) samy případ NEVYTVOŘÍ – jen doplní kontext k aplikaci,
+# která skutečně padá v žebříčku. (Párování zpráv na aplikace podle jména
+# dávalo nesmysly typu ChatGPT, Outlook, SmartThings.)
+APP_NEWS_CREATE_CASES = False
+# Vlastníci, kteří aplikace neprodávají (big tech, média, banky, státní instituce).
+# Porovnává se s vývojářem/prodejcem v App Store (malými písmeny, stačí část).
+APP_OWNER_BLACKLIST = [
+    "apple", "google", "microsoft", "meta platforms", "facebook", "instagram", "whatsapp",
+    "amazon", "samsung", "openai", "anthropic", "bytedance", "tiktok", "tencent", "alibaba",
+    "netflix", "spotify", "uber", "lyft", "airbnb", "snap inc", "x corp", "twitter",
+    "pinterest", "linkedin", "paypal", "ebay", "walmart", "target corporation", "disney",
+    "warner", "hbo", "paramount", "comcast", "nbcuniversal", "verizon", "at&t", "t-mobile",
+    "united states postal", "usps", "adobe", "yahoo", "zoom", "salesforce", "oracle", "ibm",
+    "intuit", "sony", "nintendo", "huawei", "xiaomi", "temu", "shein", "pdd", "booking.com",
+    "expedia", "starbucks", "mcdonald", "dropbox", "duolingo", "roblox", "discord", "reddit",
+    "telegram", "signal messenger", "nike", "ikea", "bank", "government", "ministry",
+    "block, inc", "square, inc", "cash app", "robinhood", "coinbase", "binance",
+]
 APP_NEWS_MAX_AGE_DAYS = 14      # zprávy o aplikacích: jak daleko zpět hledat
 
 WEEKLY_SUMMARY_WEEKDAY = 0       # 0 = pondělí (souhrn týdne)
@@ -238,7 +259,7 @@ APP_MIN_DAYS_IN_TOP = 10
 APP_DROP_POSITIONS = 80
 APP_ABSENT_DAYS = 7
 # Dlouho bez aktualizace u velké aplikace:
-APP_STALE_MONTHS = 12
+APP_STALE_MONTHS = 18
 APP_MIN_RATINGS = 20_000       # "velká uživatelská základna" (počet hodnocení)
 
 # Aplikace, které chceš hlídat vždy (název z App Store):

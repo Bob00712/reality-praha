@@ -154,7 +154,11 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "Metallbau Schmid" in allt
     # jen AAA: aplikace bez známé velikosti / jen bez aktualizace neprojdou
     assert "LinguaPro" not in allt and "Crypto" not in allt
-    assert "[APP] AAA" in allt and "ukončení produktu" in allt  # zpráva + dohledaná velká appka
+    assert "[APP]" not in allt  # zprávy samy případ nevytvoří, propad v žebříčku zatím není
+    from sources.apps import big_owner
+    assert big_owner({"sellerName": "Samsung Electronics Co., Ltd."})
+    assert big_owner({"sellerName": "OpenAI OpCo, LLC"})
+    assert not big_owner({"sellerName": "Pineapple Studio s.r.o."})
     assert "[FIRMA] AAA" in allt and "Business potenciál" in allt and "Rizika" in allt
     from common import split_message
     long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))

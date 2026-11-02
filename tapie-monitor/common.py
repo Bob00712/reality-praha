@@ -92,7 +92,10 @@ def grades_app(sig_pts, focus_pts, ratings):
     g1 = "A" if sig_pts >= 3 else "B" if sig_pts == 2 else "C"
     # zaměření je jedno (uživatel 2.11.) – druhá známka = není hra/krypto (ty se vyřazují dřív)
     g2 = "A" if not config.APP_REQUIRE_FOCUS or focus_pts >= 2 else "C"
-    g3 = "A" if ratings >= config.APP_AAA_MIN_RATINGS else "B" if ratings >= config.APP_MIN_RATINGS else "C"
+    if ratings > config.APP_MAX_RATINGS:
+        g3 = "C"  # globální gigant – nekoupíš
+    else:
+        g3 = "A" if ratings >= config.APP_AAA_MIN_RATINGS else "B" if ratings >= config.APP_MIN_RATINGS else "C"
     return g1 + g2 + g3
 
 
