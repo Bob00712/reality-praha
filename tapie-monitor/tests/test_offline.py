@@ -55,7 +55,8 @@ def soap(events):
 
 ARES = {
     "12345678": ({"obchodniJmeno": "CNC Kovo s.r.o.", "pravniForma": "112",
-                  "sidlo": {"textovaAdresa": "Brno"}, "czNace": ["25620", "28410"]},
+                  "sidlo": {"textovaAdresa": "Brno"}, "czNace": ["25620", "28410"],
+                  "datumVzniku": "2004-05-12"},
                  {"zaznamy": [{"czNacePrevazujici": "25620", "statistickeUdaje": {"kategoriePoctuPracovniku": "240"}}]}),
     "87654321": ({"obchodniJmeno": "Pizzerie Roma s.r.o.", "pravniForma": "112",
                   "czNace": ["56100"]}, {"zaznamy": [{"czNacePrevazujici": "56100"}]}),
@@ -171,6 +172,15 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "FitPlan" in allt and "[DIGITAL] AAA" in allt and "Foo lays off" not in allt
     assert "[APP]" not in allt  # zprávy samy případ nevytvoří, propad v žebříčku zatím není
     from sources.apps import big_owner
+    # skořápka založená rok před insolvencí (případ WARA s.r.o.) se nepošle
+    from sources import isir as _isir, ares as _ares
+    _ares._cache["23197684"] = {"ico": "23197684", "name": "Thomas Rachac - WARA s.r.o.",
+                                "legal_form": "112", "nace": ["10890"], "nace_main_known": True,
+                                "employees": (50, 99), "founded": "2025-03-01"}
+    assert _isir.build_case("INS 14234/2025", {"ico": "23197684"}, "konkurs", {"desc": "x"}) is None
+    _ares._cache["23197685"] = dict(_ares._cache["23197684"], ico="23197685", founded=None)
+    nf = _isir.build_case("INS 1/2026", {"ico": "23197685"}, "konkurs", {"desc": "x"})
+    assert nf and nf["grades"] != "AAA"
     assert big_owner({"sellerName": "Samsung Electronics Co., Ltd."})
     assert big_owner({"sellerName": "OpenAI OpCo, LLC"})
     assert not big_owner({"sellerName": "Pineapple Studio s.r.o."})

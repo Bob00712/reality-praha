@@ -283,6 +283,12 @@ def build_case(sz, c, stage, ev):
     if excluded:
         log(f"[isir] vyřazeno {name}: {excluded}")
         return None
+    founded = a.get("founded")
+    if founded:
+        age_m = (now_utc().year - int(founded[:4])) * 12 + now_utc().month - int(founded[5:7])
+        if age_m < config.FIRMA_MIN_AGE_MONTHS:
+            log(f"[isir] vyřazeno {name}: založena {founded} (stáří {age_m} měs.) – pravděpodobně skořápka")
+            return None
     emp = a.get("employees")
     sp, out_of_range = size_points(emp)
     if out_of_range and config.DROP_IF_SIZE_KNOWN_OUT_OF_RANGE:
@@ -293,7 +299,8 @@ def build_case(sz, c, stage, ev):
     if cat == "E-SHOP":
         points = min(points, config.RATING_A_MIN - 1)  # e-shop max B
     nace_txt = ", ".join(a.get("nace", [])[:3]) or "?"
-    notes = [f"Sp. zn.: {sz}", f"IČO: {c.get('ico') or '?'}"]
+    notes = [f"Sp. zn.: {sz}", f"IČO: {c.get('ico') or '?'}",
+             f"Založena: {founded or '? (neznámé – nemůže být AAA)'}"]
     if a.get("address"):
         notes.append(f"Sídlo: {a['address']}")
     notes.append(f"Poslední událost: {ev.get('desc')} ({ev.get('date', '')[:10]})")
@@ -318,7 +325,9 @@ def build_case(sz, c, stage, ev):
         "notes": notes,
         "points": points,
         "rating": rate(points),
-        "grades": grades_firma(config.CZ_STATE_POINTS.get(stage, 1), cat, sp),
+        # bez data vzniku nevíme, jestli nejde o skořápku → třetí známka max. B (není AAA)
+        "grades": (lambda g: g if founded else g[:2] + ("B" if g[2] == "A" else g[2]))(
+            grades_firma(config.CZ_STATE_POINTS.get(stage, 1), cat, sp)),
         "cat": cat,
         "employees": emp,
     }

@@ -97,6 +97,7 @@ def lookup(ico):
         if emp:
             break
 
+    founded = basic.get("datumVzniku") or next(iter(_walk(res, lambda k: k == "datumvzniku")), None)
     legal = basic.get("pravniForma") or next(iter(_walk(res, lambda k: k == "pravniforma")), None)
     addr = (basic.get("sidlo") or {}).get("textovaAdresa")
     out = {
@@ -107,6 +108,7 @@ def lookup(ico):
         "nace": nace,
         "nace_main_known": bool(main),
         "employees": emp,
+        "founded": str(founded)[:10] if founded else None,
     }
     _cache[ico] = out
     STATS["lookups"] += 1

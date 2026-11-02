@@ -105,6 +105,11 @@ LIABILITIES_MAX_EUR = 20_000_000
 # True = firmu, o které VÍME, že je mimo rozsah zaměstnanců, vůbec
 # neposílat. Když údaj chybí ("?"), firma se pošle vždy.
 DROP_IF_SIZE_KNOWN_OUT_OF_RANGE = True
+# Skořápky (Bob 2.11.2026, případ „Thomas Rachac - WARA s.r.o.“): firma založená
+# krátce před insolvencí není fabrika s produktem, ale typicky účelová s.r.o.
+# Firma mladší než FIRMA_MIN_AGE_MONTHS (podle data vzniku v ARES) se vyřadí.
+# Firma bez známého data vzniku nedostane AAA (jen B a výš se neposílá při ONLY_AAA).
+FIRMA_MIN_AGE_MONTHS = 36
 # True = firmu, jejíž HLAVNÍ obor známe a není v kategoriích A/B/C ani e-shop,
 # neposílat (lékárny, doprava, agentury práce…). Neznámý obor "?" se pošle.
 DROP_OTHER_FIELDS = True

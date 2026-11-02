@@ -59,7 +59,8 @@ def analyze_firma(c):
     pot_sector, risk_sector = SECTOR.get(cat, ("", ""))
     potential = [route]
     if pot_sector:
-        potential.append(pot_sector)
+        potential.append(pot_sector + " (Obecně podle oboru – NE ověřený fakt o této firmě; "
+                         "nejdřív zkontroluj web, produkt a soupis majetkové podstaty.)")
     emp = c.get("employees")
     if emp:
         size = f"{emp[0]}" if emp[0] == emp[1] else f"{emp[0]}–{emp[1]}"
