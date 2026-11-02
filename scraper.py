@@ -25,6 +25,7 @@ BAZOS_SEARCHES = [                                  # (akce, typ = rubrika na Ba
 # Pozemky: pole, louky, lesy a jiná zemědělská půda Boba nezajímají (stavební / k bydlení se nechávají)
 FIELD_RE = r"\bpol[eií]\b|\bpolí\b|orn[áéou]\w* půd|zemědělsk|\blouk|\bles\b|\blesy\b|lesní|lesů|pastvin|travní porost|\bttp\b"
 BUILD_RE = r"stavební|k bydlení|pro bydlení|pozemky/bydlení|ke stavbě|rodinn"
+POZEMEK_MIN = 1_000_000  # prodej pozemků až od této ceny
 # Posílá se: Praha (PSČ 1xx xx) + okolí obcí podle prvních 3 číslic PSČ (pošt. obvod ≈ obec + ~10 km):
 NEAR_PSC = {
     "250",  # Brandýs n. L., Úvaly, Čelákovice, Odolena Voda, Klecany, Zdiby
@@ -266,6 +267,8 @@ def bazos_page(akce, typ, offset, params, accept):
         blob = f"{title} {desc}".lower()
         if typ_i == "pozemek" and re.search(FIELD_RE, blob) and not re.search(BUILD_RE, blob):
             continue                              # pole / les / louka – nezajímá
+        if typ_i == "pozemek" and akce == "prodej" and price and price < POZEMEK_MIN:
+            continue                              # levné pozemky nezajímají (bez ceny se nechávají)
         out.append(enrich({
             "key": f"bazos:{m.group(1)}",
             "source": "bazos",
