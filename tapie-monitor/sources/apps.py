@@ -94,6 +94,31 @@ def find_app_for_news(title):
     return None
 
 
+def big_owner(app):
+    import re as _re
+    owner = f"{app.get('sellerName', '')} {app.get('artistName', '')}".lower()
+    return any(_re.search(r"\b" + _re.escape(b) + r"\b", owner) for b in config.APP_OWNER_BLACKLIST)
+
+
+def corroborate(case, app):
+    """K aplikaci, která padá v žebříčku, dohledá zprávy (přesný název v uvozovkách)."""
+    name = (app.get("trackName") or "").split(":")[0].split(" - ")[0].strip()
+    if len(name) < 4:
+        return
+    items = news.search(f'"{name}" app', "EN", days=30)
+    hits = []
+    for it in items:
+        t = f"{it['title']} {it['summary']}".lower()
+        if name.lower() not in t:
+            continue
+        sig = next((lab for kw, (lab, _) in config.APP_NEWS_SIGNALS.items() if kw in t), None)
+        if sig:
+            hits.append((sig, it))
+    for sig, it in hits[:2]:
+        case["notes"].insert(0, f"Zpráva ({sig}): {it['title']}")
+        case["links"].append((f"zpráva: {it['source'] or 'článek'}", it["link"]))
+
+
 def search_app(term):
     q = urllib.parse.urlencode({"term": term, "entity": "software", "limit": 1, "country": "us"})
     data = _get_json(f"https://itunes.apple.com/search?{q}")
@@ -228,6 +253,8 @@ def run_charts(state, seen):
         if _excluded(f"{app.get('trackName', '')} {app.get('sellerName', '')}", genre):
             continue
         ratings = int(app.get("userRatingCount") or 0)
+        if ratings > config.APP_MAX_RATINGS or big_owner(app):
+            continue
         upd = (app.get("currentVersionReleaseDate") or "")[:10]
         stale = bool(upd) and upd < stale_cut and ratings >= config.APP_MIN_RATINGS
         drop = drops.get(aid)
@@ -236,7 +263,7 @@ def run_charts(state, seen):
         elif drop:
             sig, pts = drop[0], 3
         elif stale:
-            sig, pts = f"velká aplikace bez aktualizace od {upd}", 2
+            sig, pts = f"populární aplikace (v žebříčku), vlastník ji neaktualizuje od {upd}", 3
         else:
             continue
         key = f"APP:{aid}:{'drop' if drop else 'stale'}"
@@ -244,6 +271,8 @@ def run_charts(state, seen):
             continue
         case = _app_case(app, sig, pts, labels.get(aid, ""))
         case["key"] = key
+        if drop:
+            corroborate(case, app)
         if aid in watch_ids:
             case["notes"].insert(0, "Na tvém seznamu sledovaných (APP_WATCHLIST)")
             case["points"] += 1
@@ -253,6 +282,8 @@ def run_charts(state, seen):
 
 
 def run_news(seen, fps):
+    if not config.APP_NEWS_CREATE_CASES:
+        return []
     items = []
     for q in config.APP_NEWS_QUERIES:
         items += news.search(q, "EN", days=config.APP_NEWS_MAX_AGE_DAYS)
