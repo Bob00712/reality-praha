@@ -1052,5 +1052,53 @@
   "procedure": "konkurs",
   "rating": "A",
   "size": "50–99 zaměstnanců"
+ },
+ {
+  "country": "FR",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "DIGI:f37092d044e213d8",
+  "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPUldIVG45RzZPcUdJWEpyREx1UnczWmxUcnViUnFlY1FzeElhWmY0UlNZYzBReDk1ZDd2a0hhd1h3R2pEN0tpeXYyV1RFSG9GSEgwcWcweE1lR0gwQTV2VnpUaUltSnZsUWtSZl9jZF9zVGozTV9JWGtzZWxNZm9XQ0RESk9EUGNHZVhQV3RBbkZ1Snc1M3dSYU1YYkM?oc=5",
+  "module": "DIGITAL",
+  "name": "Smala cherche un repreneur pour son activité de seconde main enfantine",
+  "procedure": "správce hledá kupce („repreneur“)",
+  "rating": "A",
+  "size": "?"
+ },
+ {
+  "country": "NL",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "DIGI:b26f5b980c9be0c6",
+  "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOZDBPVXNBMHlhR3JlLUJ2LXU5WHRpSTV2QkJCS3hwUnVTWTR6SnEwMmVfNWxnLWdGUlVmaDVBOHBBR2FuR0M2SjlqaUFGNWJjWHlVc2RvWnhaQktLc3R0Ty1wd0lHRjhyUE5mR3dzMkhUR0dWdVBxN2NsX2cxbDlJN0NVYklkcGt2dGxWOE5BcDFhTmVJOGttLVk4NHJQb3lBN3BJZDNqVThrckpOQ1lQME1qbw?oc=5",
+  "module": "DIGITAL",
+  "name": "Au pairplatform Nina.care failliet, maar zussen Jasmijn en Lyla maken doorstart:",
+  "procedure": "správce hledá kupce („doorstart“)",
+  "rating": "A",
+  "size": "?"
+ },
+ {
+  "country": "NL",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "DIGI:c991a17b32f54b02",
+  "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOLXJ6LXpDSUk4cEswUk5peEtZWTZVYldHcEw0NHpZc0dBMEs1U0YtSTB1RmFQek53bDVpM0ZfSi04X1F2Z1BXY1BkbjdLZUp0V2NuSjRlUmYtNzduOWl4a294SlE5bm8waXhSUHZySWFUTlB2SUlOSFpoaG9OeTU0bGxCSWFXQWZuYjktR0F1MGFSRUN2RXNyLXNKSzRmNkU?oc=5",
+  "module": "DIGITAL",
+  "name": "Omstreden au-pairbureau Nina.care failliet, maakt doorstart",
+  "procedure": "správce hledá kupce („doorstart“)",
+  "rating": "A",
+  "size": "?"
+ },
+ {
+  "country": "EU?",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "DIGI:edb3f31e85c69a09",
+  "link": "https://www.eu-startups.com/2026/10/the-netherlands-risks-losing-its-agritech-crown-warns-new-report/",
+  "module": "DIGITAL",
+  "name": "The Netherlands risks losing its AgriTech crown, warns new report",
+  "procedure": "správce hledá kupce („repreneur“)",
+  "rating": "A",
+  "size": "?"
  }
 ]
