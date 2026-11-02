@@ -109,11 +109,12 @@ RK_SELLERS = [
 RK_SELLER_IDS = {"19659032", "19127202"}   # Pavelková, Jiří Beneš
 
 # Inzeráty, kde majitel výslovně nechce RK – vyřadit (nemá smysl volat)
+_RK = r"(?<!\w)r\.?\s?k\b\.?"         # RK, R.K, R.K., R. K.
 NO_RK_WORDS = [
-    r"(rk|realitk\w*|realitní\w* kancelář\w*|makléř\w*)[^.\n]{0,25}(nevolat|nevolejte|nekontaktovat|nekontaktujte|neozývat|neozývejte|neodpovídám|nepište|ne,? děkuji|děkuji,? ne)",
-    r"(nevolat|nevolejte|nekontaktovat|nekontaktujte)[^.\n]{0,15}(rk|realitk\w*|realitní\w* kancelář\w*|makléř\w*)",
-    r"(nemám|nemáme) zájem o (rk|realitk\w*|služby (rk|realitk\w*|makléř\w*))",
-    r"bez zájmu o (rk|realitk\w*)", r"spolupráci s (rk|realitk\w*) (nechci|nepožaduji|odmítám)",
+    r"(" + _RK + r"|realitk\w*|realitní\w* kancelář\w*|makléř\w*)[^\n]{0,25}?(nevolat|nevolejte|nekontaktovat|nekontaktujte|neozývat|neozývejte|neodpovídám|nepište|ne,? děkuji|děkuji,? ne)",
+    r"(nevolat|nevolejte|nekontaktovat|nekontaktujte)[^.\n]{0,15}(" + _RK + r"|realitk\w*|realitní\w* kancelář\w*|makléř\w*)",
+    r"(nemám|nemáme) zájem o (" + _RK + r"|realitk\w*|služby (" + _RK + r"|realitk\w*|makléř\w*))",
+    r"bez zájmu o (" + _RK + r"|realitk\w*)", r"spolupráci s (" + _RK + r"|realitk\w*) (nechci|nepožaduji|odmítám)",
 ]
 
 # Slabé znaky RK: samy o sobě inzerát nevyřadí, jen ho označí jako ❔ nejistý
