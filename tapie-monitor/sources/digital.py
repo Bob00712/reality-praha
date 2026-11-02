@@ -44,6 +44,57 @@ STRUGGLE = [
     "ceo steps down", "rettungs", "schieflage", "kriselt", "krise", "geht das geld aus",
     "en difficulté", "difficultés", "en crise", "in difficoltà", "en apuros", "v potížích",
 ]
+# Výzva správce ke koupi (typ Smala) – nejcennější signál: proces běží, je termín
+BUYER_CALL = [
+    "repreneur", "appel d'offres", "offres de reprise", "dépôt des offres", "appel à candidatures",
+    "investorensuche", "investor gesucht", "investorenprozess", "käufer gesucht", "kaufinteressent",
+    "zoekt koper", "zoekt overnemer", "doorstart", "cerca acquirent", "cercasi acquirent",
+    "busca comprador", "buscan comprador", "looking for a buyer", "seeking a buyer",
+    "buyer sought", "hledá kupce", "hledá se kupec", "nabídky do",
+]
+# značka / web / e-commerce (Smala: značka, web, zásoby, zákazníci)
+BRAND = ["marque", "marke", "brand", "site internet", "site web", "boutique en ligne",
+         "e-commerce", "ecommerce", "onlineshop", "online-shop", "webshop", "e-shop",
+         "seconde main", "second-hand", "secondhand", "plateforme", "plattform", "platform"]
+MONTHS = {
+    "jan": 1, "janv": 1, "januar": 1, "january": 1, "janvier": 1, "gennaio": 1, "enero": 1, "januari": 1, "ledna": 1,
+    "feb": 2, "fév": 2, "févr": 2, "februar": 2, "february": 2, "février": 2, "febbraio": 2, "febrero": 2, "februari": 2, "února": 2,
+    "mar": 3, "mars": 3, "märz": 3, "march": 3, "marzo": 3, "maart": 3, "března": 3,
+    "apr": 4, "avril": 4, "april": 4, "aprile": 4, "abril": 4, "dubna": 4,
+    "mai": 5, "may": 5, "maggio": 5, "mayo": 5, "mei": 5, "května": 5,
+    "juin": 6, "juni": 6, "june": 6, "giugno": 6, "junio": 6, "června": 6,
+    "juil": 7, "juillet": 7, "juli": 7, "july": 7, "luglio": 7, "julio": 7, "července": 7,
+    "août": 8, "aug": 8, "august": 8, "agosto": 8, "augustus": 8, "srpna": 8,
+    "sept": 9, "septembre": 9, "september": 9, "settembre": 9, "septiembre": 9, "září": 9,
+    "oct": 10, "octobre": 10, "oktober": 10, "october": 10, "ottobre": 10, "octubre": 10, "října": 10,
+    "nov": 11, "novembre": 11, "november": 11, "noviembre": 11, "listopadu": 11,
+    "déc": 12, "dec": 12, "décembre": 12, "dezember": 12, "december": 12, "dicembre": 12, "diciembre": 12, "prosince": 12,
+}
+DEADLINE_CTX = re.compile(r"(jusqu'au|avant le|date limite|au plus tard|bis zum|bis spätestens|frist|"
+                          r"until|by|deadline|uiterlijk|entro il|hasta el|do)\s*[:\-]?\s*(?:le\s+|den\s+|il\s+|el\s+)?"
+                          r"(\d{1,2})[.\s]*(?:(\d{1,2})\.(\d{2,4})|([a-zéûäöüřěíáčů]+)\.?\s*(\d{4})?)", re.I)
+
+
+def extract_deadline(text):
+    """Najde termín pro nabídky (např. „jusqu'au 6 novembre 2026“). Vrací ISO datum nebo None."""
+    from common import now_utc
+    for m in DEADLINE_CTX.finditer(text or ""):
+        day = int(m.group(2))
+        if m.group(3):
+            month, year = int(m.group(3)), int(m.group(4))
+        else:
+            word = (m.group(5) or "").lower().rstrip(".")
+            month = MONTHS.get(word) or MONTHS.get(word[:4]) or MONTHS.get(word[:3])
+            if not month:
+                continue
+            year = int(m.group(6)) if m.group(6) else now_utc().year
+        if year < 100:
+            year += 2000
+        if 1 <= day <= 31 and 1 <= month <= 12:
+            return f"{year:04d}-{month:02d}-{day:02d}"
+    return None
+
+
 DIGITAL = [
     "app", "plattform", "platform", "plateforme", "piattaforma", "plataforma",
     "platforma", "saas", "software", "online", "e-commerce", "onlineshop", "e-shop",
@@ -73,14 +124,20 @@ STAFF_RE = re.compile(
     re.I)
 
 QUERIES = {
-    "DE": ["Start-up Insolvenz App Nutzer", "Insolvenz Plattform Investor gesucht",
+    "DE": ["Insolvenzverwalter Investorensuche Onlineshop Marke", "Insolvenz Onlinehändler Investor gesucht",
+           "Start-up Insolvenz App Nutzer", "Insolvenz Plattform Investor gesucht",
            "Insolvenzantrag Online-Plattform Mitarbeiter", "Software Start-up Insolvenz Kunden"],
     "AT": ["Start-up Insolvenz App Nutzer", "Sanierungsverfahren Plattform Software"],
-    "FR": ["redressement judiciaire plateforme repreneur", "redressement judiciaire application utilisateurs",
+    "FR": ["redressement judiciaire recherche repreneur marque site", "redressement judiciaire e-commerce repreneur",
+           "appel d'offres reprise plateforme en ligne", "liquidation judiciaire marque e-commerce repreneur",
+           "redressement judiciaire plateforme repreneur", "redressement judiciaire application utilisateurs",
            "liquidation judiciaire start-up application", "start-up cherche repreneur plateforme"],
-    "NL": ["faillissement platform app gebruikers", "failliet startup app doorstart"],
-    "IT": ["startup app concordato utenti", "piattaforma digitale fallimento acquirente"],
-    "ES": ["startup app concurso de acreedores usuarios", "plataforma digital concurso comprador"],
+    "NL": ["faillissement webshop curator zoekt koper", "failliet merk webwinkel doorstart",
+           "faillissement platform app gebruikers", "failliet startup app doorstart"],
+    "IT": ["e-commerce marchio fallimento cerca acquirente", "startup app concordato utenti",
+           "piattaforma digitale fallimento acquirente"],
+    "ES": ["tienda online marca concurso de acreedores busca comprador",
+           "startup app concurso de acreedores usuarios", "plataforma digital concurso comprador"],
     "CZ": ["startup aplikace insolvence uživatelé", "platforma insolvence kupec"],
     "EN": ["European startup insolvency app users", "European app startup administration buyer",
            "EU startup shuts down app users"],
@@ -265,6 +322,12 @@ def run(seen, fps):
                                 if re.search(r"\b" + re.escape(k) + (r"s?\b" if len(k) <= 4 else ""), low)), None)
                 users, staff, revenue = extract_users(text), extract_staff(text), extract_revenue(text)
                 g = grades(strong, digital, users, staff, revenue)
+                buyer = next((k for k in BUYER_CALL if k in low), None)
+                brand = next((k for k in BRAND if k in low), None)
+                deadline = extract_deadline(text) if buyer else None
+                smala = bool(buyer and (digital or brand))
+                if smala and config.DIGITAL_BUYER_CALL_IS_AAA:
+                    g = "AAA"   # správce aktivně hledá kupce digitálního byznysu/značky = vždy zajímavé
                 key = "DIGI:" + hashlib.sha1(it["title"].lower().encode()).hexdigest()[:16]
                 if key in seen or news.is_duplicate(it["title"], fps):
                     continue
@@ -281,8 +344,9 @@ def run(seen, fps):
                     "key": key, "fp": fp, "module": "DIGITAL", "source": f"zprávy {loc}",
                     "name": news.guess_company(it["title"]),
                     "country": COUNTRY_HINT.get(loc, "?") if eu_native or loc != "EN" else "EU?",
-                    "procedure": signal_label(strong or medium),
-                    "field": f"digitální produkt ({digital})" if digital else "?",
+                    "procedure": (f"správce hledá kupce („{buyer}“)" if smala else signal_label(strong or medium)),
+                    "deadline": deadline,
+                    "field": (f"digitální produkt / značka ({digital or brand})" if (digital or brand) else "?"),
                     "size": ", ".join(size) or "?",
                     "contact": news.extract_admin(text) or
                                "? – správce/vlastník je ve zprávě; u FR „administrateur judiciaire“",

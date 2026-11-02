@@ -154,6 +154,8 @@ def test_full_run(tmp_path, monkeypatch=None):
     sent = []
     monitor.telegram_send = lambda text: sent.append(text) or True
     os.environ.pop("TELEGRAM_TOKEN", None)
+    import config
+    config.WEEKLY_DIGEST = False   # 1. část: denní režim
     sys.argv = ["monitor.py"]
     monitor.main()
     allt = "\n".join(sent)
@@ -191,6 +193,40 @@ def test_full_run(tmp_path, monkeypatch=None):
     sent.clear()
     monitor.main()
     assert not [s for s in sent if "Souhrn týdne" not in s], sent  # nic nového = žádná zpráva
+
+    # 2. část: týdenní režim + případ typu Smala (správce hledá kupce, blízký termín)
+    config.WEEKLY_DIGEST = True
+    from datetime import timedelta as _td
+    soon = NOW + _td(days=4)
+    later = NOW + _td(days=30)
+    months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+              "septembre", "octobre", "novembre", "décembre"]
+    def d(x):
+        return f"{x.day} {months[x.month - 1]} {x.year}"
+    smala_rss = f"""<rss><channel>
+<item><title>Kidzy en redressement judiciaire : la plateforme de seconde main cherche un repreneur</title>
+<link>https://news.example/s1</link><pubDate>{NOW.strftime("%a, %d %b %Y %H:%M:%S GMT")}</pubDate>
+<description>Offres de reprise jusqu'au {d(soon)} : marque, site internet, clients.</description></item>
+<item><title>ModaBox en redressement judiciaire, la marque e-commerce cherche un repreneur</title>
+<link>https://news.example/s2</link><pubDate>{NOW.strftime("%a, %d %b %Y %H:%M:%S GMT")}</pubDate>
+<description>Dépôt des offres jusqu'au {d(later)}.</description></item>
+</channel></rss>"""
+    orig = news.http
+    def fake2(method, url, **kw):
+        if "news.google.com" in url and "hl=fr" in url:
+            return Resp(content=smala_rss.encode())
+        return orig(method, url, **kw)
+    news.http = fake2
+    sent.clear()
+    monitor.main()
+    allt = "\n".join(sent)
+    assert "Kidzy" in allt and "ModaBox" not in allt, allt   # urgentní hned, druhý čeká
+    st = json.load(open(common.STATE_FILE))
+    assert any("ModaBox" in c["name"] for c in st["pending"])
+    sent.clear()
+    monitor.weekly_digest(st, [])
+    allt = "\n".join(sent)
+    assert "týdenní přehled" in allt and "ModaBox" in allt and st["pending"] == []
 
 
 if __name__ == "__main__":

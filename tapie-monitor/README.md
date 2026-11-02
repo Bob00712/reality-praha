@@ -1,5 +1,10 @@
 # Tapie-monitor – hlídač příležitostí k převzetí
 
+> **Režim od 2. 11. 2026:** hlídač sbírá denně, ale do Telegramu posílá **1× týdně – v úterý ráno**
+> přehled všech AAA příležitostí s rozborem. Výjimka: když má příležitost termín pro nabídky
+> do 7 dní (např. „repreneur recherché jusqu'au …“), přijde hned. Nejcennější typ je „Smala“:
+> správce veřejně hledá kupce digitálního byznysu/značky (web, zákazníci, zásoby) – ten je AAA vždy.
+
 Každé ráno (cca 5:23 v zimě, 6:23 v létě) projde zdroje a pošle do Telegramu **jen nové** případy:
 
 - **[FIRMA]** – firmy v insolvenci (ČR, Rakousko, Bavorsko), kde jde koupit firmu nebo majetek

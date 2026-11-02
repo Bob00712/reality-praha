@@ -84,6 +84,41 @@ def send_daily(cases, errors):
     return sent
 
 
+def send_cards(cases):
+    sent = []
+    for c in sorted(cases, key=lambda c: (c.get("deadline") or "9999", c["module"])):
+        if telegram_send(format_case(c)):
+            sent.append(c)
+    return sent
+
+
+def weekly_digest(state, errors):
+    """Úterní přehled: všechny AAA příležitosti za týden v plném znění s rozborem."""
+    pend = state.get("pending", [])
+    head = (f"📬 <b>Tapie – týdenní přehled příležitostí ({today()})</b>\n"
+            f"AAA příležitostí: {len(pend)}")
+    if errors:
+        head += "\n⚠️ Zdroje s chybou: " + "; ".join(esc(e) for e in errors)
+    if not pend:
+        telegram_send(head + "\nTento týden žádná příležitost nesplnila všechna kritéria.")
+        return True
+    if not telegram_send(head):
+        return False
+    order = {"DIGITAL": 0, "FIRMA": 1, "APP": 2}
+    pend.sort(key=lambda c: (c.get("deadline") or "9999", order.get(c["module"], 3)))
+    for c in pend[: config.WEEKLY_MAX_CARDS]:
+        telegram_send(format_case(c))
+    rest = pend[config.WEEKLY_MAX_CARDS:]
+    if rest:
+        lines = [f"➕ <b>Další {len(rest)} (zkráceně)</b>"]
+        for c in rest:
+            link = f' – <a href="{html.escape(c["link"])}">odkaz</a>' if c.get("link") else ""
+            lines.append(f"[{c['module']}] {esc(c['name'])} · {esc(c.get('procedure'))}{link}")
+        telegram_send("\n".join(lines))
+    state["pending"] = []
+    return True
+
+
 def weekly_summary(log_cases):
     since = (now_utc() - timedelta(days=7)).strftime("%Y-%m-%d")
     week = [c for c in log_cases if c.get("date", "") >= since]
@@ -122,6 +157,12 @@ def merge_state(our_state_path, our_cases_path):
     if ours.get("apps", {}).get("best_day", "") >= theirs.get("apps", {}).get("best_day", ""):
         theirs["apps"] = ours.get("apps", theirs.get("apps", {}))
     theirs["weekly_sent"] = max(theirs.get("weekly_sent", ""), ours.get("weekly_sent", ""))
+    pend = {c.get("key"): c for c in theirs.get("pending", [])}
+    for c in ours.get("pending", []):
+        pend.setdefault(c.get("key"), c)
+    if theirs.get("weekly_sent", "") > ours.get("weekly_sent", ""):
+        pass  # jejich běh už přehled poslal – naše čekající jsou novější než jejich odeslání
+    theirs["pending"] = list(pend.values())
     for k, v in ours.items():
         theirs.setdefault(k, v)
     cases = load_json(CASES_FILE, [])
@@ -156,7 +197,11 @@ def main():
     state = load_json(STATE_FILE, {})
     log_cases = load_json(CASES_FILE, [])
     if args.weekly:
-        weekly_summary(log_cases)
+        if getattr(config, "WEEKLY_DIGEST", False):
+            weekly_digest(state, [])
+            save_json(STATE_FILE, state)
+        else:
+            weekly_summary(log_cases)
         return
 
     seen = state.setdefault("seen", {})
@@ -172,15 +217,28 @@ def main():
         uniq.setdefault(c["key"], c)
     cases = list(uniq.values())
 
-    # Aplikace jen 1× týdně (Bob 2.11.2026): denně se neposílají, jen se zapíšou
-    # do logu a přijdou v pondělním souhrnu týdne.
+    # Bob 2.11.2026: výsledky stačí 1× týdně (úterý dopoledne). Denně se jen sbírá;
+    # AAA případy čekají v state["pending"]. Výjimka: termín pro nabídky do X dní → hned.
     queued = []
-    if getattr(config, "APP_WEEKLY_ONLY", False):
+    if getattr(config, "WEEKLY_DIGEST", False):
+        aaa = [c for c in cases if not config.ONLY_AAA or c.get("grades") == "AAA"]
+        urgent_cut = (now_utc() + timedelta(days=config.URGENT_DEADLINE_DAYS)).strftime("%Y-%m-%d")
+        urgent = [c for c in aaa if c.get("deadline") and c["deadline"] <= urgent_cut]
+        queued = [c for c in aaa if c not in urgent]
+        pend = state.setdefault("pending", [])
+        pend += [{k: v for k, v in c.items() if k != "fp"} for c in queued]
+        log(f"[týden] odloženo do úterního přehledu: {len(queued)}, urgentních (termín ≤ "
+            f"{config.URGENT_DEADLINE_DAYS} dní): {len(urgent)}, čeká celkem: {len(pend)}")
+        cases = urgent
+        if urgent:
+            telegram_send(f"⏰ <b>Tapie: {len(urgent)} příležitost(i) s blízkým termínem pro nabídky</b>")
+    elif getattr(config, "APP_WEEKLY_ONLY", False):
         queued = [c for c in cases if c["module"] == "APP"
                   and (not config.ONLY_AAA or c.get("grades") == "AAA")]
         cases = [c for c in cases if c["module"] != "APP"]
         log(f"[app] {len(queued)} aplikací odloženo do týdenního souhrnu")
-    sent = send_daily(cases, errors)
+    sent = (send_cards(cases) if getattr(config, "WEEKLY_DIGEST", False)
+            else send_daily(cases, errors))
     t = today()
     for c in sent + queued:
         seen[c["key"]] = {"date": t, "stage": c.get("stage"), "rating": c["rating"]}
@@ -205,8 +263,10 @@ def main():
 
     # týdenní souhrn jen jednou za den (i když běh spustíme víckrát)
     if now_utc().weekday() == config.WEEKLY_SUMMARY_WEEKDAY and state.get("weekly_sent") != t:
-        weekly_summary(log_cases)
-        state["weekly_sent"] = t
+        ok = (weekly_digest(state, errors) if getattr(config, "WEEKLY_DIGEST", False)
+              else (weekly_summary(log_cases) or True))
+        if ok:
+            state["weekly_sent"] = t
 
     save_json(STATE_FILE, state)
     save_json(CASES_FILE, log_cases)

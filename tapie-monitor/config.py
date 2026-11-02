@@ -28,6 +28,9 @@ DIGITAL_MIN_REVENUE = 1_000_000  # nebo tržby/ARR 1–100 mil. (EUR/USD)
 DIGITAL_MAX_REVENUE = 100_000_000
 DIGITAL_TECH_SITES = True        # číst i TechCrunch, Sifted, tech.eu, EU-Startups, t3n, Maddyness…
 DIGITAL_LAYOFFS_ARE_STRONG = True  # propouštění = signál, že se nedaří (nejen insolvence)
+# Typ „Smala“: správce/vlastník veřejně hledá kupce digitálního byznysu nebo značky
+# (redressement judiciaire + repreneur, Investorensuche…) → AAA i bez čísla o velikosti.
+DIGITAL_BUYER_CALL_IS_AAA = True
 
 # Posílat JEN případy, které sedí ve všech třech kritériích (známka AAA):
 #  FIRMA: typ řízení (konkurs/reorganizace/Sanierung/Eigenverwaltung…) +
@@ -72,7 +75,13 @@ APP_OWNER_BLACKLIST = [
 ]
 APP_NEWS_MAX_AGE_DAYS = 14      # zprávy o aplikacích: jak daleko zpět hledat
 
-WEEKLY_SUMMARY_WEEKDAY = 0       # 0 = pondělí (souhrn týdne)
+WEEKLY_SUMMARY_WEEKDAY = 1       # 1 = úterý (týdenní přehled příležitostí)
+# Výsledky 1× týdně (Bob 2.11.2026): denně se jen sbírá, v úterý ráno přijde přehled
+# všech AAA příležitostí v plném znění s rozborem. Výjimka: termín pro nabídky
+# do URGENT_DEADLINE_DAYS dní → pošle se hned (jinak by propadl).
+WEEKLY_DIGEST = True
+URGENT_DEADLINE_DAYS = 7
+WEEKLY_MAX_CARDS = 20
 MAX_MESSAGES_PER_RUN = 25        # pojistka proti zahlcení Telegramu
 SHOW_RATING_C = True             # False = posílat jen A a B
 
