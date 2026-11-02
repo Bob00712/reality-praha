@@ -114,6 +114,26 @@ def analyze_app(c):
     return potential, risks, verdict
 
 
+def analyze_symbolic(c):
+    potential = [
+        "Převzetí za symbolickou cenu (Tapie style): kupec neplatí za firmu, ale převezme provoz, "
+        "zaměstnance a závazek ji stabilizovat – hodnota je v obratu, zákaznících, značce a týmu.",
+        "Páky obratu: okamžitě zastavit ztrátové činnosti, vyjednat se správcem/věřiteli odpis "
+        "nebo splátkový kalendář, prodat nepotřebná aktiva, sjednotit nákup a ceny.",
+    ]
+    risks = [
+        "Symbolická cena ≠ levný obchod: převezmeš ztrátový provoz – spočítej hotovost na 6–12 měsíců "
+        "(mzdy, nájmy, dodavatelé) a podmínky převodu zaměstnanců.",
+        "Ověř, co přesně přechází: share deal (i se skrytými dluhy!) vs. asset deal (bez dluhů) – "
+        "Tapie trval na tom, že dluhy nepřebírá; trvej na asset dealu nebo zárukách prodávajícího.",
+        "Prodávající (koncern/správce) často chce závazky: zachování míst, investice – smluvní pokuty.",
+        "Data ze zprávy nejsou ověřená – vyžádej výsledovku, cash-flow a seznam závazků.",
+    ]
+    verdict = ("PRIORITA: kontaktovat prodávajícího/správce, vyžádat informační memorandum a podmínky "
+               "(co přesně přechází, závazky kupce, termín); připravit 100denní plán obratu.")
+    return potential, risks, verdict
+
+
 def analyze_digital(c):
     sig = (c.get("procedure") or "").lower()
     insolv = any(k in sig for k in ("insolv", "redressement", "liquidation", "faillis", "failliet",
@@ -139,6 +159,8 @@ def analyze_digital(c):
 
 
 def analyze(c):
+    if "symbolickou cenu" in (c.get("procedure") or ""):
+        return analyze_symbolic(c)
     if c.get("module") == "DIGITAL":
         return analyze_digital(c)
     return analyze_app(c) if c.get("module") == "APP" else analyze_firma(c)

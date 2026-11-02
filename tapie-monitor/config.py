@@ -31,6 +31,9 @@ DIGITAL_LAYOFFS_ARE_STRONG = True  # propouštění = signál, že se nedaří (
 # Typ „Smala“: správce/vlastník veřejně hledá kupce digitálního byznysu nebo značky
 # (redressement judiciaire + repreneur, Investorensuche…) → AAA i bez čísla o velikosti.
 DIGITAL_BUYER_CALL_IS_AAA = True
+# „Za korunu“ (Tapie style): firma nabízená za symbolickou cenu (1 €, 1 Kč…) → AAA,
+# v jakémkoli oboru kromě vyloučených. Už proběhlé převzetí se neposílá.
+SYMBOLIC_PRICE_IS_AAA = True
 
 # Posílat JEN případy, které sedí ve všech třech kritériích (známka AAA):
 #  FIRMA: typ řízení (konkurs/reorganizace/Sanierung/Eigenverwaltung…) +
