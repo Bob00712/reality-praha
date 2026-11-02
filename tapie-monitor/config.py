@@ -264,6 +264,29 @@ APP_ABSENT_DAYS = 7
 # Dlouho bez aktualizace u velké aplikace:
 APP_STALE_MONTHS = 18
 APP_MIN_RATINGS = 5_000        # spodní hranice pro známku B (počet hodnocení)
+# Mrtvý produkt (Bob 2.11.2026, případ Apollo for Reddit): aplikace bez aktualizace
+# déle než tolik měsíců se VYŘADÍ úplně – i když padá v žebříčku. Tím je vypnutý
+# i samostatný signál „neaktualizuje se 18 měsíců“ (APP_STALE_SIGNAL).
+APP_MAX_MONTHS_SINCE_UPDATE = 12
+APP_STALE_SIGNAL = False
+# Aplikace závislé na API cizí platformy (vlastník platformy jim může vypnout
+# přístup – Reddit 2023, Twitter/X 2023). Vyřadí se, když:
+#  a) název obsahuje jméno platformy (celé slovo), nebo
+#  b) popis obsahuje typickou frázi neoficiálního klienta.
+APP_PLATFORM_NAME_WORDS = [
+    "reddit", "twitter", "tweet", "tweets", "instagram", "tiktok", "youtube",
+    "snapchat", "pinterest", "facebook", "whatsapp", "telegram", "discord",
+    "twitch", "spotify",
+]
+APP_PLATFORM_DESC_PHRASES = [
+    "client for reddit", "reddit client", "app for reddit", "browse reddit",
+    "client for twitter", "twitter client", "client for x", "unofficial client",
+    "unofficial app", "third-party client", "third party client",
+    "not affiliated with reddit", "not affiliated with twitter",
+    "not affiliated with instagram", "not affiliated with meta",
+    "not affiliated with tiktok", "not affiliated with youtube",
+    "not affiliated with google", "not affiliated with spotify",
+]
 
 # Aplikace, které chceš hlídat vždy (název z App Store):
 APP_WATCHLIST = [

@@ -63,9 +63,12 @@ Body se sčítají; hranice jsou v `config.py` (`RATING_A_MIN = 7`, `RATING_B_MI
 | Zaměstnanci 10–150 | 3 · částečně v rozsahu 2 · neznámo `?` 1 |
 | Závazky do 20 mil. EUR | 2 · neznámo `?` 1 |
 
-**[APP] AAA** = aplikace je v žebříčku App Store (tedy používaná) a zároveň (a) výrazně padá v pořadí
-nebo (b) ji vlastník přes 18 měsíců neaktualizuje; má 100 000 – 3 000 000 hodnocení; vlastník není big tech,
-banka, médium ani stát (`APP_OWNER_BLACKLIST`); nejde o hru ani krypto. Zprávy z Google News případ samy
+**[APP] AAA** = aplikace je v žebříčku App Store (tedy používaná) a výrazně padá v pořadí;
+má 100 000 – 3 000 000 hodnocení; vlastník není big tech, banka, médium ani stát (`APP_OWNER_BLACKLIST`);
+nejde o hru ani krypto. **Vyřazují se** (od 2. 11. 2026, případ Apollo for Reddit): aplikace bez aktualizace
+déle než 12 měsíců (`APP_MAX_MONTHS_SINCE_UPDATE` – mrtvý produkt) a aplikace závislé na API cizí platformy
+– Reddit, X, Instagram, TikTok, YouTube… (`APP_PLATFORM_NAME_WORDS`, `APP_PLATFORM_DESC_PHRASES`).
+Země u [APP] je „?“ – žebříček země neříká, odkud je vlastník. Zprávy z Google News případ samy
 nevytvoří – jen se k padající aplikaci dohledají jako kontext.
 
 **Vyřazuje se:** gastro, ubytování, stavebnictví, nemovitosti, holdingy, sezónní byznys,

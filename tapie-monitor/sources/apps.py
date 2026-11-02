@@ -137,6 +137,24 @@ def search_app(term):
     return str(res[0]["trackId"]) if res else None
 
 
+def platform_dependent(app):
+    """Aplikace stojí na API cizí platformy (Reddit, X, Instagram…) – vlastník
+    platformy jí může kdykoli vypnout přístup, takže ji nemá smysl kupovat."""
+    import re as _re
+    name = (app.get("trackName") or "").lower()
+    if any(_re.search(r"\b" + _re.escape(w) + r"\b", name) for w in config.APP_PLATFORM_NAME_WORDS):
+        return True
+    desc = (app.get("description") or "").lower()
+    return any(p in desc for p in config.APP_PLATFORM_DESC_PHRASES)
+
+
+def dead_product(app):
+    """Bez aktualizace déle než APP_MAX_MONTHS_SINCE_UPDATE = mrtvý produkt."""
+    upd = (app.get("currentVersionReleaseDate") or "")[:10]
+    cut = (now_utc() - timedelta(days=30 * config.APP_MAX_MONTHS_SINCE_UPDATE)).strftime("%Y-%m-%d")
+    return bool(upd) and upd < cut
+
+
 def _excluded(text, genre):
     t = (text or "").lower()
     if genre in config.APP_EXCLUDED_GENRES:
@@ -183,7 +201,8 @@ def _app_case(app, signal, sig_pts, chart_label=""):
         "module": "APP",
         "source": "App Store",
         "name": app.get("trackName", "?"),
-        "country": "?" if not chart_label else chart_label.split(" ")[0].upper(),
+        # země žebříčku ≠ země vlastníka (Apollo: kanadský vývojář v CZ žebříčku) – proto "?"
+        "country": "?",
         "procedure": signal,
         "field": genre,
         "size": f"{ratings:,} hodnocení v App Store".replace(",", " ") if ratings else "?",
@@ -288,8 +307,11 @@ def run_charts(state, seen):
             continue
         if avg is not None and float(avg) < config.APP_MIN_AVG_RATING:
             continue  # uživatelé ji hodnotí špatně – nejspíš nefunguje
+        if dead_product(app) or platform_dependent(app):
+            continue
         upd = (app.get("currentVersionReleaseDate") or "")[:10]
-        stale = bool(upd) and upd < stale_cut and ratings >= config.APP_MIN_RATINGS
+        stale = (config.APP_STALE_SIGNAL and bool(upd) and upd < stale_cut
+                 and ratings >= config.APP_MIN_RATINGS)
         drop = drops.get(aid)
         if drop and stale:
             sig, pts = f"{drop[0]} + bez aktualizace od {upd}", 4
@@ -341,6 +363,8 @@ def run_news(seen, fps):
         app = find_app_for_news(it["title"]) if sig[1] >= 3 else None
         ratings = int((app or {}).get("userRatingCount") or 0)
         if app and _excluded(app.get("trackName", ""), app.get("primaryGenreName", "")):
+            continue
+        if app and (dead_product(app) or platform_dependent(app)):
             continue
         if app:
             case = _app_case(app, sig[0], sig[1])

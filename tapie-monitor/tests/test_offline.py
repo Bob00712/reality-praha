@@ -160,6 +160,14 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert big_owner({"sellerName": "Samsung Electronics Co., Ltd."})
     assert big_owner({"sellerName": "OpenAI OpCo, LLC"})
     assert not big_owner({"sellerName": "Pineapple Studio s.r.o."})
+    # 2.11.2026: mrtvé aplikace a klienti cizích platforem (Apollo for Reddit) ven
+    from sources.apps import platform_dependent, dead_product
+    assert platform_dependent({"trackName": "Apollo for Reddit"})
+    assert platform_dependent({"trackName": "Narwhal 2", "description": "The best client for Reddit."})
+    assert not platform_dependent({"trackName": "Mondly", "description": "Learn languages"})
+    assert not platform_dependent({"trackName": "Canva", "description": "Make posts for Instagram"})
+    assert dead_product({"currentVersionReleaseDate": "2023-11-28T00:00:00Z"})
+    assert not dead_product({"currentVersionReleaseDate": NOW.isoformat()})
     assert "[FIRMA] AAA" in allt and "Business potenciál" in allt and "Rizika" in allt
     from common import split_message
     long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))
