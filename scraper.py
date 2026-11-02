@@ -692,10 +692,7 @@ def notify(new_items):
         if i.get("seller"):
             who += f" – {i['seller']}"
         from html import escape as E
-        q = i["phone"] if i.get("phone") else (f'"{i["seller"]}"' if i.get("seller") else "")
         links = [f'<a href="{E(i["url"])}">Otevřít inzerát</a>']
-        if q:
-            links.append(f'<a href="{E("https://www.google.com/search?q=" + requests.utils.quote(q))}">🔎 Google</a>')
         if i.get("phone"):
             digits = re.sub(r"\D", "", i["phone"])
             digits = "420" + digits if len(digits) == 9 else digits

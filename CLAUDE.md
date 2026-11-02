@@ -70,7 +70,7 @@ Priorita Boba: **raději občas propustit realitku, než přijít o soukromníka
 
 ## Telegram zpráva
 HTML: titulek, cena, dispozice/m²/Kč/m²/lokalita/zdroj, 👤 jméno, 📞 telefon (pokud je),
-odkazy „Otevřít inzerát · 🔎 Google (hledá jen telefon, jinak jméno) · 📲 WhatsApp" (wa.me s předvyplněnou zprávou `WA_TEXT`,
+odkazy „Otevřít inzerát · 📲 WhatsApp" (odkaz na Google Bob nechce) (wa.me s předvyplněnou zprávou `WA_TEXT`,
 varianty pronájem/prodej, byt/dům). Max. 15 samostatných zpráv na běh, zbytek souhrnem.
 Je-li v textu inzerátu e-mail, zpráva ukáže ✉️ adresu + text e-mailu v `<code>` (klepnutím se zkopíruje; Telegram `mailto:` odkazy nebere).
 Automatické odesílání WhatsApp zpráv ani e-mailů **nedělat** (ban čísla, nevyžádaná obchodní sdělení) – jen předvyplněný odkaz, Bob odesílá sám.
