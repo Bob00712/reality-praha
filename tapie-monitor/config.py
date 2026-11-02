@@ -23,6 +23,10 @@ DIGITAL_MIN_USERS = 10_000       # aspoň tolik uživatelů/zákazníků …
 DIGITAL_MAX_USERS = 20_000_000   # … ale ne globální gigant
 DIGITAL_MAX_STAFF = 300          # nebo 10–300 zaměstnanců
 DIGITAL_NEWS_DAYS = 14           # jak daleko zpět číst zprávy
+DIGITAL_MIN_REVENUE = 1_000_000  # nebo tržby/ARR 1–100 mil. (EUR/USD)
+DIGITAL_MAX_REVENUE = 100_000_000
+DIGITAL_TECH_SITES = True        # číst i TechCrunch, Sifted, tech.eu, EU-Startups, t3n, Maddyness…
+DIGITAL_LAYOFFS_ARE_STRONG = True  # propouštění = signál, že se nedaří (nejen insolvence)
 
 # Posílat JEN případy, které sedí ve všech třech kritériích (známka AAA):
 #  FIRMA: typ řízení (konkurs/reorganizace/Sanierung/Eigenverwaltung…) +

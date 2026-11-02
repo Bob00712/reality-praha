@@ -125,6 +125,17 @@ def fake_http(method, url, **kw):
             {"trackId": 900, "trackName": "Other", "sellerName": "x", "userRatingCount": 10,
              "primaryGenreName": "Education", "currentVersionReleaseDate": NOW.isoformat()},
         ]})
+    if any(d in url for d in ("techcrunch.com/feed", "sifted.eu", "tech.eu", "eu-startups", "siliconcanals",
+                              "trendingtopics", "deutsche-startups", "t3n.de", "maddyness", "startupitalia",
+                              "czechcrunch")):
+        if "techcrunch" in url:
+            pub = NOW.strftime("%a, %d %b %Y %H:%M:%S GMT")
+            return Resp(content=f"""<rss><channel><item><title>Berlin-based FitPlan struggles, cuts 30 of its 80 employees</title>
+<link>https://techcrunch.com/x</link><pubDate>{pub}</pubDate>
+<description>The fitness app with 400,000 users is exploring a sale.</description></item>
+<item><title>US startup Foo lays off staff</title><link>https://techcrunch.com/y</link><pubDate>{pub}</pubDate>
+<description>San Francisco based app with 50,000 users.</description></item></channel></rss>""".encode())
+        return Resp(404, content=b"")
     if "rss.applemarketingtools.com" in url:
         return Resp(js={"feed": {"results": []}})
     raise AssertionError("neočekávaná URL " + url)
@@ -132,8 +143,8 @@ def fake_http(method, url, **kw):
 
 def test_full_run(tmp_path, monkeypatch=None):
     import monitor
-    from sources import isir, ares, news, apps
-    for mod in (isir, ares, news, apps):
+    from sources import isir, ares, news, apps, digital
+    for mod in (isir, ares, news, apps, digital):
         setattr(mod, "http", fake_http)
     isir.find_start_id = lambda days: 100
     apps.CHART_PAUSE = apps.LOOKUP_PAUSE = 0
@@ -155,6 +166,7 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "Metallbau Schmid" in allt
     # jen AAA: aplikace bez známé velikosti / jen bez aktualizace neprojdou
     assert "LinguaPro" not in allt and "Crypto" not in allt
+    assert "FitPlan" in allt and "[DIGITAL] AAA" in allt and "Foo lays off" not in allt
     assert "[APP]" not in allt  # zprávy samy případ nevytvoří, propad v žebříčku zatím není
     from sources.apps import big_owner
     assert big_owner({"sellerName": "Samsung Electronics Co., Ltd."})
@@ -173,7 +185,7 @@ def test_full_run(tmp_path, monkeypatch=None):
     long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))
     for part in split_message(long):
         assert part.count("<a ") == part.count("</a>") and len(part) <= 3800
-    assert all("[FIRMA]" in s or "[APP]" in s for s in sent[1:] if "Souhrn" not in s)
+    assert all("[FIRMA]" in s or "[APP]" in s or "[DIGITAL]" in s for s in sent[1:] if "Souhrn" not in s)
 
     # druhý běh: žádné duplicity
     sent.clear()
