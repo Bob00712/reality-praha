@@ -19,6 +19,14 @@ from common import grades_app, http, log, now_utc, rate, today
 from sources import news
 
 CHARTS = ("topfreeapplications", "topgrossingapplications")
+CHART_PAUSE = 0.2    # s mezi žebříčky (šetrnost k Apple)
+LOOKUP_PAUSE = 3.0   # s mezi dávkami Lookup API (limit ~20/min)
+
+
+def _pause(sec):
+    import time
+    if sec:
+        time.sleep(sec)
 
 
 def _get_json(url):
@@ -59,11 +67,14 @@ def fetch_chart_fallback(cc):
             for r in res if r.get("id")]
 
 
-def lookup(ids, cc="us"):
+def lookup(ids, cc="de"):
+    """iTunes Lookup (limit Apple ~20 dotazů/min → pauza mezi dávkami)."""
     out = {}
     ids = list(dict.fromkeys(str(i) for i in ids))
     for i in range(0, len(ids), 150):
         chunk = ids[i:i + 150]
+        if i:
+            _pause(LOOKUP_PAUSE)
         data = _get_json(f"https://itunes.apple.com/lookup?id={','.join(chunk)}&country={cc}")
         for r in (data or {}).get("results", []):
             if r.get("trackId"):
@@ -160,7 +171,7 @@ def _app_case(app, signal, sig_pts, chart_label=""):
     ratings = int(app.get("userRatingCount") or 0)
     genre = app.get("primaryGenreName", "?")
     text = f"{app.get('trackName', '')} {genre} {app.get('description', '')[:400]}"
-    size_pts = 3 if ratings >= 100_000 else 2 if ratings >= config.APP_MIN_RATINGS else 1 if ratings else 1
+    size_pts = 3 if ratings >= config.APP_AAA_MIN_RATINGS else 2 if ratings >= config.APP_MIN_RATINGS else 1
     focus = 2 if genre == "Education" or any(k in text.lower() for k in ("language", "learn")) else 1
     points = sig_pts + size_pts + focus
     upd = (app.get("currentVersionReleaseDate") or "")[:10] or "?"
@@ -192,12 +203,13 @@ def run_charts(state, seen):
     st = state.setdefault("apps", {})
     ranks = st.setdefault("ranks", {})
     t = today()
-    fetched_ids, labels = set(), {}
+    fetched_ids, labels, app_ccs = set(), {}, {}
     fallback_used = False
     for cc in config.APP_COUNTRIES:
         for genre, gname in config.APP_GENRES.items():
             for chart in CHARTS:
                 rows = fetch_chart(cc, genre, chart)
+                _pause(CHART_PAUSE)
                 key = f"{cc}:{genre}:{chart}"
                 if not rows:
                     continue
@@ -207,6 +219,7 @@ def run_charts(state, seen):
                         continue
                     h.setdefault(aid, {})[t] = pos
                     fetched_ids.add(aid)
+                    app_ccs.setdefault(aid, set()).add(cc)
                     labels.setdefault(aid, f"{cc} {gname} {'free' if 'free' in chart else 'grossing'}")
         if not any(k.startswith(cc + ":") and ranks[k] for k in ranks):
             rows = fetch_chart_fallback(cc)
@@ -248,13 +261,33 @@ def run_charts(state, seen):
 
     out = []
     stale_cut = (now_utc() - timedelta(days=30 * config.APP_STALE_MONTHS)).strftime("%Y-%m-%d")
-    for aid, app in meta.items():
-        genre = app.get("primaryGenreName", "")
-        if _excluded(f"{app.get('trackName', '')} {app.get('sellerName', '')}", genre):
+    # kandidáti (padá v žebříčku nebo dlouho bez aktualizace) – datum aktualizace je globální
+    cands = {aid: app for aid, app in meta.items()
+             if aid in drops or (app.get("currentVersionReleaseDate") or "9")[:10] < stale_cut}
+    cands = {aid: app for aid, app in cands.items()
+             if not big_owner(app)
+             and not _excluded(f"{app.get('trackName', '')} {app.get('sellerName', '')}",
+                               app.get("primaryGenreName", ""))}
+    # počet hodnocení v EU obchodech, kde je aplikace v žebříčku (bere se nejvyšší)
+    by_cc = {}
+    for aid in cands:
+        for cc in sorted(app_ccs.get(aid, {"de"}))[:6]:
+            by_cc.setdefault(cc, []).append(aid)
+    local = {}
+    for cc, ids in by_cc.items():
+        for aid, r in lookup(ids, cc).items():
+            n = int(r.get("userRatingCount") or 0)
+            if n > local.get(aid, (0, None, None))[0]:
+                local[aid] = (n, cc, r.get("averageUserRating"))
+    log(f"[app] kandidátů {len(cands)}, ověřeno v EU obchodech {len(local)}")
+    for aid, app in cands.items():
+        n, cc, avg = local.get(aid, (0, None, None))
+        app = dict(app, userRatingCount=n, averageUserRating=avg if avg is not None else app.get("averageUserRating"))
+        ratings = n
+        if ratings > config.APP_MAX_RATINGS:
             continue
-        ratings = int(app.get("userRatingCount") or 0)
-        if ratings > config.APP_MAX_RATINGS or big_owner(app):
-            continue
+        if avg is not None and float(avg) < config.APP_MIN_AVG_RATING:
+            continue  # uživatelé ji hodnotí špatně – nejspíš nefunguje
         upd = (app.get("currentVersionReleaseDate") or "")[:10]
         stale = bool(upd) and upd < stale_cut and ratings >= config.APP_MIN_RATINGS
         drop = drops.get(aid)
@@ -271,6 +304,8 @@ def run_charts(state, seen):
             continue
         case = _app_case(app, sig, pts, labels.get(aid, ""))
         case["key"] = key
+        if cc:
+            case["size"] += f" (obchod {cc.upper()})"
         if drop:
             corroborate(case, app)
         if aid in watch_ids:

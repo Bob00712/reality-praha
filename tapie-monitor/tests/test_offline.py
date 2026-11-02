@@ -136,6 +136,7 @@ def test_full_run(tmp_path, monkeypatch=None):
     for mod in (isir, ares, news, apps):
         setattr(mod, "http", fake_http)
     isir.find_start_id = lambda days: 100
+    apps.CHART_PAUSE = apps.LOOKUP_PAUSE = 0
     common.STATE_FILE = tmp_path / "state.json"
     common.CASES_FILE = tmp_path / "cases.json"
     monitor.STATE_FILE, monitor.CASES_FILE = common.STATE_FILE, common.CASES_FILE
