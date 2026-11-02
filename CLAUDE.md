@@ -6,7 +6,7 @@
 - Po každé změně ověř, že běh v GitHub Actions doběhl ✅ (log kroku „Run python scraper.py").
 
 ## Co to dělá
-Každých 15 minut stáhne nové inzeráty bytů a domů (prodej i pronájem) z **Bazoš.cz** v Praze a 22 obcích kolem,
+Každých 15 minut stáhne nové inzeráty (byty, domy, pozemky, chaty, garáže; v Praze a Středočeském kraji vše od 5 mil.) z **Bazoš.cz**,
 vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je, aby Bob oslovil majitele dřív než ostatní RK.
 
 ## Jak to běží
@@ -31,12 +31,16 @@ vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je,
 - `requirements.txt` – requests, beautifulsoup4, lxml.
 
 ## Zdroje
-- **Bazoš (jediný aktivní)**: `reality.bazos.cz/{prodam|pronajmu}/{byt|dum}/` s `hlokalita=<PSČ>&humkreis=<km>`.
-  - Praha: PSČ 11000, 15 km + filtr PSČ `1xx xx`, až `MAX_PAGES` stránek.
-  - `BAZOS_LOCATIONS`: Beroun, Benešov, Úvaly, Kralupy n. Vlt., Neratovice, Brandýs n. L., Říčany, Průhonice, Jesenice, Černošice,
-    Rudná, Roztoky, Klecany, Odolena Voda, Hostivice, Čelákovice, Mnichovice, Strančice, Mníšek p. Brdy, Dobřichovice, Řevnice, Kladno
-    – vše 5 km, `LOC_PAGES = 1`. Radotín je součást Prahy.
-  - Nová lokalita se při prvním načtení jen uloží (`first_load`, nic se nepošle).
+- **Bazoš (jediný aktivní)**: `reality.bazos.cz/{prodam|pronajmu}/{rubrika}/{offset}/` s `hlokalita=11000&humkreis=70`
+  (40 inzerátů/str., offset po 40). Jedno velké hledání na rubriku (`BAZOS_SEARCHES`), pak filtr podle PSČ (`near`):
+  - rubriky: byt, dum (prodej i pronájem), pozemek, chata, garaz (jen prodej).
+  - posílá se Praha (PSČ `1xx xx`) + `NEAR_PSC` = první 3 číslice PSČ (poštovní obvod ≈ obec + ~10 km): Brandýs, Úvaly,
+    Čelákovice, Odolena Voda, Klecany, Zdiby (250), Říčany… (251), Praha-západ obce (252), Hostivice (253), Benešov (256/257),
+    Dobříš (263), Beroun (266/267), Kladno, Unhošť (272/273), Slaný (274), Mělník (276), Neratovice (277), Kralupy (278),
+    Kolín (280/281), Nymburk, Lysá n. L. (288/289).
+  - **drahé**: `/prodam/` přes všechny rubriky, `cenaod=5000000`, okruh 90 km, Praha + Středočeský kraj (PSČ 25x–29x) – `expensive`.
+    Typ se u nich odhaduje z titulku (`guess_typ`), jinak „jiná nemovitost".
+  - Změna schématu hledání (`SCHEME` v `data.json`) → první běh jen uloží (`first_load`), nic nepošle.
   - Detail inzerátu (`bazos_detail`) dává jméno prodávajícího, celý popis, `seller_id` (idphone).
   - Inzeráty bez načteného jména čekají (`pending`, max. 3 běhy), pak se tiše zahodí – nikdy se neposílají bez posouzení.
   - Poptávky (titulek začíná Hledám/Koupím/Poptávám/Sháním) se přeskakují – Bob je nechce.

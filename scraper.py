@@ -13,25 +13,36 @@ from bs4 import BeautifulSoup
 # ------------------------------------------------------------------ NASTAVENÍ
 DATA_FILE = Path("docs/data.json")
 KEEP_DAYS = 30            # jak dlouho držet inzeráty v datech
-MAX_PAGES = 8             # max. stránek na jednu kategorii a běh (20 inzerátů/str. na Bazoši)
+MAX_PAGES = 8             # max. stránek na jednu kategorii a běh (40 inzerátů/str. na Bazoši)
 
-# Bazoš: akce x typ -> URL se generují automaticky
+# Bazoš: jedno velké hledání kolem Prahy na každou kategorii, výsledky se pak filtrují podle PSČ.
 BAZOS_AKCE = {"prodej": "prodam", "pronajem": "pronajmu"}
-BAZOS_TYP = {"byt": "byt", "dum": "dum"}
-BAZOS_PARAMS = {"hlokalita": "11000", "humkreis": "15"}   # Praha + okolí 15 km, pak filtr na PSČ 1xx xx
-
-# Další lokality: (název, PSČ, okruh v km). Radotín je součást Prahy, hlídá se v ní.
-BAZOS_LOCATIONS = [
-    ("Beroun", "26601", 5), ("Benešov", "25601", 5), ("Úvaly", "25082", 5),
-    ("Kralupy n. Vlt.", "27801", 5), ("Neratovice", "27711", 5), ("Brandýs n. L.", "25001", 5),
-    ("Říčany", "25101", 5), ("Průhonice", "25243", 5), ("Jesenice", "25242", 5),
-    ("Černošice", "25228", 5), ("Rudná", "25219", 5),
-    ("Roztoky", "25263", 5), ("Klecany", "25067", 5), ("Odolena Voda", "25070", 5),
-    ("Hostivice", "25301", 5), ("Čelákovice", "25088", 5), ("Mnichovice", "25164", 5),
-    ("Strančice", "25163", 5), ("Mníšek p. Brdy", "25210", 5), ("Dobřichovice", "25229", 5),
-    ("Řevnice", "25230", 5), ("Kladno", "27201", 5),
+BAZOS_CENTER, BAZOS_RADIUS = "11000", "70"           # Praha + 70 km
+BAZOS_SEARCHES = [                                  # (akce, typ = rubrika na Bazoši)
+    ("prodej", "byt"), ("prodej", "dum"), ("pronajem", "byt"), ("pronajem", "dum"),
+    ("prodej", "pozemek"), ("prodej", "chata"), ("prodej", "garaz"),
 ]
-LOC_PAGES = 1             # u menších lokalit stačí 1 stránka (20 nejnovějších)
+# Posílá se: Praha (PSČ 1xx xx) + okolí obcí podle prvních 3 číslic PSČ (pošt. obvod ≈ obec + ~10 km):
+NEAR_PSC = {
+    "250",  # Brandýs n. L., Úvaly, Čelákovice, Odolena Voda, Klecany, Zdiby
+    "251",  # Říčany, Mnichovice, Strančice
+    "252",  # Průhonice, Jesenice, Černošice, Rudná, Roztoky, Mníšek p. Brdy, Dobřichovice, Řevnice
+    "253",  # Hostivice
+    "256", "257",  # Benešov
+    "263",  # Dobříš
+    "266", "267",  # Beroun
+    "272", "273",  # Kladno, Unhošť
+    "274",  # Slaný
+    "276",  # Mělník
+    "277",  # Neratovice
+    "278",  # Kralupy n. Vlt.
+    "280", "281",  # Kolín
+    "288", "289",  # Nymburk, Lysá n. L.
+}
+# Drahé nemovitosti: všechny rubriky (i komerční), Praha + celý Středočeský kraj (PSČ 25x–29x)
+EXPENSIVE_MIN = 5_000_000
+EXPENSIVE_RADIUS = "90"
+SCHEME = "v2"             # změna schématu hledání -> první běh jen uloží (nic nepošle)
 
 # Sbazar: vlož URL vyhledávání zkopírované z prohlížeče (Praha, byty/domy, prodej/pronájem).
 # Klíč = (akce, typ). Prázdné URL se přeskočí.
@@ -179,18 +190,43 @@ def enrich(item):
 
 
 # ------------------------------------------------------------------ BAZOŠ
-def bazos_page(akce, typ, offset, params=None, area=None):
-    path = f"https://reality.bazos.cz/{BAZOS_AKCE[akce]}/{BAZOS_TYP[typ]}/"
+TYP_CO = {"byt": "bytu", "dum": "domu", "pozemek": "pozemku", "chata": "chaty", "garaz": "garáže"}
+TYP_LABEL = {"pozemek": "Pozemek", "chata": "Chata/chalupa", "garaz": "Garáž", "jine": "Jiná nemovitost"}
+
+
+def guess_typ(*texts):
+    """Typ podle slova, které se v titulku (pak v popisu) objeví nejdřív."""
+    rules = (("garaz", r"garáž|garaz|parkovací stání"), ("chata", r"chat[auy]\b|chalup|rekreační"),
+             ("byt", r"\bbyt|\d\s?\+\s?(kk|1)\b|garsoni|ateliér"), ("dum", r"\bd[ůo]m\b|\bdomu\b|\bvil[ay]\b|rodinn"),
+             ("pozemek", r"pozem|parcel|zahrad"))
+    for t in texts:
+        hits = [(m.start(), typ) for typ, rx in rules for m in [re.search(rx, t.lower())] if m]
+        if hits:
+            return min(hits)[1]
+    return "jine"
+
+
+def near(psc, price):
+    return bool(psc) and (psc.startswith("1") or psc[:3] in NEAR_PSC)
+
+
+def expensive(psc, price):
+    return bool(psc) and bool(re.match(r"1|2[5-9]", psc)) and (price or 0) >= EXPENSIVE_MIN
+
+
+def bazos_page(akce, typ, offset, params, accept):
+    """Vrátí (inzeráty prošlé filtrem accept(psč, cena), počet inzerátů na stránce celkem)."""
+    path = f"https://reality.bazos.cz/{BAZOS_AKCE[akce]}/" + (f"{typ}/" if typ else "")
     if offset:
         path += f"{offset}/"
     try:
-        html = get(path, params or BAZOS_PARAMS)
+        html = get(path, params)
     except requests.HTTPError as e:
         if e.response is not None and e.response.status_code == 404:
-            return []          # za poslední stránkou výsledků
+            return [], 0       # za poslední stránkou výsledků
         raise
     soup = BeautifulSoup(html, "lxml")
-    out = []
+    out, raw = [], 0
     for box in soup.select("div.inzeraty"):
         a = box.select_one("h2.nadpis a, .nadpis a")
         if not a:
@@ -199,42 +235,44 @@ def bazos_page(akce, typ, offset, params=None, area=None):
         m = re.search(r"/inzerat/(\d+)/", href)
         if not m:
             continue
+        raw += 1
         url = href if href.startswith("http") else "https://reality.bazos.cz" + href
         loc_el = box.select_one(".inzeratylok")
         loc = loc_el.get_text(" ", strip=True) if loc_el else ""
         psc = re.search(r"\b(\d{3})\s?(\d{2})\b", loc)
         psc = f"{psc.group(1)} {psc.group(2)}" if psc else None
-        if area is None and psc and not psc.startswith("1"):      # hledání Praha: jen PSČ 1xx xx
+        price_el = box.select_one(".inzeratycena")
+        price = parse_price(price_el.get_text(" ", strip=True) if price_el else "")
+        if not accept(psc, price):
             continue
-        if re.match(r"\s*(hled[aá]m|koup[ií]m|popt[aá]v[aá]m|sh[aá]n[ií]m)\b", a.get_text(strip=True), re.I):
+        title = a.get_text(strip=True)
+        if re.match(r"\s*(hled[aá]m|koup[ií]m|popt[aá]v[aá]m|sh[aá]n[ií]m)(e|me)?\b", title, re.I):
             continue                              # poptávka, ne nabídka
         full = box.get_text(" ", strip=True)
         d = re.search(r"\[(\d{1,2})\.(\d{1,2})\.\s?(\d{4})\]", full)
         posted = f"{d.group(3)}-{int(d.group(2)):02d}-{int(d.group(1)):02d}" if d else None
         img = box.select_one("img")
         desc_el = box.select_one(".popis")
-        price_el = box.select_one(".inzeratycena")
+        desc = (desc_el.get_text(" ", strip=True) if desc_el else "")[:400]
+        locality = loc.replace(psc or "", "").strip()
         out.append(enrich({
             "key": f"bazos:{m.group(1)}",
             "source": "bazos",
             "url": url,
-            "title": a.get_text(strip=True),
-            "desc": (desc_el.get_text(" ", strip=True) if desc_el else "")[:400],
-            "price": parse_price(price_el.get_text(" ", strip=True) if price_el else ""),
+            "title": title,
+            "desc": desc,
+            "price": price,
             "price_text": price_el.get_text(" ", strip=True) if price_el else "",
-            "locality": loc.replace(psc or "", "").strip(),
+            "locality": locality,
             "psc": psc,
             "img": img.get("src") if img else None,
             "posted": posted,
             "akce": akce,
-            "typ": typ,
-            "area_name": area,
+            "typ": typ or guess_typ(title, desc),
+            "district": None if (psc or "").startswith("1") else (locality or None),
+            "search": f"{akce}/{typ or 'vse'}",
         }))
-    if area:
-        for i in out:
-            if not (i.get("district") or "").startswith("Praha"):
-                i["district"] = area
-    return out
+    return out, raw
 
 
 def bazos_detail(item):
@@ -352,28 +390,27 @@ def classify(item, seller_counts):
 
 def scrape_bazos(known):
     found, seen = [], set()
-    searches = [(None, None, MAX_PAGES)] + [
-        (name, {"hlokalita": psc, "humkreis": str(km)}, LOC_PAGES) for name, psc, km in BAZOS_LOCATIONS]
-    for area, params, pages in searches:
-        label = area or "Praha"
-        for akce in BAZOS_AKCE:
-            for typ in BAZOS_TYP:
-                for p in range(pages):
-                    try:
-                        items = bazos_page(akce, typ, p * 20, params, area)
-                    except OutOfTime:
-                        log("[bazos] vyčerpán čas běhu, zbytek příště")
-                        return found
-                    except Exception as e:
-                        log(f"[bazos] {label} {akce}/{typ} str.{p}: CHYBA {e}")
-                        break
-                    items = [i for i in items if i["key"] not in seen]
-                    seen.update(i["key"] for i in items)
-                    found += items
-                    fresh = [i for i in items if i["key"] not in known]
-                    log(f"[bazos] {label} {akce}/{typ} str.{p}: {len(items)} inzerátů, nových {len(fresh)}")
-                    if not items or (p > 0 and not fresh) or (area and not fresh):
-                        break
+    near_params = {"hlokalita": BAZOS_CENTER, "humkreis": BAZOS_RADIUS}
+    exp_params = {"hlokalita": BAZOS_CENTER, "humkreis": EXPENSIVE_RADIUS, "cenaod": str(EXPENSIVE_MIN)}
+    searches = [(akce, typ, near_params, near, f"{akce}/{typ}") for akce, typ in BAZOS_SEARCHES]
+    searches.append(("prodej", None, exp_params, expensive, f"prodej/vše od {EXPENSIVE_MIN // 1_000_000} mil."))
+    for akce, typ, params, accept, label in searches:
+        for p in range(MAX_PAGES):
+            try:
+                items, raw = bazos_page(akce, typ, p * 40, params, accept)
+            except OutOfTime:
+                log("[bazos] vyčerpán čas běhu, zbytek příště")
+                return found
+            except Exception as e:
+                log(f"[bazos] {label} str.{p}: CHYBA {e}")
+                break
+            items = [i for i in items if i["key"] not in seen]
+            seen.update(i["key"] for i in items)
+            found += items
+            fresh = [i for i in items if i["key"] not in known]
+            log(f"[bazos] {label} str.{p}: {raw} na stránce, v oblasti {len(items)}, nových {len(fresh)}")
+            if not raw or (p > 0 and not fresh):
+                break
     return found
 
 
@@ -606,7 +643,7 @@ def _fmt(i):
     if i.get("price") and i["akce"] == "pronajem":
         price += "/měs."
     meta = " | ".join(str(x) for x in [
-        "Prodej" if i["akce"] == "prodej" else "Pronájem",
+        "Prodej" if i["akce"] == "prodej" else "Pronájem", TYP_LABEL.get(i.get("typ")),
         i.get("layout"), f"{i['area']} m²" if i.get("area") else None,
         f"{i['ppm2']:,} Kč/m²".replace(",", " ") if i.get("ppm2") else None,
         i.get("district"), {"bazos": "Bazoš", "ulovdomov": "UlovDomov"}.get(i["source"], i["source"]),
@@ -649,13 +686,13 @@ def notify(new_items):
         if i.get("phone"):
             digits = re.sub(r"\D", "", i["phone"])
             digits = "420" + digits if len(digits) == 9 else digits
-            co = "bytu" if i.get("typ") == "byt" else "domu"
+            co = TYP_CO.get(i.get("typ"), "nemovitosti")
             msg = WA_TEXT.get(i.get("akce"), WA_TEXT["pronajem"]).format(co=co, co2=co)
             links.append(f'<a href="{E("https://wa.me/" + digits + "?text=" + requests.utils.quote(msg))}">📲 WhatsApp</a>')
         mail = EMAIL_RE.search(" ".join(str(i.get(k) or "") for k in ("desc_full", "desc", "title")))
         tel = f"📞 {E(i['phone'])}\n" if i.get("phone") else ""
         if mail:                           # Telegram mailto: odkazy nebere – e-mail jako text (klikací)
-            co = "bytu" if i.get("typ") == "byt" else "domu"
+            co = TYP_CO.get(i.get("typ"), "nemovitosti")
             body = WA_TEXT.get(i.get("akce"), WA_TEXT["pronajem"]).format(co=co, co2=co)
             tel += f"✉️ {E(mail.group(0))}\n📝 Text e-mailu (klepnutím zkopírujete):\n<code>{E(body)}</code>\n"
         _send(tok, chat, f"🏠 <b>{E(i['title'])}</b>\n{E(price)}\n{E(meta)}\n{E(who)}\n{tel}" + " · ".join(links),
@@ -769,10 +806,11 @@ def main():
     # detail (jméno prodávajícího, celý popis) u nových inzerátů z Bazoše
     # + u starších, kde se detail minule nestihl načíst ("pending")
     # nová lokalita: při prvním načtení jen uložit (bez detailů a bez posílání)
-    known_areas = {v.get("area_name") for v in store.values()}
+    new_scheme = data.get("scheme") != SCHEME
     for i in found:
-        if i.get("area_name") and i["area_name"] not in known_areas and i["key"] not in known:
+        if new_scheme and i["source"] == "bazos" and i["key"] not in known:
             i["first_load"] = True
+    data["scheme"] = SCHEME
     pending = [dict(v) for v in store.values() if v.get("pending")]
     seen_keys = set()
     todo = []
@@ -803,7 +841,7 @@ def main():
         no_detail = (i["source"] == "bazos" and not i.get("seller")) or \
                     (i["source"] == "ulovdomov" and i.get("ud_private") is None and not i.get("ud_external"))
         if i.get("first_load"):
-            i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení lokality", True, False
+            i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení (nové hledání)", True, False
             return
         if i["source"] == "ulovdomov" and ud_first and i["key"] not in store:
             i["seller_type"], i["seller_reason"], i["silent"], i["pending"] = "nejiste", "první načtení zdroje", True, False
@@ -878,6 +916,7 @@ def merge(ours_path):
             newer = b if b.get("last_seen", "") > a.get("last_seen", "") else a
             newer["first_seen"] = min(a.get("first_seen", ""), b.get("first_seen", "")) or newer.get("first_seen")
             L[k] = newer
+    theirs["scheme"] = ours.get("scheme") or theirs.get("scheme")
     theirs["updated"] = max(theirs.get("updated", ""), ours.get("updated", ""))
     DATA_FILE.write_text(json.dumps(theirs, ensure_ascii=False, separators=(",", ":")), "utf-8")
     log(f"[merge] sloučeno, celkem {len(L)}")
