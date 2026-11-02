@@ -646,6 +646,7 @@ def matches_notify(i):
     st = i.get("seller_type", "nejiste")
     if SELLER_FILTER == "rk_ven" and st == "rk": return False
     if SELLER_FILTER == "jen_soukromi" and st != "soukromy": return False
+    if i.get("akce") == "pronajem" and i.get("typ") == "garaz": return False   # pronájem garáží Bob nechce
     f = NOTIFY
     if f["akce"] and i["akce"] != f["akce"]: return False
     if f["typ"] and i["typ"] != f["typ"]: return False
