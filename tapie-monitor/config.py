@@ -54,6 +54,16 @@ APP_OWNER_BLACKLIST = [
     "expedia", "starbucks", "mcdonald", "dropbox", "duolingo", "roblox", "discord", "reddit",
     "telegram", "signal messenger", "nike", "ikea", "bank", "government", "ministry",
     "block, inc", "square, inc", "cash app", "robinhood", "coinbase", "binance",
+    # státní a veřejné instituce, velká média a koncerny (neprodávají)
+    "institut", "instituut", "ministère", "ministerie", "ministerium", "ministero",
+    "france travail", "pôle emploi", "bundesamt", "bundesagentur", "agence", "agency",
+    "agentur", "université", "university", "universität", "gemeente", "kommune",
+    "stadt", "ville de", "comune", "ayuntamiento", "région", "regione", "landkreis",
+    "bending spoons", "evernote", "zepp", "huami", "axel springer", "ringier",
+    "aviv group", "schibsted", "adevinta", "mediaset", "rai", "orf", "zdf", "ard",
+    "bbc", "deutsche bahn", "sncf", "trenitalia", "renfe", "öbb", "deutsche post",
+    "la poste", "telekom", "orange", "vodafone", "telefónica", "allianz", "axa",
+    "volkswagen", "bmw", "mercedes", "stellantis", "lidl", "aldi", "carrefour",
 ]
 APP_NEWS_MAX_AGE_DAYS = 14      # zprávy o aplikacích: jak daleko zpět hledat
 
@@ -238,35 +248,26 @@ NEWS_MAX_AGE_DAYS = 3   # starší zprávy ignorovat
 # EU trh bez Bulharska, Rumunska a Polska (kódy obchodů App Store):
 APP_COUNTRIES = ["de", "fr", "it", "es", "nl", "be", "at", "se", "dk", "fi", "ie", "pt",
                  "cz", "sk", "hu", "gr", "si", "hr", "lu", "ee", "lv", "lt", "cy", "mt"]
-APP_GENRES = {          # číslo kategorie Apple -> název
+APP_GENRES = {          # číslo kategorie Apple -> název (10 kategorií = běh do ~15 min)
     6017: "Education",
     6012: "Lifestyle",
     6007: "Productivity",
     6024: "Shopping",
     6000: "Business",
     6013: "Health & Fitness",
-    6005: "Social Networking",
     6008: "Photo & Video",
     6002: "Utilities",
-    6016: "Entertainment",
     6003: "Travel",
     6023: "Food & Drink",
-    6011: "Music",
-    6010: "Navigation",
-    6001: "Weather",
-    6006: "Reference",
-    6018: "Books",
-    6020: "Medical",
-    6009: "News",
-    6004: "Sports",
 }
-APP_CHART_LIMIT = 200
+APP_CHART_LIMIT = 100
+APP_HISTORY_DAYS = 30   # kolik dní historie pořadí si pamatovat
 # Pokles v žebříčku: aplikace byla v posledních 30 dnech aspoň
 # APP_MIN_DAYS_IN_TOP dní v TOP APP_TOP_RANK a teď je o víc než
 # APP_DROP_POSITIONS míst níž (nebo z žebříčku vypadla na 7+ dní).
 APP_TOP_RANK = 50
 APP_MIN_DAYS_IN_TOP = 10
-APP_DROP_POSITIONS = 80
+APP_DROP_POSITIONS = 50
 APP_ABSENT_DAYS = 7
 # Dlouho bez aktualizace u velké aplikace:
 APP_STALE_MONTHS = 18

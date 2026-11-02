@@ -72,7 +72,9 @@ def load_json(path, default):
 def save_json(path, data):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     tmp = Path(str(path) + ".tmp")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True),
+    compact = Path(path).name == "state.json"   # velký soubor → bez odsazení
+    tmp.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True,
+                              **({"separators": (",", ":")} if compact else {"indent": 1})),
                    encoding="utf-8")
     tmp.replace(path)
 

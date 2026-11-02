@@ -166,22 +166,21 @@ def _days_ago(n):
     return (now_utc() - timedelta(days=n)).strftime("%Y-%m-%d")
 
 
-def detect_drop(hist, today_s):
-    """hist = {datum: pořadí}. Vrací popis signálu nebo None."""
-    window = [d for d in hist if _days_ago(30) <= d < today_s]
-    in_top = [d for d in window if hist[d] <= config.APP_TOP_RANK]
+def detect_drop(h):
+    """h = denní nejlepší pořadí v EU (poslední = dnes, 0 = mimo žebříček)."""
+    past = h[:-1]
+    in_top = [r for r in past if 0 < r <= config.APP_TOP_RANK]
     if len(in_top) < config.APP_MIN_DAYS_IN_TOP:
         return None
-    best = min(hist[d] for d in in_top)
-    cur = hist.get(today_s)
-    if cur is None:
-        last_seen = max(hist)
-        absent = (datetime.strptime(today_s, "%Y-%m-%d") - datetime.strptime(last_seen, "%Y-%m-%d")).days
+    top = min(in_top)
+    cur = h[-1]
+    if cur == 0:
+        absent = len(h) - len("".join("x" if r else "_" for r in h).rstrip("_"))
         if absent >= config.APP_ABSENT_DAYS:
-            return f"vypadla ze žebříčku (dříve až #{best}, nevidět {absent} dní)"
+            return f"vypadla z EU žebříčků (dříve až #{top}, {absent} dní mimo TOP {config.APP_CHART_LIMIT})"
         return None
-    if cur - best >= config.APP_DROP_POSITIONS:
-        return f"pokles v žebříčku z #{best} na #{cur}"
+    if cur - top >= config.APP_DROP_POSITIONS:
+        return f"pokles v EU žebříčcích z #{top} na #{cur}"
     return None
 
 
@@ -220,53 +219,49 @@ def _app_case(app, signal, sig_pts, chart_label=""):
 
 def run_charts(state, seen):
     st = state.setdefault("apps", {})
-    ranks = st.setdefault("ranks", {})
+    st.pop("ranks", None)  # stará (objemná) historie – nahrazena kompaktní
+    best = st.setdefault("best", {})       # aid -> [nejlepší pořadí za den, … dnes] (0 = mimo)
     t = today()
+    last_day = st.get("best_day")
+    gap = 1
+    if last_day and last_day != t:
+        gap = max(1, (datetime.strptime(t, "%Y-%m-%d") - datetime.strptime(last_day, "%Y-%m-%d")).days)
+    elif last_day == t:
+        gap = 0
+    if gap:
+        for aid in list(best):
+            best[aid] = (best[aid] + [0] * gap)[-config.APP_HISTORY_DAYS:]
+    st["best_day"] = t
     fetched_ids, labels, app_ccs = set(), {}, {}
-    fallback_used = False
+    today_best = {}
     for cc in config.APP_COUNTRIES:
         for genre, gname in config.APP_GENRES.items():
             for chart in CHARTS:
                 rows = fetch_chart(cc, genre, chart)
                 _pause(CHART_PAUSE)
-                key = f"{cc}:{genre}:{chart}"
-                if not rows:
-                    continue
-                h = ranks.setdefault(key, {})
                 for pos, (aid, name, artist, cat) in enumerate(rows, 1):
                     if _excluded(f"{name} {artist}", cat):
                         continue
-                    h.setdefault(aid, {})[t] = pos
                     fetched_ids.add(aid)
                     app_ccs.setdefault(aid, set()).add(cc)
-                    labels.setdefault(aid, f"{cc} {gname} {'free' if 'free' in chart else 'grossing'}")
-        if not any(k.startswith(cc + ":") and ranks[k] for k in ranks):
-            rows = fetch_chart_fallback(cc)
-            if rows:
-                fallback_used = True
-                h = ranks.setdefault(f"{cc}:all:topfree", {})
-                for pos, (aid, name, artist, cat) in enumerate(rows, 1):
-                    if not _excluded(f"{name} {artist} {cat}", ""):
-                        h.setdefault(aid, {})[t] = pos
-                        fetched_ids.add(aid)
-                        labels.setdefault(aid, f"{cc} top free")
-    if fallback_used:
-        log("[app] staré RSS s kategoriemi nefunguje – použit nový Apple RSS (bez kategorií)")
-
-    # úklid historie (45 dní) a výpočet poklesů
-    cutoff = _days_ago(45)
+                    if pos < today_best.get(aid, 10**6):
+                        today_best[aid] = pos
+                        labels[aid] = f"{cc} {gname} {'free' if 'free' in chart else 'grossing'} #{pos}"
+    if not today_best:
+        log("[app] žádný žebříček se nenačetl (Apple RSS nedostupné?)")
+    for aid, pos in today_best.items():
+        if aid in best:
+            best[aid][-1] = pos
+        elif pos <= config.APP_TOP_RANK:          # sledujeme jen appky, co byly v TOP
+            best[aid] = [0] * (config.APP_HISTORY_DAYS - 1) + [pos]
+    for aid in [a for a, h in best.items() if not any(h)]:
+        del best[aid]
     drops = {}
-    for key, h in ranks.items():
-        fetched_today = any(t in v for v in h.values())
-        for aid in list(h):
-            h[aid] = {d: r for d, r in h[aid].items() if d >= cutoff}
-            if not h[aid]:
-                del h[aid]
-                continue
-            if fetched_today:
-                sig = detect_drop(h[aid], t)
-                if sig and aid not in drops:
-                    drops[aid] = (sig, key)
+    if today_best:
+        for aid, h in best.items():
+            sig = detect_drop(h)
+            if sig:
+                drops[aid] = (sig, labels.get(aid, ""))
 
     # watchlist
     wl = st.setdefault("watch_ids", {})
