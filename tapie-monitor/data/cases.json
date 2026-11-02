@@ -1040,5 +1040,17 @@
   "procedure": "populární aplikace (v žebříčku), vlastník ji neaktualizuje od 2024-06-12",
   "rating": "B",
   "size": "19 410 hodnocení v App Store (obchod DE)"
+ },
+ {
+  "country": "CZ",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "CZ:INS 14234/2025",
+  "link": "https://isir.justice.cz/isir/ueu/vysledek_lustrace.do?ic=23197684&aktualnost=AKTUALNI_I_UKONCENA",
+  "module": "FIRMA",
+  "name": "Thomas Rachac - WARA s.r.o.",
+  "procedure": "konkurs",
+  "rating": "A",
+  "size": "50–99 zaměstnanců"
  }
 ]
