@@ -680,5 +680,53 @@
   "procedure": "insolvence (typ ?)",
   "rating": "C",
   "size": "? zaměstnanců"
+ },
+ {
+  "country": "?",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:news:896b926b0b5dde4a",
+  "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPLWlyOGtjZkFjS2JpbTRsYjNYRGtFYUs3S3N3QWQtbno2RDlOakQ1NlNsWWxuZW9rWk95WTRIZ2xTNlYyTUNYdkJxZGxkSlVCWmIzejdyWG90bzlEa01pemJRbHUxMXpvVnZORkZCQllYX1FyZW00akVmQTFYVE9pa1lnWEhwX0d1eW9CS0FabEtTTWhPa3pUeTNDZFJBWXdFeG9CT3NBVWY5RlZMTlJjSjNPY1JoZ21wYTM4N0hwd1VsMXgzcVE?oc=5",
+  "module": "APP",
+  "name": "Microsoft Outlook",
+  "procedure": "ukončení produktu",
+  "rating": "B",
+  "size": "9 374 198 hodnocení v App Store"
+ },
+ {
+  "country": "?",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:news:7a318c7490f42d6e",
+  "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOQmw1YllPeEtpTkhFWVVlSVRBb3JnWk12NG1MSG50UFV0UDIySzRuQmkwcHFNdG1jZjVva05MeDVIak54UGZidHd5YmNRRUxoV3o2NEstN0Y3QWtMUVJ2bHd3S3A1LTlBcXhpMkhrSG9WU2pvUmZCMmxlbWpvMVc4dkNTcmd4ak5uRnhqQ0JDMFlnY2Y4Vmdr?oc=5",
+  "module": "APP",
+  "name": "ChatGPT",
+  "procedure": "ukončení produktu",
+  "rating": "B",
+  "size": "11 835 244 hodnocení v App Store"
+ },
+ {
+  "country": "?",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:news:c9377903e52c7d8f",
+  "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxOejRIdTJkbWZ3aUNnMUdGTVRiTmxkVmZLN19TeEhGcGRnSGVLdkF0WEhLbFRjM2x0X2plSnRSWERZTG5SSl9rRVRMeHEtMVk2LUZMY2FvejUyS0NaeWQyNHhtYUhYWHRXU1ZqOFkxS09lbk4zZHNvZW1ObGxIYlFmS25NWWhybWIzc0RWSDUtRXItak9SNVN2bmVGWnE?oc=5",
+  "module": "APP",
+  "name": "HBO Max: Stream Movies & TV",
+  "procedure": "ukončení produktu",
+  "rating": "B",
+  "size": "5 840 960 hodnocení v App Store"
+ },
+ {
+  "country": "?",
+  "date": "2026-11-02",
+  "grades": "AAA",
+  "key": "APP:news:703433f7b082e1d8",
+  "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9BWkhLMzAtVXEyaUNmazRTTDBrMkVVRzBjeHp3cDU1WkNkNzR6QzdnVjRUXy1lM2N6Nll1aHNjM0hDMDNSN1dBRWh2SVFQOTV6LXV1RUlqLXBJa2JLMk8wTXlHVk96NVdheGc?oc=5",
+  "module": "APP",
+  "name": "SmartThings",
+  "procedure": "ukončení produktu",
+  "rating": "B",
+  "size": "854 708 hodnocení v App Store"
  }
 ]
