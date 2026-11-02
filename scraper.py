@@ -98,8 +98,11 @@ RK_SELLERS = [
     "ladislav burian", "realbrána", "realbrana",
     "ideální nájemce", "dumrealit", "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
     "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
-    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting", "pavelková",
+    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting", "pavelková", "jiří beneš",
 ]
+
+# Bazoš ID prodávajícího (idphone) nahlášených realitek – chytí je i pod jiným jménem
+RK_SELLER_IDS = {"19659032", "19127202"}   # Pavelková, Jiří Beneš
 
 # Inzeráty, kde majitel výslovně nechce RK – vyřadit (nemá smysl volat)
 NO_RK_WORDS = [
@@ -355,6 +358,8 @@ def classify(item, seller_counts):
         pat = r"(?<!\w)" + re.escape(name) + r"(?!\w)"
         if re.search(pat, seller) or re.search(pat, text):
             return "rk", f"na seznamu RK ({name})"
+    if item.get("seller_id") and str(item["seller_id"]) in RK_SELLER_IDS:
+        return "rk", f"nahlášená RK (ID {item['seller_id']})"
     if re.search(r"\s[-–|]\s*\S", item.get("seller") or ""):
         return "rk", f"jméno s firmou ({item.get('seller')})"
     if re.search(r"\w(real|reality|estate|invest)\b|,", seller) or \
