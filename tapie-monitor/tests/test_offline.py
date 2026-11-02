@@ -147,8 +147,9 @@ def test_full_run(tmp_path, monkeypatch=None):
     assert "Maschinenbau Huber" in allt and "Peter Maier" in allt
     assert "Hotel Alpenblick" not in allt
     assert "Metallbau Schmid" in allt
-    assert "LinguaPro" in allt and "Crypto" not in allt
-    assert "Mondly" in allt and "Pearson" in allt
+    # jen AAA: aplikace bez známé velikosti / jen bez aktualizace neprojdou
+    assert "LinguaPro" not in allt and "Crypto" not in allt and "Mondly" not in allt
+    assert "[FIRMA] AAA" in allt and "Business potenciál" in allt and "Rizika" in allt
     from common import split_message
     long = "\n".join(f'[X] A · <a href="https://x/{i}">odkaz</a>' for i in range(400))
     for part in split_message(long):
@@ -158,7 +159,7 @@ def test_full_run(tmp_path, monkeypatch=None):
     # druhý běh: žádné duplicity
     sent.clear()
     monitor.main()
-    assert "Dnes nic nového" in sent[0], sent
+    assert not [s for s in sent if "Souhrn týdne" not in s], sent  # nic nového = žádná zpráva
 
 
 if __name__ == "__main__":

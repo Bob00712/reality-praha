@@ -15,7 +15,7 @@ import urllib.parse
 from datetime import datetime, timedelta, timezone
 
 import config
-from common import http, log, now_utc, rate, today
+from common import grades_app, http, log, now_utc, rate, today
 from sources import news
 
 CHARTS = ("topfreeapplications", "topgrossingapplications")
@@ -136,6 +136,7 @@ def _app_case(app, signal, sig_pts, chart_label=""):
                  ([f"Žebříček: {chart_label}"] if chart_label else []),
         "points": points,
         "rating": rate(points, "APP"),
+        "grades": grades_app(sig_pts, focus, ratings),
     }
 
 
@@ -260,6 +261,7 @@ def run_news(seen, fps):
             "link": it["link"], "links": [],
             "notes": [f"Titulek: {it['title']}", f"Zdroj: {it['source'] or '?'} ({it['date'] or '?'})"],
             "points": points, "rating": rate(points, "APP"),
+            "grades": grades_app(sig[1], focus, 0),
         })
     log(f"[app] zpráv {len(items)}, případů {len(out)}")
     return out

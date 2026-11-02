@@ -78,6 +78,23 @@ def save_json(path, data):
 
 
 # ------------------------------------------------------------ hodnocení
+def grades_firma(proc_pts, cat, size_pts, liab_eur=None):
+    """Tři známky: typ řízení, obor, velikost. AAA = všechny sedí."""
+    g1 = "A" if proc_pts >= 3 else "B" if proc_pts == 2 else "C"
+    g2 = "A" if cat in ("A", "B", "C") else "B" if cat in ("E-SHOP", "?") else "C"
+    g3 = "A" if size_pts >= 3 else "B" if size_pts == 2 else "C"
+    if liab_eur is not None and liab_eur > config.LIABILITIES_MAX_EUR:
+        g3 = "C"
+    return g1 + g2 + g3
+
+
+def grades_app(sig_pts, focus_pts, ratings):
+    g1 = "A" if sig_pts >= 3 else "B" if sig_pts == 2 else "C"
+    g2 = "A" if focus_pts >= 2 else "C"
+    g3 = "A" if ratings >= config.APP_AAA_MIN_RATINGS else "B" if ratings >= config.APP_MIN_RATINGS else "C"
+    return g1 + g2 + g3
+
+
 def rate(points, module="FIRMA"):
     a, b = ((config.APP_RATING_A_MIN, config.APP_RATING_B_MIN) if module == "APP"
             else (config.RATING_A_MIN, config.RATING_B_MIN))
@@ -173,9 +190,10 @@ def esc(s):
 
 def format_case(c):
     flag = {"CZ": "🇨🇿", "AT": "🇦🇹", "DE": "🇩🇪", "US": "🇺🇸"}.get(c.get("country"), "🌍")
-    head = f"<b>[{c['module']}] {esc(c['rating'])}</b> · <b>{esc(c['name'])}</b>"
+    label = c.get("grades") or c["rating"]
+    head = f"<b>[{c['module']}] {esc(label)}</b> · <b>{esc(c['name'])}</b>"
     if c.get("update"):
-        head = f"<b>[{c['module']}] {esc(c['rating'])} · {esc(c['update'])}</b>\n<b>{esc(c['name'])}</b>"
+        head = f"<b>[{c['module']}] {esc(label)} · {esc(c['update'])}</b>\n<b>{esc(c['name'])}</b>"
     lines = [head,
              f"{flag} Země: {esc(c.get('country'))}",
              f"⚖️ {'Signál' if c['module'] == 'APP' else 'Řízení'}: {esc(c.get('procedure'))}",
@@ -190,6 +208,9 @@ def format_case(c):
         lines.append(f'🔗 <a href="{html.escape(c["link"])}">otevřít zdroj</a>')
     for label, url in c.get("links", []):
         lines.append(f'🔗 <a href="{html.escape(url)}">{esc(label)}</a>')
+    if config.ANALYSIS_ENABLED:
+        from sources.analysis import format_analysis
+        lines.append(format_analysis(c))
     return "\n".join(lines)
 
 
