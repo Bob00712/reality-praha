@@ -1100,5 +1100,17 @@
   "procedure": "správce hledá kupce („repreneur“)",
   "rating": "A",
   "size": "?"
+ },
+ {
+  "country": "EU?",
+  "date": "2026-11-03",
+  "grades": "AAA",
+  "key": "DIGI:334e362adcb67dba",
+  "link": "https://www.eu-startups.com/2026/11/freighttech-startup-conlio-secures-e6-4-million-to-expand-ai-powered-financial-automation-across-europe/",
+  "module": "DIGITAL",
+  "name": "FreightTech startup Conlio secures €6.4 million to expand AI-powered financial a",
+  "procedure": "nedaří se („struggl“)",
+  "rating": "A",
+  "size": "tržby/ARR ≈ 100,0 mil,"
  }
 ]
