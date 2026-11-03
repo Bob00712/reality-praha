@@ -102,11 +102,11 @@ RK_SELLERS = [
     "ladislav burian", "realbrána", "realbrana",
     "ideální nájemce", "dumrealit", "jan paschke", "paschke", "hvb real estate", "finpos", "aleš doubek", "makers reality", "gepard",
     "vlasta marklová", "žalmánek", "váš konzultant realit", "realityspolu", "reality spolu", "petráčková",
-    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting", "pavelková", "jiří beneš", "petr schejbal",
+    "next reality", "karel zajac", "zoom", "bohemian estates", "broker consulting", "pavelková", "jiří beneš", "petr schejbal", "vladimír kremel", "vladimir kremel",
 ]
 
 # Bazoš ID prodávajícího (idphone) nahlášených realitek – chytí je i pod jiným jménem
-RK_SELLER_IDS = {"19659032", "19127202", "19056743", "19006547", "19623771"}   # Pavelková, Jiří Beneš, TM (2×), Petr Schejbal
+RK_SELLER_IDS = {"19659032", "19127202", "19056743", "19006547", "19623771", "21100492"}   # Pavelková, Jiří Beneš, TM (2×), Petr Schejbal, Vladimír Kremel
 # Krátká jména RK – musí se shodovat s celým jménem prodávajícího (v textu se nehledají)
 RK_SELLERS_EXACT = {"tm"}
 
