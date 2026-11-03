@@ -106,7 +106,9 @@ RK_SELLERS = [
 ]
 
 # Bazoš ID prodávajícího (idphone) nahlášených realitek – chytí je i pod jiným jménem
-RK_SELLER_IDS = {"19659032", "19127202"}   # Pavelková, Jiří Beneš
+RK_SELLER_IDS = {"19659032", "19127202", "19056743", "19006547"}   # Pavelková, Jiří Beneš, TM (2×)
+# Krátká jména RK – musí se shodovat s celým jménem prodávajícího (v textu se nehledají)
+RK_SELLERS_EXACT = {"tm"}
 
 # Inzeráty, kde majitel výslovně nechce RK – vyřadit (nemá smysl volat)
 _RK = r"(?<!\w)r\.?\s?k\b\.?"         # RK, R.K, R.K., R. K.
@@ -369,6 +371,8 @@ def classify(item, seller_counts):
         pat = r"(?<!\w)" + re.escape(name) + r"(?!\w)"
         if re.search(pat, seller) or re.search(pat, text):
             return "rk", f"na seznamu RK ({name})"
+    if seller.strip() in RK_SELLERS_EXACT:
+        return "rk", f"na seznamu RK ({item.get('seller')})"
     if item.get("seller_id") and str(item["seller_id"]) in RK_SELLER_IDS:
         return "rk", f"nahlášená RK (ID {item['seller_id']})"
     if re.search(r"\s[-–|]\s*\S", item.get("seller") or ""):
