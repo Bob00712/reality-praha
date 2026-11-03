@@ -16,7 +16,8 @@ vyřadí realitky a poptávky a **soukromníky pošle do Telegramu**. Cílem je,
     (sloučí `data.json`, aby se nic neztratilo ani neposlalo dvakrát) a zkusí to znovu (max. 5×).
   - V yml je i `schedule: cron "7,37 * * * *"`, ale GitHub plánované běhy u free účtu vynechává.
 - **Hlavní spouštěč je cron-job.org** (účet Boba), každých 15 min:
-  `POST https://api.github.com/repos/Bob00712/reality-praha/actions/workflows/scrape.yml/dispatches`, body `{"ref":"main"}`,
+  `POST https://api.github.com/repos/kzb0011/reality-praha/actions/workflows/scrape.yml/dispatches`
+  (účet se 3. 11. 2026 přejmenoval z Bob00712 na **kzb0011** – stará adresa v cron-job.org přestala spouštět), body `{"ref":"main"}`,
   hlavička `Authorization: Bearer <fine-grained PAT>` (jen tohle repo, Actions: read & write).
   **Token vyprší 5. 10. 2027** – pak vygenerovat nový a vyměnit v cron-job.org.
 - **Secrets** v repu: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (může obsahovat víc ID oddělených čárkou → pošle se všem).
