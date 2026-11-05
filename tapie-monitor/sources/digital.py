@@ -110,6 +110,14 @@ DONE_WORDS = ["racheté", "a été repris", "reprise par", "übernommen", "über
               "was acquired", "acquired by", "bought by", "sold to", "takes over", "took over",
               "rilevat", "adquirid", "overgenomen", "převzal", "koupil", "koupila"]
 
+# Pozitivní zprávy (investice, růst) – nejsou příležitost k převzetí
+FUNDING_WORDS = [
+    "secures", "raises", "raised", "funding round", "series a", "series b", "series c", "seed round",
+    "pre-seed", "closes €", "closes $", "lands €", "lands $", "bags", "backed by", "investment of",
+    "erhält", "sammelt", "finanzierungsrunde", "lève", "levée de fonds", "raccoglie", "round di",
+    "recauda", "ronda de", "haalt", "investering", "získal investici", "získává",
+]
+
 DIGITAL = [
     "app", "plattform", "platform", "plateforme", "piattaforma", "plataforma",
     "platforma", "saas", "software", "online", "e-commerce", "onlineshop", "e-shop",
@@ -331,8 +339,16 @@ def run(seen, fps):
                     continue
                 if not eu_native and not any(m in low for m in EU_MARKERS):
                     continue  # globální web (TechCrunch) – jen evropské firmy
-                strong = next((k for k in STRONG + STRUGGLE if k in low), None)
-                medium = next((k for k in MEDIUM if k in low), None)
+                # Signál „nedaří se“ / propouštění musí být v titulku nebo na začátku článku –
+                # celé texty z RSS zmiňují „struggle“ obecně (Conlio: zpráva o investici).
+                head = f" {it['title'].lower()} {it['summary'][:400].lower()} "
+                tlow = f" {it['title'].lower()} "
+                if any(f in tlow for f in FUNDING_WORDS) and not any(
+                        k in tlow for k in STRONG + BUYER_CALL + SYMBOLIC):
+                    continue  # zpráva o získání investice / růstu – ne příležitost
+                strong = next((k for k in STRONG if k in low), None) or \
+                    next((k for k in STRUGGLE if k in head), None)
+                medium = next((k for k in MEDIUM if k in head), None)
                 symbolic = next((k for k in SYMBOLIC if k in low), None)
                 if symbolic and any(w in low for w in DONE_WORDS) and not \
                         any(k in low for k in BUYER_CALL):
