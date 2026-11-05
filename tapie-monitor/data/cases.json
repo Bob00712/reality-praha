@@ -1112,5 +1112,17 @@
   "procedure": "nedaří se („struggl“)",
   "rating": "A",
   "size": "tržby/ARR ≈ 100,0 mil,"
+ },
+ {
+  "country": "CZ",
+  "date": "2026-11-05",
+  "grades": "AAA",
+  "key": "CZ:INS 8080/2026",
+  "link": "https://isir.justice.cz/isir/ueu/vysledek_lustrace.do?ic=25094009&aktualnost=AKTUALNI_I_UKONCENA",
+  "module": "FIRMA",
+  "name": "QWIX Foods s.r.o.",
+  "procedure": "konkurs",
+  "rating": "A",
+  "size": "10–19 zaměstnanců"
  }
 ]
