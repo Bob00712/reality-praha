@@ -62,7 +62,9 @@ Posílá se jen `soukromy` a `nejiste` (`SELLER_FILTER = "rk_ven"`). Vyřadí se
 - jméno obsahuje firmu (`Jméno - Firma`, čárku, s.r.o./spol., `…Real/Reality/Estate/Invest`, `REAL…`),
 - text obsahuje `NO_RK_WORDS` („RK nevolat", i „R.K nevolat", „R. K." apod. – Bob tyto majitele nechce oslovovat),
 - text obsahuje silné RK výrazy (`RK_WORDS`: provize, makléř, zprostředkuje, výhradní zastoupení, ID nabídky, ev. č., …webrealit.cz…),
-- stejný prodávající/telefon má ≥ 3 inzeráty (`RK_MIN_LISTINGS`), nebo byl dříve vyřazen (paměť `RK_KNOWN`, `RK_PHONES`).
+- stejný prodávající/telefon má ≥ 3 inzeráty (`RK_MIN_LISTINGS`), nebo byl dříve vyřazen (paměť `RK_KNOWN`, `RK_PHONES` –
+  **jen z jasných důvodů**, ne z jednorázového nálezu slova v textu).
+`PRIVATE_WORDS` (bez provize/provizí, bez zprostředkování, pouze přímému zájemci, nejsem realitka…) ruší RK slova v textu.
 Slabé znaky (`RK_WEAK`: „nabízíme k pronájmu", samotné „RK", „exkluzivní") inzerát nevyřadí, jen označí ❔.
 Priorita Boba: **raději občas propustit realitku, než přijít o soukromníka.**
 

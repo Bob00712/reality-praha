@@ -122,7 +122,9 @@ NO_RK_WORDS = [
 # Slabé znaky RK: samy o sobě inzerát nevyřadí, jen ho označí jako ❔ nejistý
 RK_WEAK = [r"exkluziv", r"\brk\b", r"nabízíme (vám )?(k )?(prodeji|pronájmu|podnájmu)", r"nabízíme vám"]
 
-PRIVATE_WORDS = [r"bez rk", r"nejsem rk", r"ne ?rk", r"přímo od majitele", r"bez provize", r"provize se neplatí", r"bez poplatku rk", r"od majitele", r"jsem majitel", r"soukrom[áý] osoba", r"bez realitky"]
+PRIVATE_WORDS = [r"bez rk", r"nejsem rk", r"ne ?rk", r"přímo od majitele", r"bez proviz\w*", r"provize se neplatí", r"bez poplatku rk", r"od majitele", r"jsem majitel", r"soukrom[áý] osoba", r"bez realitky",
+                 r"bez zprostředk\w*", r"bez realitní\w* kancelář\w*", r"žádn\w* proviz\w*", r"neplatí\w* (žádnou )?proviz\w*",
+                 r"nejsem (realitk\w*|makléř\w*)", r"přímému zájemci", r"pouze přím\w* zájem\w*"]
 # ---------------------------------------------------------------------------
 
 HEADERS = {
@@ -816,7 +818,9 @@ def main():
 
     # paměť realitek: jména (aspoň 2 slova) a telefony, které už byly jednou vyřazené jako RK
     for v in store.values():
-        if v.get("seller_type") == "rk" and v.get("seller_reason") != "majitel nechce RK":
+        # pamatovat si jen jasné RK – ne jednorázový nález slova v textu (mohl to být soukromník)
+        if v.get("seller_type") == "rk" and v.get("seller_reason") != "majitel nechce RK" \
+                and not (v.get("seller_reason") or "").startswith("text inzerátu"):
             if v.get("seller") and len(v["seller"].split()) >= 2:
                 RK_KNOWN.add(v["seller"].lower())
             if v.get("phone"):
