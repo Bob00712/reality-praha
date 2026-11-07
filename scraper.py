@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 # ------------------------------------------------------------------ NASTAVENÍ
 DATA_FILE = Path("docs/data.json")
 KEEP_DAYS = 30            # jak dlouho držet inzeráty v datech
+MIN_PAGES = 3             # min. stránek na kategorii (kvůli TOPovaným inzerátům nahoře)
 MAX_PAGES = 8             # max. stránek na jednu kategorii a běh (40 inzerátů/str. na Bazoši)
 
 # Bazoš: jedno velké hledání kolem Prahy na každou kategorii, výsledky se pak filtrují podle PSČ.
@@ -418,6 +419,7 @@ def scrape_bazos(known):
     searches = [(akce, typ, near_params, near, f"{akce}/{typ}") for akce, typ in BAZOS_SEARCHES]
     searches.append(("prodej", None, exp_params, expensive, f"prodej/vše od {EXPENSIVE_MIN // 1_000_000} mil."))
     for akce, typ, params, accept, label in searches:
+        idle = 0
         for p in range(MAX_PAGES):
             try:
                 items, raw = bazos_page(akce, typ, p * 40, params, accept)
@@ -432,7 +434,10 @@ def scrape_bazos(known):
             found += items
             fresh = [i for i in items if i["key"] not in known]
             log(f"[bazos] {label} str.{p}: {raw} na stránce, v oblasti {len(items)}, nových {len(fresh)}")
-            if not raw or (p > 0 and not fresh):
+            idle = 0 if fresh else idle + 1
+            # nahoře bývají TOPované (staré) inzeráty, nové mohou být až na 2.–3. stránce:
+            # projít aspoň MIN_PAGES stránek a skončit až po 2 stránkách bez nového
+            if not raw or (p + 1 >= MIN_PAGES and idle >= 2):
                 break
     return found
 
