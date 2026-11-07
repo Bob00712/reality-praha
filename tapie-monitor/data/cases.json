@@ -1124,5 +1124,53 @@
   "procedure": "konkurs",
   "rating": "A",
   "size": "10–19 zaměstnanců"
+ },
+ {
+  "country": "FR",
+  "date": "2026-11-07",
+  "grades": "AAA",
+  "key": "DIGI:d1d309ab2e991dc0",
+  "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPZW4zYWRhclBIX2xVeDQyMndpdjZ0cVVkYXAzZ0NGdVJLVGhGbWw1MEI2RkhFRHpEQXNTOU1sMkNFeVYxWlNIdXk4TXJHM3ZWTld5NzVTVnA5S1IzX0xqaVB0THJPRDV3aEF1eU12dHFNa0xpRFBCZzNhSFIyT01YYmtHa3J3OFU1cFRUY0p3OEhDTmY2T3lPRmRsaUJXVmNQQ3RaRUE2UzlIQVZaWERjSGNLSzhiT3lkcEZvQmFUWQ?oc=5",
+  "module": "DIGITAL",
+  "name": "La marque de prêt-à-porter Devernois cherche un repreneur",
+  "procedure": "správce hledá kupce („repreneur“)",
+  "rating": "A",
+  "size": "?"
+ },
+ {
+  "country": "DE",
+  "date": "2026-11-07",
+  "grades": "AAA",
+  "key": "DIGI:45d25d0b52137849",
+  "link": "https://www.deutsche-startups.de/2026/11/06/exit-illusion-gostudent-sequoia-capital-langdock-vaeridion-pliant/",
+  "module": "DIGITAL",
+  "name": "#StartupTicker - +++ Exit-Illusion +++ GoStudent +++ Sequoia Capital +++ Langdoc",
+  "procedure": "insolvence / prodej / ukončení („schließt“)",
+  "rating": "A",
+  "size": "tržby/ARR ≈ 60,0 mil,"
+ },
+ {
+  "country": "DE",
+  "date": "2026-11-07",
+  "grades": "AAA",
+  "key": "DIGI:69aa04c19263c811",
+  "link": "https://www.deutsche-startups.de/2026/11/05/gropyus-blocks-aretea-group-roll-up-atlas-bio-quint-computing/",
+  "module": "DIGITAL",
+  "name": "#StartupTicker - +++ Gropyus +++ Blocks +++ Aretea Group +++ Roll-up +++ Atlas B",
+  "procedure": "insolvence / prodej / ukončení („insolvenz“)",
+  "rating": "A",
+  "size": "tržby/ARR ≈ 25,0 mil,"
+ },
+ {
+  "country": "DE",
+  "date": "2026-11-07",
+  "grades": "AAA",
+  "key": "DIGI:1933e25b8c7f2049",
+  "link": "https://www.deutsche-startups.de/2026/11/02/taxgraph-cognigy-flow-partners-0to9-traivelling-drafted-ventures/",
+  "module": "DIGITAL",
+  "name": "#StartupTicker - +++ TaxGraph +++ Cognigy +++ Flow & Partners +++ 0TO9 +++ Traiv",
+  "procedure": "insolvence / prodej / ukončení („insolvenz“)",
+  "rating": "A",
+  "size": "tržby/ARR ≈ 16,6 mil,"
  }
 ]
